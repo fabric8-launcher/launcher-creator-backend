@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# This script copies/creates the necessary files to add
+# the component to the project pointed at by TARGET_DIR
+
+if [[ $# -eq 0 ]]; then
+    echo "Usage: $0 <app-name> <component-name> <target-dir>"
+    exit 1
+fi
+
+APP_NAME=$1
+COMPONENT_NAME=$2
+TARGET_DIR=$3
+
+SOURCE_DIR=$(cd "$(dirname "$BASH_SOURCE")" ; pwd -P)
+
+# Copy files
+cp -a $SOURCE_DIR/deploy $TARGET_DIR
+
+# Generate "env" file with component properties
+cat > $TARGET_DIR/env << __EOF__
+APP_NAME=$APP_NAME
+COMPONENT_NAME=$COMPONENT_NAME
+SECRET_NAME=$COMPONENT_NAME-bind
+DB_NAME=$COMPONENT_NAME
+__EOF__
+

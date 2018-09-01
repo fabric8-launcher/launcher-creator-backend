@@ -1,0 +1,5 @@
+name: PostgreSQL database
+description: PostgreSQL database service, with persistent storage.
+apply: "/bin/bash -c apply"
+deploy: "/bin/bash -c deploy"
+
