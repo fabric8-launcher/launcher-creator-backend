@@ -1,0 +1,9 @@
+{
+  "name": "@core/utils",
+  "version": "1.0.0",
+  "description": "Miscellaneous utility functions",
+  "main": "index.js",
+  "scripts": {},
+  "author": "Tako Schotanus <tschotan@redhat.com>",
+  "license": "ISC"
+}

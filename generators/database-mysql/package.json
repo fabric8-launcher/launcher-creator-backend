@@ -1,0 +1,11 @@
+{
+  "name": "@generators/database-mysql",
+  "version": "1.0.0",
+  "description": "mySQL database service, with persistent storage",
+  "scripts": {},
+  "author": "Tako Schotanus <tschotan@redhat.com>",
+  "license": "ISC",
+  "dependencies": {
+    "@core/resources": "file:../../core/resources"
+  }
+}

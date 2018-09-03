@@ -1,0 +1,14 @@
+{
+  "name": "@core/deploy",
+  "version": "1.0.0",
+  "description": "Deploys a project to OpenShift",
+  "main": "index.js",
+  "scripts": {
+    "generate": "node ./generate.js"
+  },
+  "author": "Tako Schotanus <tschotan@redhat.com>",
+  "license": "ISC",
+  "dependencies": {
+    "fs-extra": "^7.0.0"
+  }
+}

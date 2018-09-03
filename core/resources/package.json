@@ -1,0 +1,12 @@
+{
+  "name": "@core/resources",
+  "version": "1.0.0",
+  "description": "Support functions for resources",
+  "scripts": {},
+  "author": "Tako Schotanus <tschotan@redhat.com>",
+  "license": "ISC",
+  "dependencies": {
+    "child-process-promise": "^2.2.1",
+    "lodash": "^4.17.10"
+  }
+}

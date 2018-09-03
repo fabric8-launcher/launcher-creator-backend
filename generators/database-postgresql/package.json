@@ -1,14 +1,11 @@
 {
-  "name": "database-postgresql",
+  "name": "@generators/database-postgresql",
   "version": "1.0.0",
   "description": "PostgreSQL database service, with persistent storage",
-  "scripts": {
-    "apply": "node ./apply.js",
-    "deploy": "node ./deploy.js"
-  },
+  "scripts": {},
   "author": "Tako Schotanus <tschotan@redhat.com>",
   "license": "ISC",
   "dependencies": {
-    "child-process-promise": "^2.2.1"
+    "@core/resources": "file:../../core/resources"
   }
 }

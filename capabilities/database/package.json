@@ -1,0 +1,17 @@
+{
+  "name": "@capabilities/database",
+  "version": "1.0.0",
+  "description": "Adds Database capability to the user's project",
+  "scripts": {
+    "apply": "node ./apply.js"
+  },
+  "author": "Tako Schotanus <tschotan@redhat.com>",
+  "license": "ISC",
+  "dependencies": {
+    "@core/deploy": "file:../../core/deploy",
+    "@core/utils": "file:../../core/utils",
+    "@generators/database-mysql": "file:../../generators/database-mysql",
+    "@generators/database-postgresql": "file:../../generators/database-postgresql",
+    "@generators/database-secret": "file:../../generators/database-secret"
+  }
+}
