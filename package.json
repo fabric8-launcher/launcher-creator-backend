@@ -1,0 +1,15 @@
+{
+  "name": "launcher-creator-catalog",
+  "version": "1.0.0",
+  "description": "Root package for the App Creator Catalog",
+  "main": "index.js",
+  "repository": "git@github.com:quintesse/launcher-creator-catalog",
+  "author": "Tako Schotanus <tschotan@redhat.com>",
+  "license": "Apache-2.0",
+  "private": true,
+  "workspaces": [
+    "core/*",
+    "generators/*",
+    "capabilities/*"
+  ]
+}

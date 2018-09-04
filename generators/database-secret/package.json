@@ -4,7 +4,7 @@
   "description": "Secret containing credentials for a database",
   "scripts": {},
   "author": "Tako Schotanus <tschotan@redhat.com>",
-  "license": "ISC",
+  "license": "Apache-2.0",
   "dependencies": {
     "@core/resources": "file:../../core/resources"
   }

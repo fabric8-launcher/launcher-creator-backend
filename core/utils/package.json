@@ -5,5 +5,5 @@
   "main": "index.js",
   "scripts": {},
   "author": "Tako Schotanus <tschotan@redhat.com>",
-  "license": "ISC"
+  "license": "Apache-2.0"
 }

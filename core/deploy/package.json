@@ -9,7 +9,7 @@
     "deploy": "node ./deploy.js"
   },
   "author": "Tako Schotanus <tschotan@redhat.com>",
-  "license": "ISC",
+  "license": "Apache-2.0",
   "dependencies": {
     "@capabilities/database": "file:../../capabilities/database",
     "@core/info": "file:../info",

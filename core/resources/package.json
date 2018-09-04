@@ -4,7 +4,7 @@
   "description": "Support functions for resources",
   "scripts": {},
   "author": "Tako Schotanus <tschotan@redhat.com>",
-  "license": "ISC",
+  "license": "Apache-2.0",
   "dependencies": {
     "child-process-promise": "^2.2.1",
     "lodash": "^4.17.10",

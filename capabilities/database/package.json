@@ -4,7 +4,7 @@
   "description": "Adds Database capability to the user's project",
   "scripts": {},
   "author": "Tako Schotanus <tschotan@redhat.com>",
-  "license": "ISC",
+  "license": "Apache-2.0",
   "dependencies": {
     "@core/utils": "file:../../core/utils",
     "@generators/database-mysql": "file:../../generators/database-mysql",
