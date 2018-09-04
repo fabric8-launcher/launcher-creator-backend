@@ -1,2 +1,94 @@
 # launcher-creator-catalog
+
 Component Catalog for the Launcher Cloud Generator
+
+## Usage
+
+For the first time you'll need Yarn to install all the dependencies. Run the following command in the root of a clone of this repository:
+
+```
+$ yarn intall
+```
+
+To get a list of the capabilities you can apply to your project run:
+
+```
+$ yarn run -s apply --list
+```
+
+To apply a specific capability you need its name and which properties to pass. Use the `--help` option to find out what properties are supported/required by the Capability, for example:
+
+```
+$ yarn run -s apply database --help
+```
+
+To actually apply the Capability to the project pass all the required arguments and properties, for example:
+
+```
+$ yarn run -s apply database path/to/project "my-database" '{ "databaseType": "mysql", "runtime": "vertx" }'
+```
+
+
+## Folder structure
+
+ - **generators** - All _Generator_ modules are found in this folder.
+ - **capabilities** - All _Capability_ modules are found in this folder.
+ - **core** - 
+   This folder contains core modules that provide support for the
+   capabilites and the generators.
+   - **deploy** - Module that can execute Capabilites, manages the `deployment.json` descriptor file, can generate a project's Resource file and can deploy it top OpenShift.
+   - **info** - Modules that deals with input validation mostly.
+   - **resources** - Module that deals with OpenShift/K8s Resource lists.
+   - **utils** - Miscelleaneous utility functions.
+   
+## Generators
+
+Generators are modules that make changes to a user's project. Each module generally only makes a very specific and limited set of changes, using the UNIX philosophy of "Do one thing and do it well".
+
+Each Generator exposes the following public API:
+
+### apply( targetDir, props )
+
+When called this method allows the Generator to make changes to the user's project pointed at by `targetDir`. This generally consists
+of copying and/or generating files. It can also update already pre-existing files (for example add new dependencies a Maven POM file).
+The `props` is an object with properties required by the Generator. These properties are passed on by the Capabilities.
+
+### generate( resources, targetDir, props )
+
+When called this method allows the Generator to make changes to the OpenShift/K8s Resources list that get passed in as `resources`.
+These are the Resources that will be used in the end to create the application on OpenShift.
+The `targetDir` and `props` are the same ones as passed to `apply`, but no changes should be made to the project itself anymore!
+
+### info( )
+
+Returns the contents of the local `info.json` file as an object.
+
+## Capabilities
+
+Capabilities are modules that bundle one or more generators to add a set of features to a user's project that together implement a useful and fleshed-out use-case.
+
+Each Capability exposes the following public API:
+
+### apply( capName, targetDir, props )
+
+When called the Capability takes a list of all the Generators it will use, prepares the properties that is will pass on to each of
+them and calls their `apply()` function one by one. The end result will be that the user's project will have all the necessary
+files to work with and run the Capability.
+
+### generate( capName, resources, targetDir, props )
+
+When called the Capability takes a list of all the Generators it will use, prepares the properties that is will pass on to each of
+them and calls their `generate()` function one by one. The end result will be a Resource list with all the necessary builds,
+deployments, services, routes, config maps and secrets the user's project needs to run on OpenShift.
+
+### info( )
+
+Returns the contents of the local `info.json` file as an object.
+
+## Development
+
+To make sure that any changes you make are properly propagated to all modules you might have to run the folowing command:
+
+```
+$ yarn intall --force
+```
