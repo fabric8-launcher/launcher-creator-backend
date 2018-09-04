@@ -7,6 +7,11 @@
   "author": "Tako Schotanus <tschotan@redhat.com>",
   "license": "Apache-2.0",
   "private": true,
+  "scripts": {
+    "apply": "node ./core/deploy/apply.js",
+    "generate": "node ./core/deploy/generate.js",
+    "deploy": "node ./core/deploy/deploy.js"
+  },
   "workspaces": [
     "core/*",
     "generators/*",
