@@ -27,7 +27,8 @@ function readDeployment(deploymentFile) {
 // Returns a promise that will resolve when the given
 // deployment was written to the given file
 function writeDeployment(deploymentFile, deployment) {
-    return fs.writeFile(deploymentFile, JSON.stringify(deployment, null, 2))
+    return fs.ensureFile(deploymentFile)
+        .then(() => fs.writeFile(deploymentFile, JSON.stringify(deployment, null, 2)))
         .catch((error) => console.error(`Failed to write deployment file ${deploymentFile}: ${error}`));
 }
 
