@@ -42,5 +42,5 @@ const TARGET_DIR = args[1];
 const CAP_NAME = args[2] || CAP;
 const PROPS = args[3] || "{}";
 
-me.apply(TARGET_DIR, CAP, CAP_NAME, JSON.parse(PROPS))
+me.apply(CAP_NAME, TARGET_DIR, CAP, JSON.parse(PROPS))
     .catch(err => console.error(`Application Error: ${err}`));

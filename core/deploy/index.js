@@ -55,11 +55,11 @@ function getCapabilityModule(capability) {
 // Calls `apply()` on the given capability (which allows it to copy, generate
 // and change files in the user's project) and adds information about the
 // capability to the `deployment.json` in the project's root.
-function apply(targetDir, capability, capName, props) {
+function apply(capName, targetDir, capability, props) {
     const module = getCapabilityModule(capability);
     const df = deploymentFile(targetDir);
     return new Promise((resolve, reject) => resolve(validate(module.info(), props)))
-        .then(() => module.apply(targetDir, capName, props))
+        .then(() => module.apply(capName, targetDir, props))
         .then(() => readDeployment(df))
         .then(deployment => {
             const cap = {
@@ -72,8 +72,8 @@ function apply(targetDir, capability, capName, props) {
         });
 }
 
-function generate(resources, targetDir, capability, capName, props) {
-    return require("@capabilities/" + capability).generate(resources, targetDir, capName, props);
+function generate(capName, resources, targetDir, capability, props) {
+    return require("@capabilities/" + capability).generate(capName, resources, targetDir, props);
 }
 
 function generateDeployment(resources, targetDir) {
@@ -82,7 +82,7 @@ function generateDeployment(resources, targetDir) {
         .then((deployment) => {
             let result = Promise.resolve(resources);
             Object.entries(deployment.capabilities).forEach(([capName,cap]) => {
-                result = result.then((res) => generate(res, targetDir, cap.module, capName, cap.props));
+                result = result.then((res) => generate(capName, res, targetDir, cap.module, cap.props));
             });
             return result;
         });

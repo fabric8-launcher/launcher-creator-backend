@@ -11,7 +11,7 @@ function databaseByType(type) {
     }
 }
 
-exports.apply = function(targetDir, capName, props) {
+exports.apply = function(capName, targetDir, props) {
     const dbprops = {
         databaseUri: capName,
         databaseName: "my_data",
@@ -21,7 +21,7 @@ exports.apply = function(targetDir, capName, props) {
         .then(() => databaseByType(props.databaseType).apply(targetDir, dbprops));
 };
 
-exports.generate = function(resources, targetDir, capName, props) {
+exports.generate = function(capName, resources, targetDir, props) {
     const dbprops = {
         databaseUri: capName,
         databaseName: "my_data",
