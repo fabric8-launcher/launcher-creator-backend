@@ -45,6 +45,15 @@ $ yarn run -s apply database path/to/project "my-database" '{ "databaseType": "m
 
 Generators are modules that make changes to a user's project. Each module generally only makes a very specific and limited set of changes, using the UNIX philosophy of "Do one thing and do it well".
 
+For example a _Generator_ "mySQL" might create the necessary OpenShift/K8s Resources to set up a database service on OpenShift.
+Another one might create the code to connect to a databse from Node.js. Try not to make a _Genrator_ do too much, think of who
+would be maintaining the module for example, if a _Generator_ could generate the code for all the available languages it would
+soon become pretty complex and all the different people or teams that have the necessary expertise for their particular language
+would have to collaborate on that one module. Better to create one module for each language. If there are many common elements
+(for example they use a lot of the same supporting non-code files) consider splitting those out into a different module.
+
+So make _Generators_ simple, move the complexity to the _Capabilities_.
+
 Each Generator exposes the following public API:
 
 ### apply( targetDir, props )
@@ -66,6 +75,12 @@ Returns the contents of the local `info.json` file as an object.
 ## Capabilities
 
 Capabilities are modules that bundle one or more generators to add a set of features to a user's project that together implement a useful and fleshed-out use-case.
+
+For example, a "Database" _Capability_ might call on a _Generator_ that would create a mySQL database service, while using another to 
+create the _Secret_ that will store the datbase's connection information. Yet another _Generator_ would create the Java code based
+on the Vert.x framework and copy that to the user's project. The choice of database (mySQL, PostgreSQL, etc) and code language and
+framework (Node.js, Vert.x, Spring Boot, etc) could be options that the user can pass to the _Capability_, in that aspect a _Capability_
+can be as complex as it wants to be.
 
 Each Capability exposes the following public API:
 
