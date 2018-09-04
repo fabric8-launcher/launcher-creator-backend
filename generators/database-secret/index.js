@@ -1,10 +1,10 @@
 'use strict';
 
-exports.apply = function (appName, targetDir, capProps = {}, compProps = {}) {
-    return compProps;
+exports.apply = function(targetDir, props = {}) {
+    return Promise.resolve(true);
 }
 
-exports.generate = function(resources, props) {
+exports.generate = function(resources, targetDir, props = {}) {
     // Create Secret holding Database connection/authentication information
     if (resources.secret(props.secretName).length == 0) {
         const secret = {
@@ -17,13 +17,17 @@ exports.generate = function(resources, props) {
                 "uri": props.databaseUri,
                 "database": props.databaseName,
                 "user": "dbuser",
-                "password": "secret",
+                "password": "secret",  // TODO generate pwd
             }
         };
         resources.add(secret);
-        console.log(`Secret ${props.secretName} added`);
+        //console.log(`Secret ${props.secretName} added`);
     } else {
-        console.log(`Secret ${props.secretName} already exists`);
+        //console.log(`Secret ${props.secretName} already exists`);
     }
-    return resources;
+    return Promise.resolve(resources);
+};
+
+exports.info = function () {
+    return require("./info.json");
 };

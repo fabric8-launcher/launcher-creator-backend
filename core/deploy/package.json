@@ -4,11 +4,16 @@
   "description": "Deploys a project to OpenShift",
   "main": "index.js",
   "scripts": {
-    "generate": "node ./generate.js"
+    "apply": "node ./apply.js",
+    "generate": "node ./generate.js",
+    "deploy": "node ./deploy.js"
   },
   "author": "Tako Schotanus <tschotan@redhat.com>",
   "license": "ISC",
   "dependencies": {
+    "@capabilities/database": "file:../../capabilities/database",
+    "@core/info": "file:../info",
+    "@core/resources": "file:../resources",
     "fs-extra": "^7.0.0"
   }
 }

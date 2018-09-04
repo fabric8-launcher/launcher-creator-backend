@@ -1,12 +1,13 @@
 'use strict';
 
 const resources = require("@core/resources").resources;
+const apply = require("@core/resources").apply;
 
 const args = process.argv.slice(2);
 
 if (args.length !== 1) {
     console.error("Missing argument");
-    console.error("Usage: npm run -s generate -- <target_dir>");
+    console.error("Usage: npm run -s deploy -- <target_dir>");
     process.exit(1);
 }
 
@@ -14,7 +15,6 @@ const TARGET_DIR = args[0];
 
 require('.').generateDeployment(resources({}), TARGET_DIR)
     .then(res => {
-        process.stdout.write(JSON.stringify(res.json, null, 4));
-        process.stdout.write("\n");
+        apply(res);
     })
-    .catch(err => console.error(`Generate Deployment Error: ${err}`));
+    .catch(err => console.error(`Deployment Error: ${err}`));

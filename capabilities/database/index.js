@@ -1,82 +1,36 @@
 'use strict';
 
-const moduleName = require("@core/utils").moduleName;
-const deploy = require("@core/deploy");
+// Returns the corresponding database generator depending on the given database type
+function databaseByType(type) {
+    if (type === "postgresql") {
+        return require("@generators/database-postgresql");
+    } else if (type === "mysql") {
+        return require("@generators/database-mysql");
+    } else {
+        throw `Unknown database type: ${type}`;
+    }
+}
 
-exports.apply = function(appName, targetDir, props) {
-    const deploymentFile = deploy.deploymentFile(targetDir);
-    deploy.readDeployment(deploymentFile)
-        .then((deployment) => {
-            const id = props.id || deploy.uniqueName(deployment, moduleName(module));
-            const dbprops = {
-                databaseName: "my_data",
-                secretName: id + "-bind",
-            };
+exports.apply = function(targetDir, capName, props) {
+    const dbprops = {
+        databaseUri: capName,
+        databaseName: "my_data",
+        secretName: capName + "-bind",
+    };
+    return require("@generators/database-secret").apply(targetDir, dbprops)
+        .then(() => databaseByType(props.databaseType).apply(targetDir, dbprops));
+};
 
-            // Returns the corresponding database generator depending on the given database type
-            function databaseByType(type) {
-                if (type === "postgresql") {
-                    return {
-                        name: "database-postgresql",
-                        props: require("@generators/database-postgresql").apply(appName, targetDir, props, dbprops)
-                    };
-                } else if (type === "mysql") {
-                    return {
-                        name: "database-mysql",
-                        props: require("@generators/database-mysql").apply(appName, targetDir, props, {databaseUri: id, ...dbprops})
-                    };
-                } else {
-                    throw `Unknown daytabase type: ${type}`;
-                }
-            }
-
-            const cap = {
-                props: props,
-                generators: [
-                    {
-                        name: "database-secret",
-                        props: require("@generators/database-secret").apply(appName, targetDir, props, dbprops)
-                    },
-                    databaseByType(props.databaseType),
-                ]
-            };
-            const newDeployment = deploy.addCapability(deployment, id, cap);
-            return deploy.writeDeployment(deploymentFile, deployment)
-                .then(() => newDeployment);
-        })
+exports.generate = function(resources, targetDir, capName, props) {
+    const dbprops = {
+        databaseUri: capName,
+        databaseName: "my_data",
+        secretName: capName + "-bind",
+    };
+    return require("@generators/database-secret").generate(resources, targetDir, dbprops)
+        .then((res) => databaseByType(props.databaseType).generate(res, targetDir, dbprops));
 };
 
 exports.info = function() {
-    return {
-        description: "Adds Database capability to the user's project",
-        props: {
-            id: {
-                type: "string"
-            },
-            databaseType: {
-                enum: [{
-                    id: "postgresql",
-                    name: "PostgreSQL"
-                }, {
-                    id: "mysql",
-                    name: "mySQL"
-                }]
-            },
-            runtime: {
-                enum: [{
-                    id: "nodejs",
-                    name: "Node.js"
-                }, {
-                    id: "springboot",
-                    name: "Spring Boot"
-                }, {
-                    id: "thorntail",
-                    name: "Thorntail"
-                }, {
-                    id: "vertx",
-                    name: "Vert.x"
-                }]
-            }
-        }
-    };
+    return require("./info.json");
 };

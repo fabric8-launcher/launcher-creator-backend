@@ -7,6 +7,7 @@
   "license": "ISC",
   "dependencies": {
     "child-process-promise": "^2.2.1",
-    "lodash": "^4.17.10"
+    "lodash": "^4.17.10",
+    "stream-to-string": "^1.1.0"
   }
 }
