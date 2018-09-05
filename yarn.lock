@@ -6,6 +6,7 @@
   version "1.0.0"
   dependencies:
     "@core/utils" "file:../../../.cache/yarn/v1/core/utils"
+    "@generators/database-crud-vertx" "file:../../../.cache/yarn/v1/generators/database-crud-vertx"
     "@generators/database-mysql" "file:../../../.cache/yarn/v1/generators/database-mysql"
     "@generators/database-postgresql" "file:../../../.cache/yarn/v1/generators/database-postgresql"
     "@generators/database-secret" "file:../../../.cache/yarn/v1/generators/database-secret"
@@ -23,20 +24,12 @@
 "@core/utils@file:core/utils":
   version "1.0.0"
 
-"@generator/database-mysql@file:generators/database-mysql":
+"@generators/database-crud-vertx@file:generators/database-crud-vertx":
   version "1.0.0"
   dependencies:
     "@core/resources" "file:../../../.cache/yarn/v1/core/resources"
-
-"@generator/database-postgresql@file:generators/database-postgresql":
-  version "1.0.0"
-  dependencies:
-    "@core/resources" "file:../../../.cache/yarn/v1/core/resources"
-
-"@generator/database-secret@file:generators/database-secret":
-  version "1.0.0"
-  dependencies:
-    "@core/resources" "file:../../../.cache/yarn/v1/core/resources"
+    "@core/utils" "file:../../../.cache/yarn/v1/core/utils"
+    fs-extra "^7.0.0"
 
 "@generators/database-mysql@file:generators/database-mysql":
   version "1.0.0"
@@ -93,10 +86,11 @@ jsonfile@^4.0.0:
 "launcher-creator-catalog@file:.":
   version "1.0.0"
   dependencies:
-    "@capabilities/database" "file:../../../.cache/yarn/v1/npm-launcher-creator-catalog-1.0.0-1cfcc284-5133-4060-8c4d-80589248fa34-1536150603330/capabilities/database"
-    "@generator/database-mysql" "file:../../../.cache/yarn/v1/npm-launcher-creator-catalog-1.0.0-1cfcc284-5133-4060-8c4d-80589248fa34-1536150603330/generators/database-mysql"
-    "@generator/database-postgresql" "file:../../../.cache/yarn/v1/npm-launcher-creator-catalog-1.0.0-1cfcc284-5133-4060-8c4d-80589248fa34-1536150603330/generators/database-postgresql"
-    "@generator/database-secret" "file:../../../.cache/yarn/v1/npm-launcher-creator-catalog-1.0.0-1cfcc284-5133-4060-8c4d-80589248fa34-1536150603330/generators/database-secret"
+    "@capabilities/database" "file:../../../.cache/yarn/v1/npm-launcher-creator-catalog-1.0.0-020d0417-4425-472b-bf0f-f4333e9f4ef8-1536169031080/capabilities/database"
+    "@generators/database-crud-vertx" "file:../../../.cache/yarn/v1/npm-launcher-creator-catalog-1.0.0-020d0417-4425-472b-bf0f-f4333e9f4ef8-1536169031080/generators/database-crud-vertx"
+    "@generators/database-mysql" "file:../../../.cache/yarn/v1/npm-launcher-creator-catalog-1.0.0-020d0417-4425-472b-bf0f-f4333e9f4ef8-1536169031080/generators/database-mysql"
+    "@generators/database-postgresql" "file:../../../.cache/yarn/v1/npm-launcher-creator-catalog-1.0.0-020d0417-4425-472b-bf0f-f4333e9f4ef8-1536169031080/generators/database-postgresql"
+    "@generators/database-secret" "file:../../../.cache/yarn/v1/npm-launcher-creator-catalog-1.0.0-020d0417-4425-472b-bf0f-f4333e9f4ef8-1536169031080/generators/database-secret"
 
 lodash@^4.17.10:
   version "4.17.10"

@@ -3,6 +3,7 @@
 const fs = require('fs-extra');
 const path = require('path');
 const validate = require("@core/info").validate;
+const catalog = require("launcher-creator-catalog");
 
 // Returns the name of the deployment file in the given directory
 function deploymentFile(targetDir) {
@@ -52,7 +53,7 @@ function addCapability(deployment, capName, capability) {
 // and change files in the user's project) and adds information about the
 // capability to the `deployment.json` in the project's root.
 function apply(capName, targetDir, capability, props) {
-    const module = getCapabilityModule(capability);
+    const module = catalog.getCapabilityModule(capability);
     const df = deploymentFile(targetDir);
     return new Promise((resolve, reject) => resolve(validate(module.info(), props)))
         .then(() => module.apply(capName, targetDir, props))

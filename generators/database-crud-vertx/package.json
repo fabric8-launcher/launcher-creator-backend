@@ -1,0 +1,15 @@
+{
+  "name": "@generators/database-crud-vertx",
+  "version": "1.0.0",
+  "description": "Vert.x based CRUD implementation for a database",
+  "main": "index.js",
+  "scripts": {
+  },
+  "author": "Tako Schotanus <tschotan@redhat.com>",
+  "license": "ISC",
+  "dependencies": {
+    "@core/resources": "file:../../core/resources",
+    "@core/utils": "file:../../core/utils",
+    "fs-extra": "^7.0.0"
+  }
+}

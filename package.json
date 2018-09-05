@@ -14,9 +14,10 @@
   },
   "dependencies": {
     "@capabilities/database": "file:capabilities/database",
-    "@generator/database-mysql": "file:generators/database-mysql",
-    "@generator/database-postgresql": "file:generators/database-postgresql",
-    "@generator/database-secret": "file:generators/database-secret"
+    "@generators/database-mysql": "file:generators/database-mysql",
+    "@generators/database-postgresql": "file:generators/database-postgresql",
+    "@generators/database-crud-vertx": "file:generators/database-crud-vertx",
+    "@generators/database-secret": "file:generators/database-secret"
   },
   "workspaces": [
     "core/*",

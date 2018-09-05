@@ -2,7 +2,12 @@
 
 const path = require('path');
 
- function moduleInfo(module) {
+function log(res, ...args) {
+    console.log(...args);
+    return res;
+}
+
+function moduleInfo(module) {
     const pkg = path.join(path.dirname(module.filename), "package.json");
     return require(pkg);
 };

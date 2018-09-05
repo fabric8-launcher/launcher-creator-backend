@@ -217,14 +217,16 @@ function resources(res) {
 
 // Returns a list of resources that when applied will create
 // an instance of the given image or template.
-function newApp(appName, imageName, env={}) {
+function newApp(appName, imageName, env={}, cwd) {
     const envStr = Object.entries(env).map(([key,val]) => `-e${key}=${val}`);
+    const opts = {};
+    if (cwd) opts.cwd = cwd;
     const proc = spawn(`oc`, [`new-app`,
                     `--name=${appName}`,
                     ...envStr,
                     imageName,
                     `--dry-run`,
-                    `-o`, `json`]);
+                    `-o`, `json`], opts);
     proc.catch((error) => {
             console.error(`Spawn error: ${error}`);
             throw error;
