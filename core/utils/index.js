@@ -2,7 +2,19 @@
 
 const path = require('path');
 
-exports.moduleName = function (module) {
+ function moduleInfo(module) {
     const pkg = path.join(path.dirname(module.filename), "package.json");
-    return path.basename(require(pkg).name);
+    return require(pkg);
 };
+
+function moduleName(module) {
+    return path.basename(moduleInfo(module).name);
+};
+
+function moduleDir(module) {
+    return path.dirname(module.filename);
+};
+
+exports.moduleInfo = moduleInfo;
+exports.moduleName = moduleName;
+exports.moduleDir = moduleDir;

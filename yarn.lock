@@ -23,6 +23,21 @@
 "@core/utils@file:core/utils":
   version "1.0.0"
 
+"@generator/database-mysql@file:generators/database-mysql":
+  version "1.0.0"
+  dependencies:
+    "@core/resources" "file:../../../.cache/yarn/v1/core/resources"
+
+"@generator/database-postgresql@file:generators/database-postgresql":
+  version "1.0.0"
+  dependencies:
+    "@core/resources" "file:../../../.cache/yarn/v1/core/resources"
+
+"@generator/database-secret@file:generators/database-secret":
+  version "1.0.0"
+  dependencies:
+    "@core/resources" "file:../../../.cache/yarn/v1/core/resources"
+
 "@generators/database-mysql@file:generators/database-mysql":
   version "1.0.0"
   dependencies:
@@ -74,6 +89,14 @@ jsonfile@^4.0.0:
   resolved "https://registry.yarnpkg.com/jsonfile/-/jsonfile-4.0.0.tgz#8771aae0799b64076b76640fca058f9c10e33ecb"
   optionalDependencies:
     graceful-fs "^4.1.6"
+
+"launcher-creator-catalog@file:.":
+  version "1.0.0"
+  dependencies:
+    "@capabilities/database" "file:../../../.cache/yarn/v1/npm-launcher-creator-catalog-1.0.0-1cfcc284-5133-4060-8c4d-80589248fa34-1536150603330/capabilities/database"
+    "@generator/database-mysql" "file:../../../.cache/yarn/v1/npm-launcher-creator-catalog-1.0.0-1cfcc284-5133-4060-8c4d-80589248fa34-1536150603330/generators/database-mysql"
+    "@generator/database-postgresql" "file:../../../.cache/yarn/v1/npm-launcher-creator-catalog-1.0.0-1cfcc284-5133-4060-8c4d-80589248fa34-1536150603330/generators/database-postgresql"
+    "@generator/database-secret" "file:../../../.cache/yarn/v1/npm-launcher-creator-catalog-1.0.0-1cfcc284-5133-4060-8c4d-80589248fa34-1536150603330/generators/database-secret"
 
 lodash@^4.17.10:
   version "4.17.10"

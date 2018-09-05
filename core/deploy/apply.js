@@ -1,13 +1,13 @@
 'use strict';
 
-const me = require('.');
 const printUsage = require("@core/info").printUsage;
+const catalog = require("launcher-creator-catalog");
 
 const args = process.argv.slice(2);
 
 if (args.length === 1 && args[0] === "--list") {
     process.stdout.write(`Available capabilities:\n`);
-    me.listCapabilities().forEach(c => process.stdout.write(`    ${c.module.slice(14)}\n`));
+    catalog.listCapabilities().forEach(c => process.stdout.write(`    ${c.module.slice(14)}\n`));
     process.exit(0);
 }
 
@@ -19,7 +19,7 @@ if (args.length === 2 && args[1] === "--help") {
     console.log(`    project_dir     - The project directory. Will be created if it doesn't exist.`);
     console.log(`    capability_name - The name that will be given to any OpenShift/K8s resources that will be created.`);
     console.log(`    json_props      - These will be passed to the Capability:`);
-    printUsage(me.getCapabilityModule(CAP).info());
+    printUsage(catalog.getCapabilityModule(CAP).info());
     process.exit(0);
 }
 
@@ -42,5 +42,5 @@ const TARGET_DIR = args[1];
 const CAP_NAME = args[2] || CAP;
 const PROPS = args[3] || "{}";
 
-me.apply(CAP_NAME, TARGET_DIR, CAP, JSON.parse(PROPS))
+require('.').apply(CAP_NAME, TARGET_DIR, CAP, JSON.parse(PROPS))
     .catch(err => console.error(`Application Error: ${err}`));

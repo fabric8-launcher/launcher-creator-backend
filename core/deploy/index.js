@@ -48,10 +48,6 @@ function addCapability(deployment, capName, capability) {
     deployment.capabilities[capName] = capability;
 }
 
-function getCapabilityModule(capability) {
-    return require("@capabilities/" + capability);
-}
-
 // Calls `apply()` on the given capability (which allows it to copy, generate
 // and change files in the user's project) and adds information about the
 // capability to the `deployment.json` in the project's root.
@@ -88,19 +84,6 @@ function generateDeployment(resources, targetDir) {
         });
 }
 
-function listCapabilities() {
-    const deps = require("./package.json").dependencies;
-    if (deps) {
-        return Object.entries(deps)
-            .filter(([name,path]) => name.startsWith("@capabilities/"))
-            .map(([name, path]) => ({ module: name, ...getCapabilityModule(name.slice(14)).info() }))
-    } else {
-        return [];
-    }
-}
-
 exports.apply = apply;
 exports.generate = generate;
 exports.generateDeployment = generateDeployment;
-exports.getCapabilityModule = getCapabilityModule;
-exports.listCapabilities = listCapabilities;

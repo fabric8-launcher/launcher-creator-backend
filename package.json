@@ -12,6 +12,12 @@
     "generate": "node ./core/deploy/generate.js",
     "deploy": "node ./core/deploy/deploy.js"
   },
+  "dependencies": {
+    "@capabilities/database": "file:capabilities/database",
+    "@generator/database-mysql": "file:generators/database-mysql",
+    "@generator/database-postgresql": "file:generators/database-postgresql",
+    "@generator/database-secret": "file:generators/database-secret"
+  },
   "workspaces": [
     "core/*",
     "generators/*",
