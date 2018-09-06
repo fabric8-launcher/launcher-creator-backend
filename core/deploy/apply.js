@@ -7,7 +7,7 @@ const args = process.argv.slice(2);
 
 if (args.length === 1 && args[0] === "--list") {
     process.stdout.write(`Available capabilities:\n`);
-    catalog.listCapabilities().forEach(c => process.stdout.write(`    ${c.module.slice(14)}\n`));
+    catalog.listCapabilities().forEach(c => process.stdout.write(`    ${c.module.slice(14).padEnd(15)} - ${c.description}\n`));
     process.exit(0);
 }
 
