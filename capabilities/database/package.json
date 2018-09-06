@@ -2,6 +2,7 @@
   "name": "@capabilities/database",
   "version": "1.0.0",
   "description": "Adds Database capability to the user's project",
+  "main": "index.js",
   "scripts": {},
   "author": "Tako Schotanus <tschotan@redhat.com>",
   "license": "Apache-2.0",

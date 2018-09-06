@@ -2,6 +2,7 @@
   "name": "@generators/database-secret",
   "version": "1.0.0",
   "description": "Secret containing credentials for a database",
+  "main": "index.js",
   "scripts": {},
   "author": "Tako Schotanus <tschotan@redhat.com>",
   "license": "Apache-2.0",

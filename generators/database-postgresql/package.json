@@ -2,6 +2,7 @@
   "name": "@generators/database-postgresql",
   "version": "1.0.0",
   "description": "PostgreSQL database service, with persistent storage",
+  "main": "index.js",
   "scripts": {},
   "author": "Tako Schotanus <tschotan@redhat.com>",
   "license": "Apache-2.0",
