@@ -8,6 +8,7 @@
   "license": "Apache-2.0",
   "private": true,
   "scripts": {
+    "start": "node ./server.js",
     "apply": "node ./core/deploy/apply.js",
     "generate": "node ./core/deploy/generate.js",
     "deploy": "node ./core/deploy/deploy.js"
@@ -15,12 +16,13 @@
   "dependencies": {
     "@capabilities/database": "file:capabilities/database",
     "@capabilities/rest": "file:capabilities/rest",
+    "@generators/database-crud-vertx": "file:generators/database-crud-vertx",
     "@generators/database-mysql": "file:generators/database-mysql",
     "@generators/database-postgresql": "file:generators/database-postgresql",
-    "@generators/database-crud-vertx": "file:generators/database-crud-vertx",
-    "@generators/database-secret": "file:generators/database-secret",
     "@generators/database-secret": "file:generators/rest-vertx",
-    "@generators/platform-vertx": "file:generators/platform-vertx"
+    "@generators/platform-vertx": "file:generators/platform-vertx",
+    "body-parser": "^1.18.3",
+    "express": "^4.16.3"
   },
   "workspaces": [
     "core/*",
