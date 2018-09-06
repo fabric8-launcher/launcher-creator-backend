@@ -14,8 +14,7 @@ if (args.length === 1 && args[0] === "--list") {
 if (args.length === 2 && args[1] === "--help") {
     const CAP = args[0];
     console.log(`yarn run -s apply ${CAP} <project_dir> [<capability_name>] [<json_props>]`);
-    console.log(`    capability      - The name of the Capability to apply.`);
-    console.log(`                      Use 'yarn run -s apply --list' for a list of available capabilities.`);
+    console.log(`    ${CAP.padEnd(15)} - The name of the Capability to apply.`);
     console.log(`    project_dir     - The project directory. Will be created if it doesn't exist.`);
     console.log(`    capability_name - The name that will be given to any OpenShift/K8s resources that will be created.`);
     console.log(`    json_props      - These will be passed to the Capability:`);
