@@ -3,10 +3,9 @@
 const fs = require('fs-extra');
 const path = require('path');
 const newApp = require('@core/resources').newApp;
-const moduleDir = require('@core/utils').moduleDir;
 
 exports.apply = function(targetDir, props={}) {
-    return fs.copy(path.join(moduleDir(module), "files"), targetDir);
+    return fs.copy(path.join(__dirname, "files"), targetDir);
 }
 
 exports.generate = function(resources, targetDir, props = {}) {

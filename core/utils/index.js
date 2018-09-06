@@ -16,10 +16,5 @@ function moduleName(module) {
     return path.basename(moduleInfo(module).name);
 };
 
-function moduleDir(module) {
-    return path.dirname(module.filename);
-};
-
 exports.moduleInfo = moduleInfo;
 exports.moduleName = moduleName;
-exports.moduleDir = moduleDir;

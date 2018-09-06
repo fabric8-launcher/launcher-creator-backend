@@ -9,7 +9,6 @@
   "license": "ISC",
   "dependencies": {
     "@core/resources": "file:../../core/resources",
-    "@core/utils": "file:../../core/utils",
     "fs-extra": "^7.0.0"
   }
 }
