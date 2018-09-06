@@ -28,6 +28,16 @@ To actually apply the Capability to the project pass all the required arguments 
 $ yarn run -s apply database path/to/project "my-database" '{ "databaseType": "mysql", "runtime": "vertx" }'
 ```
 
+## Stages
+
+ - **Apply** Stage - This is where the Generators, executed by the Capabilities, can make changes to the user's project.
+ This generally entails copying (template) files from the Generators to the user's project, generating files or changing
+ already existing files. This is done _only once_ when the user _applies_ the Capability to their project.
+ - **Generate** Stage - This is where the Generators, executed by the Capabilities, can add their own Resources to the
+ final list of OpenShift/K8s Resources that will be created in the user's OpenShift environment. The _generation_
+ of this Resource List will done _each time_ when the user's project needs to be installed in an OpenShift instance.
+- **Deploy** Stage - This is where the result from a previous **Generate** Stage is taken and installed in an OpenShift
+instance. Generators and Capabilities don't do anything in this stage (although this might be revisted in the future).
 
 ## Folder structure
 
