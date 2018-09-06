@@ -24,7 +24,7 @@ function listGenerators() {
     if (deps) {
         return Object.entries(deps)
             .filter(([name, path]) => name.startsWith("@generators/"))
-            .map(([name, path]) => ({module: name, ...getGeneratorModule(name.slice(14)).info()}))
+            .map(([name, path]) => ({module: name, ...getGeneratorModule(name.slice(12)).info()}))
     } else {
         return [];
     }
