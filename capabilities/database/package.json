@@ -6,6 +6,7 @@
   "author": "Tako Schotanus <tschotan@redhat.com>",
   "license": "Apache-2.0",
   "dependencies": {
+    "launcher-creator-catalog": "file:../..",
     "@core/utils": "file:../../core/utils",
     "@generators/database-mysql": "file:../../generators/database-mysql",
     "@generators/database-postgresql": "file:../../generators/database-postgresql",
