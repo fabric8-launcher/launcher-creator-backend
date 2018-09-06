@@ -18,6 +18,7 @@
     "@generators/database-postgresql": "file:generators/database-postgresql",
     "@generators/database-crud-vertx": "file:generators/database-crud-vertx",
     "@generators/database-secret": "file:generators/database-secret",
+    "@generators/database-secret": "file:generators/rest-vertx",
     "@generators/platform-vertx": "file:generators/platform-vertx"
   },
   "workspaces": [

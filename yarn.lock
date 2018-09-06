@@ -49,6 +49,15 @@
   dependencies:
     "@core/resources" "file:../../../.cache/yarn/v1/core/resources"
 
+"@generators/database-secret@file:generators/rest-vertx":
+  version "1.0.0"
+  dependencies:
+    "@core/resources" "file:../../../.cache/yarn/v1/core/resources"
+    "@core/utils" "file:../../../.cache/yarn/v1/core/utils"
+    "@generators/platform-vertx" "file:../../../.cache/yarn/v1/generators/platform-vertx"
+    fs-extra "^7.0.0"
+    launcher-creator-catalog "file:../../../.cache/yarn/v1"
+
 "@generators/platform-vertx@file:generators/platform-vertx":
   version "1.0.0"
   dependencies:
@@ -96,12 +105,12 @@ jsonfile@^4.0.0:
 "launcher-creator-catalog@file:.":
   version "1.0.0"
   dependencies:
-    "@capabilities/database" "file:../../../.cache/yarn/v1/npm-launcher-creator-catalog-1.0.0-5151a327-d67d-4e5e-9f56-abc509d2b675-1536231541731/capabilities/database"
-    "@generators/database-crud-vertx" "file:../../../.cache/yarn/v1/npm-launcher-creator-catalog-1.0.0-5151a327-d67d-4e5e-9f56-abc509d2b675-1536231541731/generators/database-crud-vertx"
-    "@generators/database-mysql" "file:../../../.cache/yarn/v1/npm-launcher-creator-catalog-1.0.0-5151a327-d67d-4e5e-9f56-abc509d2b675-1536231541731/generators/database-mysql"
-    "@generators/database-postgresql" "file:../../../.cache/yarn/v1/npm-launcher-creator-catalog-1.0.0-5151a327-d67d-4e5e-9f56-abc509d2b675-1536231541731/generators/database-postgresql"
-    "@generators/database-secret" "file:../../../.cache/yarn/v1/npm-launcher-creator-catalog-1.0.0-5151a327-d67d-4e5e-9f56-abc509d2b675-1536231541731/generators/database-secret"
-    "@generators/platform-vertx" "file:../../../.cache/yarn/v1/npm-launcher-creator-catalog-1.0.0-5151a327-d67d-4e5e-9f56-abc509d2b675-1536231541731/generators/platform-vertx"
+    "@capabilities/database" "file:../../../.cache/yarn/v1/npm-launcher-creator-catalog-1.0.0-fd3a2807-46fd-4e2b-81e2-c3cddeb16b18-1536236962877/capabilities/database"
+    "@generators/database-crud-vertx" "file:../../../.cache/yarn/v1/npm-launcher-creator-catalog-1.0.0-fd3a2807-46fd-4e2b-81e2-c3cddeb16b18-1536236962877/generators/database-crud-vertx"
+    "@generators/database-mysql" "file:../../../.cache/yarn/v1/npm-launcher-creator-catalog-1.0.0-fd3a2807-46fd-4e2b-81e2-c3cddeb16b18-1536236962877/generators/database-mysql"
+    "@generators/database-postgresql" "file:../../../.cache/yarn/v1/npm-launcher-creator-catalog-1.0.0-fd3a2807-46fd-4e2b-81e2-c3cddeb16b18-1536236962877/generators/database-postgresql"
+    "@generators/database-secret" "file:../../../.cache/yarn/v1/npm-launcher-creator-catalog-1.0.0-fd3a2807-46fd-4e2b-81e2-c3cddeb16b18-1536236962877/generators/rest-vertx"
+    "@generators/platform-vertx" "file:../../../.cache/yarn/v1/npm-launcher-creator-catalog-1.0.0-fd3a2807-46fd-4e2b-81e2-c3cddeb16b18-1536236962877/generators/platform-vertx"
 
 lodash@^4.17.10:
   version "4.17.10"

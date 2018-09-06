@@ -1,0 +1,17 @@
+{
+  "name": "@generators/rest-vertx",
+  "version": "1.0.0",
+  "description": "Vert.x based REST application",
+  "main": "index.js",
+  "scripts": {
+  },
+  "author": "Tako Schotanus <tschotan@redhat.com>",
+  "license": "ISC",
+  "dependencies": {
+    "fs-extra": "^7.0.0",
+    "launcher-creator-catalog": "file:../..",
+    "@core/resources": "file:../../core/resources",
+    "@core/utils": "file:../../core/utils",
+    "@generators/platform-vertx": "file:../../generators/platform-vertx"
+  }
+}

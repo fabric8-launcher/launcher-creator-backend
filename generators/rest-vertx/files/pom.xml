@@ -25,12 +25,9 @@
   </parent>
 
   <groupId>io.openshift.booster</groupId>
-  <artifactId>health-check-vertx</artifactId>
-  <version>24</version>
+  <artifactId>http-vertx</artifactId>
+  <version>29</version>
   <packaging>jar</packaging>
-
-  <name>PROJECT_NAME</name>
-  <description>PROJECT_DESCRIPTION</description>
 
   <properties>
     <vertx.version>3.5.3</vertx.version>
@@ -59,10 +56,6 @@
     <dependency>
       <groupId>io.vertx</groupId>
       <artifactId>vertx-web</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.vertx</groupId>
-      <artifactId>vertx-health-check</artifactId>
     </dependency>
 
     <!-- Logging -->
@@ -96,6 +89,12 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>com.jayway.restassured</groupId>
+      <artifactId>rest-assured</artifactId>
+      <version>2.9.0</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>io.rest-assured</groupId>
       <artifactId>rest-assured</artifactId>
       <version>3.1.1</version>
@@ -105,6 +104,13 @@
     <dependency>
       <groupId>org.arquillian.cube</groupId>
       <artifactId>arquillian-cube-openshift-starter</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>io.fabric8</groupId>
+      <artifactId>openshift-client</artifactId>
+      <version>4.0.4</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -149,15 +155,20 @@
                   <goal>resource</goal>
                   <goal>build</goal>
                 </goals>
-                <configuration>
-                  <enricher>
-                    <excludes>
-                      <exclude>f8-maven-scm</exclude>
-                    </excludes>
-                  </enricher>
-                </configuration>
               </execution>
             </executions>
+            <configuration>
+              <enricher>
+                <excludes>
+                  <exclude>f8-maven-scm</exclude>
+                </excludes>
+                <config>
+                  <vertx-health-check>
+                    <path>/</path>
+                  </vertx-health-check>
+                </config>
+              </enricher>
+            </configuration>
           </plugin>
         </plugins>
       </build>
