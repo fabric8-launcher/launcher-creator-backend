@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@capabilities/database": "file:capabilities/database",
+    "@capabilities/rest": "file:capabilities/rest",
     "@generators/database-mysql": "file:generators/database-mysql",
     "@generators/database-postgresql": "file:generators/database-postgresql",
     "@generators/database-crud-vertx": "file:generators/database-crud-vertx",

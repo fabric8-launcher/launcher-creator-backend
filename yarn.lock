@@ -12,6 +12,13 @@
     "@generators/database-secret" "file:../../../.cache/yarn/v1/generators/database-secret"
     launcher-creator-catalog "file:../../../.cache/yarn/v1"
 
+"@capabilities/rest@file:capabilities/rest":
+  version "1.0.0"
+  dependencies:
+    "@core/utils" "file:../../../.cache/yarn/v1/core/utils"
+    "@generators/rest-vertx" "file:../../../.cache/yarn/v1/generators/rest-vertx"
+    launcher-creator-catalog "file:../../../.cache/yarn/v1"
+
 "@core/info@file:core/info":
   version "1.0.0"
 
@@ -65,6 +72,15 @@
     "@core/utils" "file:../../../.cache/yarn/v1/core/utils"
     fs-extra "^7.0.0"
 
+"@generators/rest-vertx@file:generators/rest-vertx":
+  version "1.0.0"
+  dependencies:
+    "@core/resources" "file:../../../.cache/yarn/v1/core/resources"
+    "@core/utils" "file:../../../.cache/yarn/v1/core/utils"
+    "@generators/platform-vertx" "file:../../../.cache/yarn/v1/generators/platform-vertx"
+    fs-extra "^7.0.0"
+    launcher-creator-catalog "file:../../../.cache/yarn/v1"
+
 child-process-promise@^2.2.1:
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/child-process-promise/-/child-process-promise-2.2.1.tgz#4730a11ef610fad450b8f223c79d31d7bdad8074"
@@ -105,12 +121,13 @@ jsonfile@^4.0.0:
 "launcher-creator-catalog@file:.":
   version "1.0.0"
   dependencies:
-    "@capabilities/database" "file:../../../.cache/yarn/v1/npm-launcher-creator-catalog-1.0.0-fd3a2807-46fd-4e2b-81e2-c3cddeb16b18-1536236962877/capabilities/database"
-    "@generators/database-crud-vertx" "file:../../../.cache/yarn/v1/npm-launcher-creator-catalog-1.0.0-fd3a2807-46fd-4e2b-81e2-c3cddeb16b18-1536236962877/generators/database-crud-vertx"
-    "@generators/database-mysql" "file:../../../.cache/yarn/v1/npm-launcher-creator-catalog-1.0.0-fd3a2807-46fd-4e2b-81e2-c3cddeb16b18-1536236962877/generators/database-mysql"
-    "@generators/database-postgresql" "file:../../../.cache/yarn/v1/npm-launcher-creator-catalog-1.0.0-fd3a2807-46fd-4e2b-81e2-c3cddeb16b18-1536236962877/generators/database-postgresql"
-    "@generators/database-secret" "file:../../../.cache/yarn/v1/npm-launcher-creator-catalog-1.0.0-fd3a2807-46fd-4e2b-81e2-c3cddeb16b18-1536236962877/generators/rest-vertx"
-    "@generators/platform-vertx" "file:../../../.cache/yarn/v1/npm-launcher-creator-catalog-1.0.0-fd3a2807-46fd-4e2b-81e2-c3cddeb16b18-1536236962877/generators/platform-vertx"
+    "@capabilities/database" "file:../../../.cache/yarn/v1/npm-launcher-creator-catalog-1.0.0-f7ea9af5-c283-408f-84c8-e4b3f154ee48-1536237212695/capabilities/database"
+    "@capabilities/rest" "file:../../../.cache/yarn/v1/npm-launcher-creator-catalog-1.0.0-f7ea9af5-c283-408f-84c8-e4b3f154ee48-1536237212695/capabilities/rest"
+    "@generators/database-crud-vertx" "file:../../../.cache/yarn/v1/npm-launcher-creator-catalog-1.0.0-f7ea9af5-c283-408f-84c8-e4b3f154ee48-1536237212695/generators/database-crud-vertx"
+    "@generators/database-mysql" "file:../../../.cache/yarn/v1/npm-launcher-creator-catalog-1.0.0-f7ea9af5-c283-408f-84c8-e4b3f154ee48-1536237212695/generators/database-mysql"
+    "@generators/database-postgresql" "file:../../../.cache/yarn/v1/npm-launcher-creator-catalog-1.0.0-f7ea9af5-c283-408f-84c8-e4b3f154ee48-1536237212695/generators/database-postgresql"
+    "@generators/database-secret" "file:../../../.cache/yarn/v1/npm-launcher-creator-catalog-1.0.0-f7ea9af5-c283-408f-84c8-e4b3f154ee48-1536237212695/generators/rest-vertx"
+    "@generators/platform-vertx" "file:../../../.cache/yarn/v1/npm-launcher-creator-catalog-1.0.0-f7ea9af5-c283-408f-84c8-e4b3f154ee48-1536237212695/generators/platform-vertx"
 
 lodash@^4.17.10:
   version "4.17.10"
