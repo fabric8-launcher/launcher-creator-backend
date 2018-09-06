@@ -1,6 +1,15 @@
 # launcher-creator-catalog
 
-Component Catalog for the Launcher Cloud Generator
+This is a PoC for the _engine_ that could be by the Launcher Cloud App Generator (or whatever its name will be) to perform
+the actual code generation. Right now it only has command line tools to make it work, but this could easily be made part
+of a REST service of some kind that would return a ZIP file.
+
+The fundamental design idea for this engine is the concept of _Capabilities_ and _Generators_. Things are described in more detail
+below but basically it comes down to _Generators_ creating the very simple and basic pieces of a project and _Capabilites_
+being like the director that groups and manages them to create a final composition. _Generators_ just know to _do_ one thing,
+while a _Capability_ holds all the intelligence and knowledge on _how_ to put them together to create something useful.
+
+The process is simple: you start with an empty directory and apply capabilities to it using the commands described below.
 
 ## Usage
 
@@ -90,7 +99,7 @@ Returns the contents of the local `info.json` file as an object.
 ## Capabilities
 
 Capabilities are modules that bundle one or more generators to add a set of features to a user's project that
-together implement a useful and fleshed-out use-case.
+together implement a useful and fleshed-out use-case. _Generators_ **do**, while _Capabilities_ **manage**.
 
 For example, a "Database" _Capability_ might call on a _Generator_ that would create a mySQL database service,
 while using another to create the _Secret_ that will store the datbase's connection information. Yet another
