@@ -25,15 +25,18 @@
   </parent>
 
   <groupId>io.openshift.booster</groupId>
-  <artifactId>crud-vertx</artifactId>
-  <version>28</version>
+  <artifactId>health-check-vertx</artifactId>
+  <version>24</version>
   <packaging>jar</packaging>
+
+  <name>PROJECT_NAME</name>
+  <description>PROJECT_DESCRIPTION</description>
 
   <properties>
     <vertx.version>3.5.3</vertx.version>
     <slf4j.version>1.7.25</slf4j.version>
     <vertx-maven-plugin.version>1.0.17</vertx-maven-plugin.version>
-    <vertx.verticle>io.openshift.booster.CrudApplication</vertx.verticle>
+    <vertx.verticle>io.openshift.booster.HttpApplication</vertx.verticle>
   </properties>
 
   <dependencyManagement>
@@ -51,25 +54,15 @@
   <dependencies>
     <dependency>
       <groupId>io.vertx</groupId>
+      <artifactId>vertx-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.vertx</groupId>
       <artifactId>vertx-web</artifactId>
     </dependency>
     <dependency>
       <groupId>io.vertx</groupId>
-      <artifactId>vertx-jdbc-client</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.vertx</groupId>
-      <artifactId>vertx-sql-common</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.vertx</groupId>
-      <artifactId>vertx-rx-java</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.postgresql</groupId>
-      <artifactId>postgresql</artifactId>
-      <version>42.2.4</version>
+      <artifactId>vertx-health-check</artifactId>
     </dependency>
 
     <!-- Logging -->
@@ -80,6 +73,10 @@
     </dependency>
 
     <!-- Testing -->
+    <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-web-client</artifactId>
+    </dependency>
     <dependency>
       <groupId>io.vertx</groupId>
       <artifactId>vertx-unit</artifactId>
@@ -150,22 +147,16 @@
                 <goals>
                   <goal>resource</goal>
                   <goal>build</goal>
-                  <goal>helm</goal>
                 </goals>
+                <configuration>
+                  <enricher>
+                    <excludes>
+                      <exclude>f8-maven-scm</exclude>
+                    </excludes>
+                  </enricher>
+                </configuration>
               </execution>
             </executions>
-            <configuration>
-              <enricher>
-                <excludes>
-                  <exclude>f8-maven-scm</exclude>
-                </excludes>
-                <config>
-                  <vertx-health-check>
-                    <path>/health</path>
-                  </vertx-health-check>
-                </config>
-              </enricher>
-            </configuration>
           </plugin>
         </plugins>
       </build>

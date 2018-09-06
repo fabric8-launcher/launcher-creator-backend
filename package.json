@@ -17,7 +17,8 @@
     "@generators/database-mysql": "file:generators/database-mysql",
     "@generators/database-postgresql": "file:generators/database-postgresql",
     "@generators/database-crud-vertx": "file:generators/database-crud-vertx",
-    "@generators/database-secret": "file:generators/database-secret"
+    "@generators/database-secret": "file:generators/database-secret",
+    "@generators/platform-vertx": "file:generators/platform-vertx"
   },
   "workspaces": [
     "core/*",

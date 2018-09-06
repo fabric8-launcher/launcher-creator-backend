@@ -30,7 +30,9 @@
   dependencies:
     "@core/resources" "file:../../../.cache/yarn/v1/core/resources"
     "@core/utils" "file:../../../.cache/yarn/v1/core/utils"
+    "@generators/platform-vertx" "file:../../../.cache/yarn/v1/generators/platform-vertx"
     fs-extra "^7.0.0"
+    launcher-creator-catalog "file:../../../.cache/yarn/v1"
 
 "@generators/database-mysql@file:generators/database-mysql":
   version "1.0.0"
@@ -46,6 +48,13 @@
   version "1.0.0"
   dependencies:
     "@core/resources" "file:../../../.cache/yarn/v1/core/resources"
+
+"@generators/platform-vertx@file:generators/platform-vertx":
+  version "1.0.0"
+  dependencies:
+    "@core/resources" "file:../../../.cache/yarn/v1/core/resources"
+    "@core/utils" "file:../../../.cache/yarn/v1/core/utils"
+    fs-extra "^7.0.0"
 
 child-process-promise@^2.2.1:
   version "2.2.1"
@@ -87,11 +96,12 @@ jsonfile@^4.0.0:
 "launcher-creator-catalog@file:.":
   version "1.0.0"
   dependencies:
-    "@capabilities/database" "file:../../../.cache/yarn/v1/npm-launcher-creator-catalog-1.0.0-56076c48-d63e-4571-beb8-b6f586b3b535-1536195057979/capabilities/database"
-    "@generators/database-crud-vertx" "file:../../../.cache/yarn/v1/npm-launcher-creator-catalog-1.0.0-56076c48-d63e-4571-beb8-b6f586b3b535-1536195057979/generators/database-crud-vertx"
-    "@generators/database-mysql" "file:../../../.cache/yarn/v1/npm-launcher-creator-catalog-1.0.0-56076c48-d63e-4571-beb8-b6f586b3b535-1536195057979/generators/database-mysql"
-    "@generators/database-postgresql" "file:../../../.cache/yarn/v1/npm-launcher-creator-catalog-1.0.0-56076c48-d63e-4571-beb8-b6f586b3b535-1536195057979/generators/database-postgresql"
-    "@generators/database-secret" "file:../../../.cache/yarn/v1/npm-launcher-creator-catalog-1.0.0-56076c48-d63e-4571-beb8-b6f586b3b535-1536195057979/generators/database-secret"
+    "@capabilities/database" "file:../../../.cache/yarn/v1/npm-launcher-creator-catalog-1.0.0-5151a327-d67d-4e5e-9f56-abc509d2b675-1536231541731/capabilities/database"
+    "@generators/database-crud-vertx" "file:../../../.cache/yarn/v1/npm-launcher-creator-catalog-1.0.0-5151a327-d67d-4e5e-9f56-abc509d2b675-1536231541731/generators/database-crud-vertx"
+    "@generators/database-mysql" "file:../../../.cache/yarn/v1/npm-launcher-creator-catalog-1.0.0-5151a327-d67d-4e5e-9f56-abc509d2b675-1536231541731/generators/database-mysql"
+    "@generators/database-postgresql" "file:../../../.cache/yarn/v1/npm-launcher-creator-catalog-1.0.0-5151a327-d67d-4e5e-9f56-abc509d2b675-1536231541731/generators/database-postgresql"
+    "@generators/database-secret" "file:../../../.cache/yarn/v1/npm-launcher-creator-catalog-1.0.0-5151a327-d67d-4e5e-9f56-abc509d2b675-1536231541731/generators/database-secret"
+    "@generators/platform-vertx" "file:../../../.cache/yarn/v1/npm-launcher-creator-catalog-1.0.0-5151a327-d67d-4e5e-9f56-abc509d2b675-1536231541731/generators/platform-vertx"
 
 lodash@^4.17.10:
   version "4.17.10"
