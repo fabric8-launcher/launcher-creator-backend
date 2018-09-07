@@ -1,6 +1,6 @@
 'use strict';
 
-const support = require('@core/resources');
+const support = require('../../core/resources');
 const newDatabaseUsingSecret = support.newDatabaseUsingSecret;
 
 exports.apply = function(targetDir, props={}) {

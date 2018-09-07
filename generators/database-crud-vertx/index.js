@@ -2,8 +2,8 @@
 
 const fs = require('fs-extra');
 const path = require('path');
-const newApp = require('@core/resources').newApp;
-const getGeneratorModule = require("launcher-creator-catalog").getGeneratorModule;
+const newApp = require('../../core/resources').newApp;
+const getGeneratorModule = require("../../core/catalog").getGeneratorModule;
 
 exports.apply = function(targetDir, props={}) {
     // First copy the files from the base Vert.x platform module

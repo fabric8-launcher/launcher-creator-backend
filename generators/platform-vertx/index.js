@@ -2,7 +2,7 @@
 
 const fs = require('fs-extra');
 const path = require('path');
-const newApp = require('@core/resources').newApp;
+const newApp = require('../../core/resources').newApp;
 
 exports.apply = function(targetDir, props={}) {
     return fs.copy(path.join(__dirname, "files"), targetDir);

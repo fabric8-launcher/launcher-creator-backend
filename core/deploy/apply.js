@@ -1,14 +1,14 @@
 'use strict';
 
-const printUsage = require("@core/info").printUsage;
-const catalog = require("launcher-creator-catalog");
+const printUsage = require("../../core/info").printUsage;
+const catalog = require("../../core/catalog");
 
 const args = process.argv.slice(2);
 
 if (args.length === 1 && args[0] === "--list") {
     process.stdout.write(`Available capabilities:\n`);
-    catalog.listCapabilities().forEach(c => process.stdout.write(`    ${c.module.slice(14).padEnd(15)} - ${c.description}\n`));
-    process.exit(0);
+    catalog.listCapabilities().then(caps => caps.forEach(c => process.stdout.write(`    ${c.module.padEnd(15)} - ${c.description}\n`)));
+    return;
 }
 
 if (args.length === 2 && args[1] === "--help") {

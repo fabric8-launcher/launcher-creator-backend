@@ -1,6 +1,6 @@
 'use strict';
 
-const getGeneratorModule = require("launcher-creator-catalog").getGeneratorModule;
+const getGeneratorModule = require("../../core/catalog").getGeneratorModule;
 
 // Returns the corresponding runtime generator depending on the given runtime type
 function runtimeByType(type) {

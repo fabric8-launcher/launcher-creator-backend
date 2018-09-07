@@ -1,9 +1,0 @@
-{
-  "name": "@core/info",
-  "version": "1.0.0",
-  "description": "Utility functions dealing with capability/generator info descriptors",
-  "main": "index.js",
-  "scripts": {},
-  "author": "Tako Schotanus <tschotan@redhat.com>",
-  "license": "Apache-2.0"
-}

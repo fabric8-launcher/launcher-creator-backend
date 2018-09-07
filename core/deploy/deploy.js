@@ -1,7 +1,7 @@
 'use strict';
 
-const resources = require("@core/resources").resources;
-const apply = require("@core/resources").apply;
+const resources = require("../../core/resources").resources;
+const apply = require("../../core/resources").apply;
 
 const args = process.argv.slice(2);
 

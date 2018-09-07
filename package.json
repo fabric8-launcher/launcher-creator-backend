@@ -2,7 +2,7 @@
   "name": "launcher-creator-catalog",
   "version": "1.0.0",
   "description": "Root package for the App Creator Catalog",
-  "main": "index.js",
+  "main": "server.js",
   "repository": "git@github.com:quintesse/launcher-creator-catalog",
   "author": "Tako Schotanus <tschotan@redhat.com>",
   "license": "Apache-2.0",
@@ -14,13 +14,10 @@
     "deploy": "node ./core/deploy/deploy.js"
   },
   "dependencies": {
-    "@capabilities/database": "file:capabilities/database",
-    "@capabilities/rest": "file:capabilities/rest",
-    "@generators/database-crud-vertx": "file:generators/database-crud-vertx",
-    "@generators/database-mysql": "file:generators/database-mysql",
-    "@generators/database-postgresql": "file:generators/database-postgresql",
-    "@generators/database-secret": "file:generators/rest-vertx",
-    "@generators/platform-vertx": "file:generators/platform-vertx",
+    "fs-extra": "^7.0.0",
+    "child-process-promise": "^2.2.1",
+    "lodash": "^4.17.10",
+    "stream-to-string": "^1.1.0",
     "body-parser": "^1.18.3",
     "express": "^4.16.3"
   },

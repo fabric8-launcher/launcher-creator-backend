@@ -3,18 +3,18 @@
 
 const express = require('express');
 const bodyParser = require('body-parser');
-const catalog = require("launcher-creator-catalog");
+const catalog = require("./core/catalog");
 
 const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get("/capabilities", (req, res) => {
-    res.status(200).send(catalog.listCapabilities());
+    catalog.listCapabilities().then(caps => res.status(200).send(caps));
 });
 
 app.get("/generators", (req, res) => {
-    res.status(200).send(catalog.listGenerators());
+    catalog.listGenerators().then(caps => res.status(200).send(caps));
 });
 
 const server = app.listen(8080, () => console.log("Server listening on port ", server.address().port));
