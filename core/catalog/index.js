@@ -1,10 +1,9 @@
 'use strict';
 
 const fs = require('fs-extra');
-const path = require('path');
 
 function getCapabilityModule(capability) {
-    return require("../../capabilities/" + capability);
+    return require('../../capabilities/' + capability);
 }
 
 function listCapabilities() {
@@ -16,7 +15,7 @@ function listCapabilities() {
 }
 
 function getGeneratorModule(generator) {
-    return require("../../generators/" + generator);
+    return require('../../generators/' + generator);
 }
 
 function listGenerators() {

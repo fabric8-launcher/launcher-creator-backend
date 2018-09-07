@@ -1,12 +1,12 @@
 'use strict';
 
-const resources = require("../../core/resources").resources;
-const apply = require("../../core/resources").apply;
+const resources = require('../../core/resources').resources;
+const apply = require('../../core/resources').apply;
 
 const args = process.argv.slice(2);
 
 if (args.length !== 1) {
-    console.error("Missing argument");
+    console.error('Missing argument');
     console.log(`Usage: yarn run -s deploy <project_dir>`);
     console.log(`    project_dir     - The project directory. Will be created if it doesn't exist.`);
     process.exit(1);

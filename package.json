@@ -11,7 +11,8 @@
     "start": "node ./server.js",
     "apply": "node ./core/deploy/apply.js",
     "generate": "node ./core/deploy/generate.js",
-    "deploy": "node ./core/deploy/deploy.js"
+    "deploy": "node ./core/deploy/deploy.js",
+    "lint": "eslint ."
   },
   "dependencies": {
     "fs-extra": "^7.0.0",
@@ -25,5 +26,8 @@
     "core/*",
     "generators/*",
     "capabilities/*"
-  ]
+  ],
+  "devDependencies": {
+    "eslint": "^5.5.0"
+  }
 }

@@ -2,8 +2,8 @@
 
 const fs = require('fs-extra');
 const path = require('path');
-const validate = require("../../core/info").validate;
-const catalog = require("../../core/catalog");
+const validate = require('../../core/info').validate;
+const catalog = require('../../core/catalog');
 
 // Returns the name of the deployment file in the given directory
 function deploymentFile(targetDir) {
@@ -22,7 +22,7 @@ function readDeployment(deploymentFile) {
             } else {
                 return {capabilities:{}};
             }
-        })
+        });
 }
 
 // Returns a promise that will resolve when the given
@@ -39,7 +39,7 @@ function uniqueName(deployment, prefix) {
     let idx = 1;
     let name;
     do {
-        name = prefix + "-" + idx++;
+        name = prefix + '-' + idx++;
     } while (deployment.capabilities[name]);
     return name;
 }
@@ -70,7 +70,7 @@ function apply(capName, targetDir, capability, props) {
 }
 
 function generate(capName, resources, targetDir, capability, props) {
-    return require("../../capabilities/" + capability).generate(capName, resources, targetDir, props);
+    return require('../../capabilities/' + capability).generate(capName, resources, targetDir, props);
 }
 
 function generateDeployment(resources, targetDir) {

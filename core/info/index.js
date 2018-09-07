@@ -12,7 +12,7 @@ class ValidationError extends Error {
 function validateRequired(name, def, props) {
     if (def.required === true) {
         if (!props.hasOwnProperty(name)) {
-            throw new ValidationError(`Missing property: "${name}"`);
+            throw new ValidationError(`Missing property: '${name}'`);
         }
     }
 }
@@ -20,12 +20,12 @@ function validateRequired(name, def, props) {
 function validateTypeEnum(name, def, props) {
     const val = props[name];
     if (!def.values.some(v => v.id === val)) {
-        throw new ValidationError(`Invalid enumeration value: "${name}", should be one of: ${def.values.map(v => v.id)}`);
+        throw new ValidationError(`Invalid enumeration value: '${name}', should be one of: ${def.values.map(v => v.id)}`);
     }
 }
 
 function validateType(name, def, props) {
-    if (def.type === "enum") {
+    if (def.type === 'enum') {
         validateTypeEnum(name, def, props);
     }
 }
@@ -51,7 +51,7 @@ function printEnumType(name, def) {
 }
 
 function printType(name, def) {
-    if (def.type === "enum") {
+    if (def.type === 'enum') {
         printEnumType(name, def);
     } else {
         process.stdout.write(def.description || def.name);

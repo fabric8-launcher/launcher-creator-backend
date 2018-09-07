@@ -3,7 +3,7 @@
 const _ = require('lodash');
 const spawn = require('child-process-promise').spawn;
 const streamToString = require('stream-to-string');
-const Readable = require("stream").Readable;
+const Readable = require('stream').Readable;
 
 // Wrapper class for an object containing OpenShift/K8s resources.
 // It intends to make it easier to query and update the resources
@@ -23,9 +23,9 @@ class Resources {
             return Resources.asList(res.json);
         } else if (Array.isArray(res)) {
             return res;
-        } else if (res.kind && res.kind.toLowerCase() === "list") {
+        } else if (res.kind && res.kind.toLowerCase() === 'list') {
             return res.items || [];
-        } else if (res.kind && res.kind.toLowerCase() === "template") {
+        } else if (res.kind && res.kind.toLowerCase() === 'template') {
             return res.objects || [];
         } else if (res.kind) {
             return [res];
@@ -42,18 +42,18 @@ class Resources {
     // Takes an array of resources and turns them into a List
     static makeList(items) {
         return {
-            apiVersion: "v1",
-            kind: "List",
+            apiVersion: 'v1',
+            kind: 'List',
             items: [...items]
         };
     }
 
-    // Selects resources by their "kind" property
+    // Selects resources by their 'kind' property
     static selectByKind(res, kind) {
         return Resources.asList(res).filter(r => r.kind && r.kind.toLowerCase() === kind.toLowerCase());
     }
 
-    // Selects resources by their "metadata/name" property
+    // Selects resources by their 'metadata/name' property
     static selectByName(res, name) {
         return Resources.asList(res).filter(r => r.metadata && r.metadata.name === name);
     }
@@ -63,18 +63,18 @@ class Resources {
         return this.res;
     }
 
-    // Adds new resources from "newres" to the wrapped object.
+    // Adds new resources from 'newres' to the wrapped object.
     // If the current wrapped object is a List the new resources will be added
     // to its items. If it's a Template they will be added to its objects. If
     // it's a single resource a List will be created containing that resource
     // plus all the new ones. If the current wrapped object is empty a new List
-    // will be created if "newres" has multiple resources or it will be set to
-    // contain the single "newres" item if there's only one.
+    // will be created if 'newres' has multiple resources or it will be set to
+    // contain the single 'newres' item if there's only one.
     add(newres) {
         const items = Resources.asList(newres);
-        if (this.res.kind && this.res.kind.toLowerCase() === "list") {
+        if (this.res.kind && this.res.kind.toLowerCase() === 'list') {
             this.res.items = [...this.res.items, ...items];
-        } else if (this.res.kind && this.res.kind.toLowerCase() === "template") {
+        } else if (this.res.kind && this.res.kind.toLowerCase() === 'template') {
             this.res.objects = [...this.res.objects, ...items];
         } else if (this.res.kind) {
             this.res = Resources.makeList([this.res, ...items]);
@@ -89,7 +89,7 @@ class Resources {
     }
 
     get builds() {
-        return Resources.selectByKind(this.res, "build");
+        return Resources.selectByKind(this.res, 'build');
     }
 
     build(name) {
@@ -97,7 +97,7 @@ class Resources {
     }
 
     get buildConfigs() {
-        return Resources.selectByKind(this.res, "buildconfig");
+        return Resources.selectByKind(this.res, 'buildconfig');
     }
 
     buildConfig(name) {
@@ -105,7 +105,7 @@ class Resources {
     }
 
     get configMaps() {
-        return Resources.selectByKind(this.res, "configmap");
+        return Resources.selectByKind(this.res, 'configmap');
     }
 
     configMap(name) {
@@ -113,7 +113,7 @@ class Resources {
     }
 
     get deployments() {
-        return Resources.selectByKind(this.res, "deployment");
+        return Resources.selectByKind(this.res, 'deployment');
     }
 
     deployment(name) {
@@ -121,7 +121,7 @@ class Resources {
     }
 
     get deploymentConfigs() {
-        return Resources.selectByKind(this.res, "deploymentconfig");
+        return Resources.selectByKind(this.res, 'deploymentconfig');
     }
 
     deploymentConfig(name) {
@@ -129,7 +129,7 @@ class Resources {
     }
 
     get imageStreamImages() {
-        return Resources.selectByKind(this.res, "imagestreamimage");
+        return Resources.selectByKind(this.res, 'imagestreamimage');
     }
 
     imageStreamImage(name) {
@@ -137,7 +137,7 @@ class Resources {
     }
 
     get imageStreams() {
-        return Resources.selectByKind(this.res, "imagestream");
+        return Resources.selectByKind(this.res, 'imagestream');
     }
 
     imageStream(name) {
@@ -145,7 +145,7 @@ class Resources {
     }
 
     get imageStreamTags() {
-        return Resources.selectByKind(this.res, "imagestreamtag");
+        return Resources.selectByKind(this.res, 'imagestreamtag');
     }
 
     imageStreamTag(name) {
@@ -153,7 +153,7 @@ class Resources {
     }
 
     get persistentVolumes() {
-        return Resources.selectByKind(this.res, "persistentvolume");
+        return Resources.selectByKind(this.res, 'persistentvolume');
     }
 
     persistentVolume(name) {
@@ -161,7 +161,7 @@ class Resources {
     }
 
     get persistentVolumeClaims() {
-        return Resources.selectByKind(this.res, "persistentvolumeclaim");
+        return Resources.selectByKind(this.res, 'persistentvolumeclaim');
     }
 
     persistentVolumeClaim(name) {
@@ -169,7 +169,7 @@ class Resources {
     }
 
     get roles() {
-        return Resources.selectByKind(this.res, "role");
+        return Resources.selectByKind(this.res, 'role');
     }
 
     role(name) {
@@ -177,7 +177,7 @@ class Resources {
     }
 
     get roleBindings() {
-        return Resources.selectByKind(this.res, "rolebinding");
+        return Resources.selectByKind(this.res, 'rolebinding');
     }
 
     roleBinding(name) {
@@ -185,7 +185,7 @@ class Resources {
     }
 
     get routes() {
-        return Resources.selectByKind(this.res, "route");
+        return Resources.selectByKind(this.res, 'route');
     }
 
     route(name) {
@@ -193,7 +193,7 @@ class Resources {
     }
 
     get secrets() {
-        return Resources.selectByKind(this.res, "secret");
+        return Resources.selectByKind(this.res, 'secret');
     }
 
     secret(name) {
@@ -201,7 +201,7 @@ class Resources {
     }
 
     get services() {
-        return Resources.selectByKind(this.res, "service");
+        return Resources.selectByKind(this.res, 'service');
     }
 
     service(name) {
@@ -209,8 +209,8 @@ class Resources {
     }
 }
 
-// Wraps the given "res" object in a instance of Resources.
-// If "res" is already of type Resources it will be returned as-is
+// Wraps the given 'res' object in a instance of Resources.
+// If 'res' is already of type Resources it will be returned as-is
 function resources(res) {
     return (res instanceof Resources) ? res : new Resources(res);
 }
@@ -221,12 +221,12 @@ function newApp(appName, imageName, env={}, cwd) {
     const envStr = Object.entries(env).map(([key,val]) => `-e${key}=${val}`);
     const opts = {};
     if (cwd) opts.cwd = cwd;
-    const proc = spawn(`oc`, [`new-app`,
+    const proc = spawn('oc', ['new-app',
                     `--name=${appName}`,
                     ...envStr,
                     imageName,
-                    `--dry-run`,
-                    `-o`, `json`], opts);
+                    '--dry-run',
+                    '-o', 'json'], opts);
     proc.catch((error) => {
             console.error(`Spawn error: ${error}`);
             throw error;
@@ -243,19 +243,19 @@ function setEnv(targetEnv, env, resFunc) {
 }
 
 // Updates the environment variables for the DeploymentConfig selected
-// by "dcName" with the given variables in "env" from a previously
-// created Secret indicated by "secretName"
+// by 'dcName' with the given variables in 'env' from a previously
+// created Secret indicated by 'secretName'
 function setDeploymentEnvFromSecret(res, secretName, env, dcName) {
     if (res.deploymentConfigs.length > 0) {
         const dc = (dcName) ? res.deploymentConfig(dcName) : res.deploymentConfigs[0];
-        const dcc = _.get(dc, "spec.template.spec.containers[0]");
+        const dcc = _.get(dc, 'spec.template.spec.containers[0]');
         if (dcc) {
             dcc.env = setEnv(dcc.env, env, (envKey, secretKey) => ({
-                "name": envKey,
-                "valueFrom": {
-                    "secretKeyRef": {
-                        "name": secretName,
-                        "key": secretKey
+                'name': envKey,
+                'valueFrom': {
+                    'secretKeyRef': {
+                        'name': secretName,
+                        'key': secretKey
                     }
                 }
             }));
@@ -264,10 +264,10 @@ function setDeploymentEnvFromSecret(res, secretName, env, dcName) {
     return res;
 }
 
-// Helper function that creates a database using the given "dbImageName"
-// and the given environment variables from "env" and "secretEnv" (the
+// Helper function that creates a database using the given 'dbImageName'
+// and the given environment variables from 'env' and 'secretEnv' (the
 // latter being taken from a previously created Secret indicated by
-// "secretName").
+// 'secretName').
 function newDatabaseUsingSecret(resources, dbImageName, dbServiceName, secretName, env, secretEnv) {
     if (resources.service(dbServiceName).length === 0) {
         // Create the database resource definitions
@@ -286,8 +286,8 @@ function newDatabaseUsingSecret(resources, dbImageName, dbServiceName, secretNam
 
 // Applies the given resources to the active OpenShift instance
 function apply(resources) {
-    // Run "oc apply" using the given resources
-    const proc = spawn(`oc`, [`apply`, `-f`, `-`], { stdio: ["pipe", 1, 2] })
+    // Run 'oc apply' using the given resources
+    const proc = spawn('oc', ['apply', '-f', '-'], { stdio: ['pipe', 1, 2] })
         .catch((error) => {
             console.error(`Spawn error: ${error}`);
             throw error;

@@ -2,22 +2,22 @@
 
 exports.apply = function(targetDir, props = {}) {
     return Promise.resolve(true);
-}
+};
 
 exports.generate = function(resources, targetDir, props = {}) {
     // Create Secret holding Database connection/authentication information
     if (resources.secret(props.secretName).length == 0) {
         const secret = {
-            "kind": "Secret",
-            "apiVersion": "v1",
-            "metadata": {
-                "name": props.secretName,
+            'kind': 'Secret',
+            'apiVersion': 'v1',
+            'metadata': {
+                'name': props.secretName,
             },
-            "stringData": {
-                "uri": props.databaseUri,
-                "database": props.databaseName,
-                "user": "dbuser",
-                "password": "secret",  // TODO generate pwd
+            'stringData': {
+                'uri': props.databaseUri,
+                'database': props.databaseName,
+                'user': 'dbuser',
+                'password': 'secret',  // TODO generate pwd
             }
         };
         resources.add(secret);
@@ -29,5 +29,5 @@ exports.generate = function(resources, targetDir, props = {}) {
 };
 
 exports.info = function () {
-    return require("./info.json");
+    return require('./info.json');
 };
