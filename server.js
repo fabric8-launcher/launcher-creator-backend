@@ -3,11 +3,16 @@
 
 const express = require('express');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 const catalog = require('./core/catalog');
 
 const app = express();
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use(cors());
+//app.options('*', cors());
 
 app.get('/capabilities', (req, res) => {
     catalog.listCapabilities().then(caps => res.status(200).send(caps));
