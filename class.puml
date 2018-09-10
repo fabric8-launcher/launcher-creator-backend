@@ -1,0 +1,12 @@
+@startuml
+
+interface Generator {
+    {method} void generate(Path projectDir, GeneratorContext context);
+}
+interface GeneratorContext
+interface PlatformGenerator
+
+Generator <|-- PlatformGenerator
+
+
+@enduml

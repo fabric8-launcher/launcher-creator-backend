@@ -17,7 +17,26 @@
     <forge.version>3.9.1.Final</forge.version>
     <vertx.version>3.5.3</vertx.version>
   </properties>
-  <dependencyManagement></dependencyManagement>
-  <modules></modules>
-
+  <modules>
+    <module>addons/base-addon</module>
+    <module>generator</module>
+  </modules>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.jboss.forge</groupId>
+        <artifactId>forge-bom</artifactId>
+        <version>${forge.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>io.vertx</groupId>
+        <artifactId>vertx-dependencies</artifactId>
+        <version>${vertx.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 </project>
