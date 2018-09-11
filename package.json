@@ -9,9 +9,9 @@
   "private": true,
   "scripts": {
     "start": "node ./server.js",
-    "apply": "node ./core/deploy/apply.js",
-    "generate": "node ./core/deploy/generate.js",
-    "deploy": "node ./core/deploy/deploy.js",
+    "apply": "node ./lib/core/deploy/apply.js",
+    "generate": "node ./lib/core/deploy/generate.js",
+    "deploy": "node ./lib/core/deploy/deploy.js",
     "lint": "eslint .",
     "test": "eslint ."
   },
@@ -25,9 +25,9 @@
     "stream-to-string": "^1.1.0"
   },
   "workspaces": [
-    "core/*",
-    "generators/*",
-    "capabilities/*"
+    "lib/core/*",
+    "lib/generators/*",
+    "lib/capabilities/*"
   ],
   "devDependencies": {
     "eslint": "^5.5.0"

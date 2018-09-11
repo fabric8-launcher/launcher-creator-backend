@@ -4,7 +4,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const catalog = require('./core/catalog');
+const catalog = require('./lib/core/catalog');
 
 const app = express();
 
@@ -15,11 +15,15 @@ app.use(cors());
 //app.options('*', cors());
 
 app.get('/capabilities', (req, res) => {
-    catalog.listCapabilities().then(caps => res.status(200).send(caps));
+    catalog.listCapabilities()
+        .then(caps => res.status(200).send(caps))
+        .catch(err => res.status(500).send(err));
 });
 
 app.get('/generators', (req, res) => {
-    catalog.listGenerators().then(caps => res.status(200).send(caps));
+    catalog.listGenerators()
+        .then(caps => res.status(200).send(caps))
+        .catch(err => res.status(500).send(err));
 });
 
 app.get('/runtimes', (req, res) => {
