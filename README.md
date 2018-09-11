@@ -1,5 +1,7 @@
 # launcher-creator-backend
 
+[![Build Status](https://semaphoreci.com/api/v1/fabric8-launcher/launcher-creator-backend/branches/master/badge.svg)](https://semaphoreci.com/fabric8-launcher/launcher-creator-backend)
+
 This is a PoC for the _engine_ that could be used by the Launcher Cloud App Generator (or whatever its name will be) to perform
 the actual code generation. Right now it only has command line tools to make it work, but this could easily be made part
 of a REST service of some kind that would return a ZIP file.
