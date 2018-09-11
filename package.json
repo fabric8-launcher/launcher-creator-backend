@@ -12,7 +12,8 @@
     "apply": "node ./core/deploy/apply.js",
     "generate": "node ./core/deploy/generate.js",
     "deploy": "node ./core/deploy/deploy.js",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "test": "eslint ."
   },
   "dependencies": {
     "body-parser": "^1.18.3",
