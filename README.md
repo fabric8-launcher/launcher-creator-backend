@@ -1,4 +1,4 @@
-# launcher-creator-catalog
+# launcher-creator-backend
 
 This is a PoC for the _engine_ that could be used by the Launcher Cloud App Generator (or whatever its name will be) to perform
 the actual code generation. Right now it only has command line tools to make it work, but this could easily be made part
