@@ -14,7 +14,11 @@ module.exports = {
         ],
         'quotes': [
             'warn',
-            'single'
+            'single',
+            {
+                'avoidEscape': true,
+                'allowTemplateLiterals': true
+            }
         ],
         'semi': [
             'error',

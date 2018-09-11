@@ -25,20 +25,20 @@ app.get('/generators', (req, res) => {
 app.get('/runtimes', (req, res) => {
     const runtimes = [
         {
-            "id": "nodejs",
-            "name": "Node.js"
+            'id': 'nodejs',
+            'name': 'Node.js'
         },
         {
-            "id": "springboot",
-            "name": "Spring Boot"
+            'id': 'springboot',
+            'name': 'Spring Boot'
         },
         {
-            "id": "thorntail",
-            "name": "Thorntail"
+            'id': 'thorntail',
+            'name': 'Thorntail'
         },
         {
-            "id": "vertx",
-            "name": "Vert.x"
+            'id': 'vertx',
+            'name': 'Vert.x'
         }
     ];
     res.status(200).send(runtimes);
