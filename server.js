@@ -27,25 +27,9 @@ app.get('/generators', (req, res) => {
 });
 
 app.get('/runtimes', (req, res) => {
-    const runtimes = [
-        {
-            'id': 'nodejs',
-            'name': 'Node.js'
-        },
-        {
-            'id': 'springboot',
-            'name': 'Spring Boot'
-        },
-        {
-            'id': 'thorntail',
-            'name': 'Thorntail'
-        },
-        {
-            'id': 'vertx',
-            'name': 'Vert.x'
-        }
-    ];
-    res.status(200).send(runtimes);
+    catalog.listRuntimes()
+        .then(list => res.status(200).send(list))
+        .catch(err => res.status(500).send(err));
 });
 
 const server = app.listen(8080, () => console.log('Server listening on port ', server.address().port));
