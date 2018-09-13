@@ -8,6 +8,7 @@
   "license": "Apache-2.0",
   "private": true,
   "scripts": {
+    "install": "./install.sh",
     "start": "node ./server.js",
     "apply": "node ./lib/core/deploy/apply.js",
     "generate": "node ./lib/core/deploy/generate.js",
@@ -23,6 +24,8 @@
     "fs-extra": "^7.0.0",
     "lodash": "^4.17.10",
     "stream-to-string": "^1.1.0",
+    "tape": "^4.9.1",
+    "tmp": "^0.0.33",
     "yaml": "^1.0.0-rc.8"
   },
   "workspaces": [
