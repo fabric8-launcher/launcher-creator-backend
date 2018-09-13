@@ -1,0 +1,88 @@
+openapi: 3.0.0
+servers:
+  - url: http://api-creator-backend.devtools-dev.ext.devshift.net/
+    description: Development server
+
+info:
+  version: "1.0.0"
+  title: Launcher Creator Backend API
+  description: >-
+    This document defines the REST endpoints exposed by the
+    launcher-creator-backend component
+
+security:
+  - application:
+      - read
+      - write
+
+paths:
+  /runtimes:
+    get:
+      summary: Returns the available Runtimes
+      security: []
+      description: >-
+        This endpoint returns all known Runtimes
+      tags:
+        - runtimes
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Runtime'
+        '404':
+          description: Not Found
+  /capabilities:
+    get:
+      summary: Returns the available Capabilities
+      security: []
+      description: >-
+        This endpoint returns all known Capabilities
+      tags:
+        - capabilities
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Capability'
+        '404':
+          description: Not Found
+
+components:
+  schemas:
+    Runtime:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        icon:
+          type: string
+        metadata:
+          type: object
+
+    Capability:
+      type: array
+      items:
+        type: object
+        properties:
+          module:
+            type: string
+          name:
+            type: string
+          description:
+            type: string
+          props:
+            type: object
+
+  securitySchemes:
+    bearerAuth:            # arbitrary name for the security scheme
+      type: http
+      scheme: bearer
+      bearerFormat: JWT    # optional, arbitrary value for documentation purposes
