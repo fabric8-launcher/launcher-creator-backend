@@ -14,7 +14,7 @@
     "generate": "node ./lib/core/deploy/generate.js",
     "deploy": "node ./lib/core/deploy/deploy.js",
     "lint": "eslint .",
-    "test": "eslint ."
+    "test": "eslint . && tape test/*.test.js | tap-spec"
   },
   "dependencies": {
     "body-parser": "^1.18.3",
@@ -24,16 +24,17 @@
     "fs-extra": "^7.0.0",
     "lodash": "^4.17.10",
     "stream-to-string": "^1.1.0",
-    "tape": "^4.9.1",
-    "tmp": "^0.0.33",
     "yaml": "^1.0.0-rc.8"
+  },
+  "devDependencies": {
+    "eslint": "^5.5.0",
+    "tap-spec": "^5.0.0",
+    "tape": "^4.9.1",
+    "tmp": "^0.0.33"
   },
   "workspaces": [
     "lib/core/*",
     "lib/generators/*",
     "lib/capabilities/*"
-  ],
-  "devDependencies": {
-    "eslint": "^5.5.0"
-  }
+  ]
 }
