@@ -33,10 +33,11 @@ test('merge poms', function (t) {
             </dependencies>
         </project>`, 'utf8');
 
-    mergePoms(targetFile.name, sourceFile.name);
+    mergePoms(targetFile.name, sourceFile.name)
+        .then(() => {
+            const result = readFileSync(targetFile.name, 'utf8');
+            const expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project>\n  <dependencies>\n    <dependency>\n      <groupId>a</groupId>\n      <artifactId>b</artifactId>\n      <version>1.0</version>\n    </dependency>\n    <dependency>\n      <groupId>c</groupId>\n      <artifactId>d</artifactId>\n      <version>2.0</version>\n    </dependency>\n  </dependencies>\n</project>\n\n";
 
-    const result = readFileSync(targetFile.name, 'utf8');
-    const expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project>\n  <dependencies>\n    <dependency>\n      <groupId>a</groupId>\n      <artifactId>b</artifactId>\n      <version>1.0</version>\n    </dependency>\n    <dependency>\n      <groupId>c</groupId>\n      <artifactId>d</artifactId>\n      <version>2.0</version>\n    </dependency>\n  </dependencies>\n</project>\n\n";
-
-    t.is(result, expected);
+            t.is(result, expected);
+        });
 });
