@@ -16,7 +16,7 @@ app.use(cors());
 
 app.get('/', (req, res) => {
     const url = req.protocol + '://' + req.get('host') + req.originalUrl + 'swagger.yaml';
-    res.redirect(`https://editor.swagger.io/?url=${url}`);
+    res.redirect(`${req.protocol}://editor.swagger.io/?url=${url}`);
 });
 
 app.use('/swagger.yaml', express.static('./swagger.yaml'));
