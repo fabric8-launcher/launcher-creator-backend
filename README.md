@@ -42,27 +42,26 @@ $ yarn run -s apply database path/to/project "my-database" '{ "databaseType": "m
 
 ## Stages
 
- - **Apply** Stage - This is where the Generators, executed by the Capabilities, can make changes to the user's project.
- This generally entails copying (template) files from the Generators to the user's project, generating files or changing
- already existing files. This is done _only once_ when the user _applies_ the Capability to their project.
- - **Generate** Stage - This is where the Generators, executed by the Capabilities, can add their own Resources to the
- final list of OpenShift/K8s Resources that will be created in the user's OpenShift environment. The _generation_
- of this Resource List will done _each time_ when the user's project needs to be installed in an OpenShift instance.
+ - **Apply** Stage - This is where the Generators, executed by the Capabilities, can make changes to the user's project
+ and add their own Resources to the final list of OpenShift/K8s Resources that will be created in the user's OpenShift
+ environment. In this stage a _Generator_ can copy (template) files from the Generators to the user's project, generate
+ files or change already existing files. This is done _only once_ when the user _applies_ the Capability to their project.
 - **Deploy** Stage - This is where the result from a previous **Generate** Stage is taken and installed in an OpenShift
 instance. Generators and Capabilities don't do anything in this stage (although this might be revisted in the future).
 
 ## Folder structure
 
- - **generators** - All _Generator_ modules are found in this folder.
- - **capabilities** - All _Capability_ modules are found in this folder.
- - **core** - 
-   This folder contains core modules that provide support for the
-   capabilites and the generators.
-   - **deploy** - Module that can execute Capabilites, manages the `deployment.json` descriptor file,
-   can generate a project's Resource file and can deploy it to OpenShift.
-   - **info** - Module that deals with input validation mostly.
-   - **resources** - Module that deals with OpenShift/K8s Resource lists.
-   - **utils** - Miscelleaneous utility functions.
+ - **lib**
+   - **generators** - All _Generator_ modules are found in this folder.
+   - **capabilities** - All _Capability_ modules are found in this folder.
+   - **core** - 
+     This folder contains core modules that provide support for the
+     capabilites and the generators.
+     - **deploy** - Module that can execute Capabilites, manages the `deployment.json` descriptor file,
+       can generate a project's Resource file and can deploy it to OpenShift.
+     - **info** - Module that deals with input validation mostly.
+     - **resources** - Module that deals with OpenShift/K8s Resource lists.
+     - **utils** - Miscelleaneous utility functions.
    
 ## Generators
 
@@ -82,19 +81,14 @@ So make _Generators_ simple, move the complexity to the _Capabilities_.
 
 Each Generator exposes the following public API:
 
-### apply( targetDir, props )
+### apply( resources, targetDir, props )
 
-When called this method allows the Generator to make changes to the user's project pointed at by `targetDir`.
-This generally consists of copying and/or generating files. It can also update already pre-existing files (for
-example add new dependencies a Maven POM file). The `props` is an object with properties required by the Generator.
-These properties are passed on by the Capabilities.
-
-### generate( resources, targetDir, props )
-
-When called this method allows the Generator to make changes to the OpenShift/K8s Resources list that get passed in
-as `resources`. These are the Resources that will be used in the end to create the application on OpenShift.
-The `targetDir` and `props` are the same ones as passed to `apply`, but no changes should be made to the project
-itself anymore!
+When called this method allows the Generator to make changes to the user's project pointed at by `targetDir`
+and to the OpenShift/K8s Resources list that get passed in as `resources`. Files can be copyied and/or generated.
+It's also possible to update already pre-existing files (for example add new dependencies a Maven POM file).
+When the _Generator_ also needs new Resources to be created in the user's OpenShift project it can add them
+to the list that gets passed in and in the end that will be sent to OpenShift.
+The `props` is an object with properties required by the Generator. These properties are passed on by the Capabilities.
 
 ### info( )
 
@@ -114,18 +108,12 @@ you want it to be.
 
 Each Capability exposes the following public API:
 
-### apply( capName, targetDir, props )
+### apply( capName, resources, targetDir, props )
 
 When called the Capability takes a list of all the Generators it will use, prepares the properties that it will
 pass on to each of them and calls their `apply()` function one by one. The end result will be that the user's
-project will have all the necessary files to work with and run the Capability.
-
-### generate( capName, resources, targetDir, props )
-
-When called the Capability takes a list of all the Generators it will use, prepares the properties that it will
-pass on to each of them and calls their `generate()` function one by one. The end result will be a Resource list
-with all the necessary builds, deployments, services, routes, config maps and secrets the user's project needs to
-run on OpenShift.
+project will have all the necessary files and a Resource list with all the necessary builds, deployments, services,
+routes, config maps and secrets the user's project needs to run on OpenShift.
 
 ### info( )
 
