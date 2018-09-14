@@ -2,20 +2,19 @@
   "name": "launcher-creator-backend",
   "version": "1.0.0",
   "description": "Root package for the App Creator Backend",
-  "main": "lib/core/server/server.js",
+  "main": "server.js",
   "repository": "git@github.com:fabric8-launcher/launcher-creator-backend",
   "author": "Tako Schotanus <tschotan@redhat.com>",
   "license": "Apache-2.0",
   "private": true,
   "scripts": {
     "install": "./install.sh",
-    "start": "ts-node ./lib/core/server/rest.ts",
-    "apply": "ts-node ./lib/core/deploy/apply.ts",
-    "generate": "ts-node ./lib/core/deploy/generate.ts",
-    "deploy": "ts-node ./lib/core/deploy/deploy.ts",
-    "lint-core": "tslint ./lib/core/",
-    "lint": "lint ./lib/capabilities && lint ./lib/generators",
-    "test": "tslint . && ts-node node_modules/tape/bin/tape ./lib/core/**/*.spec.ts | tap-spec"
+    "start": "node ./server.js",
+    "apply": "node ./lib/core/deploy/apply.js",
+    "generate": "node ./lib/core/deploy/generate.js",
+    "deploy": "node ./lib/core/deploy/deploy.js",
+    "lint": "eslint .",
+    "test": "eslint . && tape test/*.test.js | tap-spec"
   },
   "dependencies": {
     "body-parser": "^1.18.3",
@@ -28,18 +27,10 @@
     "yaml": "^1.0.0-rc.8"
   },
   "devDependencies": {
-    "@types/cors": "^2.8.4",
-    "@types/express": "^4.16.0",
-    "@types/fs-extra": "^5.0.4",
-    "@types/lodash": "^4.14.116",
-    "@types/tape": "^4.2.32",
     "eslint": "^5.5.0",
     "tap-spec": "^5.0.0",
     "tape": "^4.9.1",
-    "tmp": "^0.0.33",
-    "ts-node": "^7.0.1",
-    "tslint": "^5.11.0",
-    "typescript": "^3.0.3"
+    "tmp": "^0.0.33"
   },
   "workspaces": [
     "lib/core/*",
