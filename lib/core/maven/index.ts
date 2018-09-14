@@ -1,7 +1,6 @@
-'use strict';
-
-const { spawn } = require('child-process-promise');
-const { join } =  require('path');
+// @ts-ignore
+import { spawn } from 'child-process-promise';
+import { join } from 'path';
 
 const jar = join(__dirname, 'maven-model-helper.jar');
 
