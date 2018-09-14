@@ -60,19 +60,19 @@ paths:
       tags:
         - zip
       parameters:
-        - namme: name
+        - name: name
           in: query
           required: true
           schema:
             type: string
           description: The name to be used for the created capability
-        - name: capability:
+        - name: capability
           in: query
           required: true
           schema:
             type: string
           description: The capability that should be created
-        - name: props:
+        - name: props
           in: query
           required: true
           schema:
