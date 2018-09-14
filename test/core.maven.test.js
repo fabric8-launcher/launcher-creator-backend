@@ -2,7 +2,7 @@
 const test = require('tape');
 const {writeFileSync, readFileSync} = require('fs-extra');
 const {fileSync} = require('tmp');
-const {mergePoms} = require('./index');
+const {mergePoms} = require('../lib/core/maven');
 
 test('merge poms', function (t) {
     t.plan(1);

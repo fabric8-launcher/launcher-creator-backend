@@ -1,9 +1,0 @@
-{
-  "compilerOptions": {
-    "target": "es6",
-    "moduleResolution": "node",
-    "outDir": "dist",
-    "baseUrl": ".",
-    "lib": ["es2017"]
-  }
-}
