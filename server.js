@@ -5,6 +5,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const catalog = require('./lib/core/catalog');
+const deploy = require('./lib/core/deploy');
+const { resources } = require('./lib/core/resources');
 
 const app = express();
 
@@ -37,6 +39,15 @@ app.get('/runtimes', (req, res) => {
     catalog.listRuntimes()
         .then(list => res.status(200).send(list))
         .catch(err => res.status(500).send(err));
+});
+
+app.post('/create', (req, res) => {
+//    TODO: create temp dir
+//    deploy.apply(req.body.name, resources({}), tempDir, req.body.capability, req.body.props)
+//        TODO: create zip
+//        .then(list => res.status(200).sendFile(zip))
+//        TODO: clean up temp dir and zip file
+//        .catch(err => res.status(500).send(err));
 });
 
 const server = app.listen(8080, () => console.log('Server listening on port ', server.address().port));

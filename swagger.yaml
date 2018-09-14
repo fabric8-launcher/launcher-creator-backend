@@ -50,6 +50,41 @@ paths:
                 $ref: '#/components/schemas/Capability'
         '404':
           description: Not Found
+  /create:
+    get:
+      summary: Returns a ZIP containing a generated project
+      security: []
+      description: >-
+        This endpoint returns all ZIP containing code that was
+        generated using the specified Capability
+      tags:
+        - zip
+      parameters:
+        - namme: name
+          in: query
+          required: true
+          schema:
+            type: string
+          description: The name to be used for the created capability
+        - name: capability:
+          in: query
+          required: true
+          schema:
+            type: string
+          description: The capability that should be created
+        - name: props:
+          in: query
+          required: true
+          schema:
+            type: object
+          description: The properties to pass to the capability
+      responses:
+        '200':
+          description: OK
+          content:
+            application/zip: {}
+        '404':
+          description: Not Found
 
 components:
   schemas:
