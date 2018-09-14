@@ -69,7 +69,8 @@ app.get('/create', (req, res) => {
                 zip.directory(tempDir, false);
                 zip.finalize();
            })
-           .catch(err => res.status(500).send(err));
+            .catch(err => res.status(500).send(err))
+            .finally(() => cleanTempDir());
     });
 });
 
