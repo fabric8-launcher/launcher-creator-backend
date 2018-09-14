@@ -1,15 +1,13 @@
-'use strict';
-
-const { printUsage } = require('../../core/info');
-const {listCapabilities, getCapabilityModule } = require('../../core/catalog');
-const { resources } = require('../../core/resources');
+import { printUsage } from '../info';
+import { listCapabilities, getCapabilityModule } from '../catalog';
+import { resources } from '../resources';
 
 const args = process.argv.slice(2);
 
 if (args.length === 1 && args[0] === '--list') {
     process.stdout.write('Available capabilities:\n');
     listCapabilities().then(caps => caps.forEach(c => process.stdout.write(`    ${c.module.padEnd(15)} - ${c.description}\n`)));
-    return;
+    process.exit(0);
 }
 
 if (args.length === 2 && args[1] === '--help') {
