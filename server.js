@@ -49,18 +49,19 @@ app.get('/runtimes', (req, res) => {
 
 app.get('/create', (req, res) => {
     // Create temp dir
-    tmp.dir({unsafeCleanup: true},function (err,tempDir, cleanTempDir) {
+    tmp.dir({unsafeCleanup: true}, (err, tempDir, cleanTempDir) => {
         // Generate contents TODO: Use request parameters
-        deploy.apply('my-database', resources({}), tempDir, 'database', { "databaseType" : 'mysql', 'runtime':  'vertx' })
+        const appName = 'my-database';
+        deploy.apply(appName, resources({}), tempDir, 'database', { 'databaseType' : 'postgresql', 'runtime':  'vertx' })
            .then(() => {
                 // Tell the browser that this is a zip file.
                 res.writeHead(200, {
                    'Content-Type': 'application/zip',
-                   'Content-disposition': 'attachment; filename=app.zip'
+                   'Content-disposition': `attachment; filename=${appName}.zip`
                 });
                 let zip = Archiver('zip');
                 // good practice to catch this error explicitly
-                zip.on('error', function(err) {
+                zip.on('error', (err) => {
                    throw err;
                 });
                 // Send the file to the page output.
@@ -69,8 +70,8 @@ app.get('/create', (req, res) => {
                 zip.directory(tempDir, false);
                 zip.finalize();
            })
-            .catch(err => res.status(500).send(err))
-            .finally(() => cleanTempDir());
+           .catch(err => res.status(500).send(err))
+           .finally(() => cleanTempDir());
     });
 });
 
