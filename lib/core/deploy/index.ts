@@ -1,11 +1,9 @@
-'use strict';
-
-const { pathExists, readJson, ensureFile, writeFile } = require('fs-extra');
-const { join } = require('path');
-const YAML = require('yaml').default;
-const { validate } = require('../../core/info');
-const { getCapabilityModule } = require('../../core/catalog');
-const { applyFromFile } = require('../../core/resources');
+import { pathExists, readJson, ensureFile, writeFile } from 'fs-extra';
+import { join } from 'path';
+import YAML from 'yaml';
+import { validate } from '../info';
+import { getCapabilityModule } from '../catalog';
+import { applyFromFile } from '../resources';
 
 // Returns the name of the deployment file in the given directory
 function deploymentFile(targetDir) {
@@ -67,12 +65,12 @@ function writeResources(resourcesFile, resources) {
 // Calls `apply()` on the given capability (which allows it to copy, generate
 // and change files in the user's project) and adds information about the
 // capability to the `deployment.json` in the project's root.
-function apply(capName, resources, targetDir, capability, props) {
+export function apply(capName, resources, targetDir, capability, props) {
     const module = getCapabilityModule(capability);
     const df = deploymentFile(targetDir);
     const rf = resourcesFile(targetDir);
-    return new Promise((resolve, reject) => resolve(validate(module.info(), props)))
-        .then(() => module.apply(capName, resources, targetDir, props))
+    validate(module.info(), props);
+    return module.apply(capName, resources, targetDir, props)
         .then(res => writeResources(rf, res))
         .then(() => readDeployment(df))
         .then(deployment => {
@@ -86,10 +84,7 @@ function apply(capName, resources, targetDir, capability, props) {
         });
 }
 
-function deploy(targetDir) {
+export function deploy(targetDir) {
     const rf = resourcesFile(targetDir);
     return applyFromFile(rf);
 }
-
-exports.apply = apply;
-exports.deploy = deploy;
