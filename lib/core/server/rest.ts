@@ -40,7 +40,7 @@ app.get('/runtimes', (req, res) => {
         .catch(err => res.status(500).send(err));
 });
 
-app.post('/create', (req, res) => {
+app.get('/create', (req, res) => {
     // Create temp dir
     tmp.dir({'unsafeCleanup': true}, (err, tempDir, cleanTempDir) => {
         // Generate contents TODO: Use request parameters
