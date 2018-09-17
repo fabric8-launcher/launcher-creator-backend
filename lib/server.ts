@@ -1,9 +1,9 @@
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
 import * as cors from 'cors';
-import * as catalog from '../catalog';
-import * as deploy from '../deploy';
-import { resources } from '../resources';
+import * as catalog from './core/catalog/index';
+import * as deploy from './core/deploy/index';
+import { resources } from './core/resources/index';
 import Archiver from 'archiver';
 import * as tmp from 'tmp';
 
@@ -68,10 +68,10 @@ app.get('/create', (req, res) => {
     });
 });
 
-const rest = app.listen(8080, onListening);
+const server = app.listen(8080, onListening);
 
 function onListening(): void {
-    const address = rest.address();
+    const address = server.address();
     const bind = (typeof address === 'string') ? `pipe ${address}` : `port ${address.port}`;
     console.log(`Listening on ${bind}`);
 }
