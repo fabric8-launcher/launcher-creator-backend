@@ -73,8 +73,8 @@ app.get('/create', (req, res) => {
                 });
                 // Send the file to the page output.
                 archive.pipe(res);
-                // append files from tempDir, putting its contents at the root of archive
-                archive.directory(tempDir, false);
+                // append files from tempDir, making the appName as root
+                archive.directory(tempDir, appName);
                 archive.finalize();
            })
             .catch(promErr => res.status(500).send(promErr));
