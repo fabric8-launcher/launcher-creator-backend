@@ -1,8 +1,7 @@
-'use strict';
 
-exports.apply = function(resources, targetDir, props = {}) {
+export function apply(resources, targetDir, props?: any = {}) {
     // Create Secret holding Database connection/authentication information
-    if (resources.secret(props.secretName).length == 0) {
+    if (resources.secret(props.secretName).length === 0) {
         const secret = {
             'kind': 'Secret',
             'apiVersion': 'v1',
@@ -20,13 +19,13 @@ exports.apply = function(resources, targetDir, props = {}) {
             }
         };
         resources.add(secret);
-        //console.log(`Secret ${props.secretName} added`);
+        // console.log(`Secret ${props.secretName} added`);
     } else {
-        //console.log(`Secret ${props.secretName} already exists`);
+        // console.log(`Secret ${props.secretName} already exists`);
     }
     return Promise.resolve(resources);
-};
+}
 
-exports.info = function () {
+export function info() {
     return require('./info.json');
-};
+}

@@ -45,9 +45,9 @@ class Resources {
     // Takes an array of resources and turns them into a List
     public static makeList(items) {
         return {
-            apiVersion: 'v1',
-            kind: 'List',
-            items: [...items]
+            'apiVersion': 'v1',
+            'kind': 'List',
+            'items': [...items]
         };
     }
 
@@ -254,11 +254,11 @@ export function setDeploymentEnvFromSecret(res, secretName, env, dcName?: any) {
         const dcc = _.get(dc, 'spec.template.spec.containers[0]');
         if (dcc) {
             dcc.env = setEnv(dcc.env, env, (envKey, secretKey) => ({
-                name: envKey,
-                valueFrom: {
-                    secretKeyRef: {
-                        name: secretName,
-                        key: secretKey
+                'name': envKey,
+                'valueFrom': {
+                    'secretKeyRef': {
+                        'name': secretName,
+                        'key': secretKey
                     }
                 }
             }));
@@ -290,7 +290,7 @@ export function newDatabaseUsingSecret(res, appName, dbImageName, dbServiceName,
 // Applies the given resources to the active OpenShift instance
 export function apply(res) {
     // Run 'oc apply' using the given resources
-    const proc = spawn('oc', ['apply', '-f', '-'], {stdio: ['pipe', 1, 2]})
+    const proc = spawn('oc', ['apply', '-f', '-'], {'stdio': ['pipe', 1, 2]})
         .catch((error) => {
             console.error(`Spawn error: ${error}`);
             throw error;

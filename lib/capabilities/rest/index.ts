@@ -1,23 +1,22 @@
-'use strict';
 
-const { getGeneratorModule } = require('../../core/catalog');
+import { getGeneratorModule } from '../../core/catalog';
 
 // Returns the corresponding runtime generator depending on the given runtime type
 function runtimeByType(type) {
     if (type === 'vertx') {
         return getGeneratorModule('rest-vertx');
     } else {
-        throw `Unsupported runtime type: ${type}`;
+        throw new Error(`Unsupported runtime type: ${type}`);
     }
 }
 
-exports.apply = function(capName, resources, targetDir, props) {
+export function apply(capName, resources, targetDir, props) {
     const rtprops = {
-        appName: capName
+        'appName': capName
     };
     return runtimeByType(props.runtime).apply(resources, targetDir, rtprops);
-};
+}
 
-exports.info = function() {
+export function info() {
     return require('./info.json');
-};
+}

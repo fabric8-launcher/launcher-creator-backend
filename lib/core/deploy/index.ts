@@ -25,7 +25,7 @@ function readDeployment(deploymentFile) {
                 return readJson(deploymentFile)
                     .catch((error) => console.error(`Failed to read deployment file ${deploymentFile}: ${error}`));
             } else {
-                return {capabilities: {}};
+                return {'capabilities': {}};
             }
         });
 }
@@ -75,8 +75,8 @@ export function apply(capName, resources, targetDir, capability, props) {
         .then(() => readDeployment(df))
         .then(deployment => {
             const cap = {
-                module: capability,
-                props: props
+                'module': capability,
+                'props': props
             };
             const newDeployment = addCapability(deployment, capName, cap);
             return writeDeployment(df, deployment)

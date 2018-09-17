@@ -1,21 +1,20 @@
-'use strict';
 
-const { copy } = require('fs-extra');
-const { join } = require('path');
-const { getGeneratorModule } = require('../../core/catalog');
-const { mergePoms } = require('../../core/maven');
+import { copy } from 'fs-extra';
+import { join } from 'path';
+import { getGeneratorModule } from '../../core/catalog';
+import {mergePoms} from '../../core/maven';
 
-exports.apply = function(resources, targetDir, props={}) {
+export function apply(resources, targetDir, props?: any = {}) {
     // First copy the files from the base Vert.x platform module
     // and then copy our own over that
     return getGeneratorModule('platform-vertx').apply(resources, targetDir, props)
         .then(() => copy(join(__dirname, 'files'), targetDir))
-        .then(() => mergePoms(join(targetDir, 'pom.xml'), join(__dirname, 'merge', `pom.${props.databaseType}.xml`)))
+        .then(() => mergePoms(join(targetDir, 'pom.xml'), join(__dirname, 'merge', 'pom.xml')))
         .then(() => resources);
     // TODO Don't just blindly copy all files, we need to _patch_ some of
     // them instead (eg. pom.xml and arquillian.xml and Java code)
-};
+}
 
-exports.info = function () {
+export function info() {
     return require('./info.json');
-};
+}

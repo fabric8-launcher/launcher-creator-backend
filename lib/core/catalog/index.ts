@@ -8,7 +8,7 @@ export function listCapabilities() {
     return readdir('./lib/capabilities')
         .then(files => files
             .filter(f => statSync('./lib/capabilities/' + f).isDirectory())
-            .map(f => ({module: f, ...getCapabilityModule(f).info()}))
+            .map(f => ({'module': f, ...getCapabilityModule(f).info()}))
         );
 }
 
@@ -20,7 +20,7 @@ export function listGenerators() {
     return readdir('./lib/generators')
         .then(files => files
             .filter(f => statSync('./lib/generators/' + f).isDirectory())
-            .map(f => ({module: f, ...getGeneratorModule(f).info()}))
+            .map(f => ({'module': f, ...getGeneratorModule(f).info()}))
         );
 }
 
