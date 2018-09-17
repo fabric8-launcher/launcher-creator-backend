@@ -1,10 +1,10 @@
 
-const test = require('tape');
-const {writeFileSync, readFileSync} = require('fs-extra');
-const {fileSync} = require('tmp');
-const {mergePoms} = require('../../lib/core/maven/index');
+import * as test from 'tape';
+import { writeFileSync, readFileSync } from 'fs-extra';
+import { fileSync } from 'tmp';
+import { mergePoms } from '../../lib/core/maven/index';
 
-test('merge poms', function (t) {
+test('merge poms', (t) => {
     t.plan(1);
 
     // Write target (original) file
@@ -36,7 +36,7 @@ test('merge poms', function (t) {
     mergePoms(targetFile.name, sourceFile.name)
         .then(() => {
             const result = readFileSync(targetFile.name, 'utf8');
-            const expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project>\n  <dependencies>\n    <dependency>\n      <groupId>a</groupId>\n      <artifactId>b</artifactId>\n      <version>1.0</version>\n    </dependency>\n    <dependency>\n      <groupId>c</groupId>\n      <artifactId>d</artifactId>\n      <version>2.0</version>\n    </dependency>\n  </dependencies>\n</project>\n\n";
+            const expected = '<?xml version="1.0" encoding="UTF-8"?>\n<project>\n  <dependencies>\n    <dependency>\n      <groupId>a</groupId>\n      <artifactId>b</artifactId>\n      <version>1.0</version>\n    </dependency>\n    <dependency>\n      <groupId>c</groupId>\n      <artifactId>d</artifactId>\n      <version>2.0</version>\n    </dependency>\n  </dependencies>\n</project>\n\n';
 
             t.is(result, expected);
         });

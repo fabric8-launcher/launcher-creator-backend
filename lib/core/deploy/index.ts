@@ -6,12 +6,12 @@ import { getCapabilityModule } from '../catalog';
 import { applyFromFile } from '../resources';
 
 // Returns the name of the deployment file in the given directory
-function deploymentFile(targetDir) {
+function deploymentFileName(targetDir) {
     return join(targetDir, 'deployment.json');
 }
 
 // Returns the name of the resources file in the given directory
-function resourcesFile(targetDir) {
+function resourcesFileName(targetDir) {
     return join(targetDir, '.openshiftio', 'application.yaml');
 }
 
@@ -25,7 +25,7 @@ function readDeployment(deploymentFile) {
                 return readJson(deploymentFile)
                     .catch((error) => console.error(`Failed to read deployment file ${deploymentFile}: ${error}`));
             } else {
-                return {capabilities:{}};
+                return {capabilities: {}};
             }
         });
 }
@@ -67,8 +67,8 @@ function writeResources(resourcesFile, resources) {
 // capability to the `deployment.json` in the project's root.
 export function apply(capName, resources, targetDir, capability, props) {
     const module = getCapabilityModule(capability);
-    const df = deploymentFile(targetDir);
-    const rf = resourcesFile(targetDir);
+    const df = deploymentFileName(targetDir);
+    const rf = resourcesFileName(targetDir);
     validate(module.info(), props);
     return module.apply(capName, resources, targetDir, props)
         .then(res => writeResources(rf, res))
@@ -85,6 +85,6 @@ export function apply(capName, resources, targetDir, capability, props) {
 }
 
 export function deploy(targetDir) {
-    const rf = resourcesFile(targetDir);
+    const rf = resourcesFileName(targetDir);
     return applyFromFile(rf);
 }

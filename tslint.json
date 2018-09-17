@@ -16,7 +16,6 @@
       false,
       "always-prefix"
     ],
-    "only-arrow-functions": false,
     "member-ordering": false,
     // General
     "no-console": [
@@ -32,6 +31,7 @@
     "no-string-literal": false,
     "no-use-before-declare": true,
     "object-literal-sort-keys": false,
+    "object-literal-shorthand": false,
     "ordered-imports": false,
     "no-empty-interface": false,
     "no-empty": false,
@@ -46,7 +46,8 @@
       "allow-pascal-case",
       "ban-keywords",
       "check-format"
-    ]
+    ],
+    "arrow-parens": false
   },
   "linterOptions": {
     "include": [

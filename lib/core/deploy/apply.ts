@@ -36,5 +36,5 @@ if (args.length === 1 && args[0] === '--list') {
   const PROPS = args[3] || '{}';
 
   apply(CAP_NAME, resources({}), TARGET_DIR, CAP, JSON.parse(PROPS))
-    //.catch((err) => console.error(`Application Error: ${err}`));
+    .catch((err) => console.error(`Application Error: ${err}`));
 }

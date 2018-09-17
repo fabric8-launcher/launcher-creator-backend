@@ -4,7 +4,7 @@ import * as cors from 'cors';
 import * as catalog from '../catalog';
 import * as deploy from '../deploy';
 import { resources } from '../resources';
-import Archiver from 'archiver';
+import * as Archiver from 'archiver';
 import * as tmp from 'tmp';
 
 tmp.setGracefulCleanup();
@@ -14,7 +14,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
 app.use(cors());
-//app.options('*', cors());
 
 app.get('/', (req, res) => {
     const url = req.protocol + '://' + req.get('host') + req.originalUrl + 'swagger.yaml';
@@ -42,7 +41,7 @@ app.get('/runtimes', (req, res) => {
 });
 
 app.post('/create', (req, res) => {
-// Create temp dir
+    // Create temp dir
     tmp.dir({unsafeCleanup: true}, (err, tempDir, cleanTempDir) => {
         // Generate contents TODO: Use request parameters
         const appName = 'my-database';
@@ -55,8 +54,8 @@ app.post('/create', (req, res) => {
                 });
                 const zip = Archiver('zip');
                 // good practice to catch this error explicitly
-                zip.on('error', (err) => {
-                    throw err;
+                zip.on('error', (zipErr) => {
+                    throw zipErr;
                 });
                 // Send the file to the page output.
                 zip.pipe(res);
@@ -64,7 +63,7 @@ app.post('/create', (req, res) => {
                 zip.directory(tempDir, false);
                 zip.finalize();
             })
-            .catch(err => res.status(500).send(err))
+            .catch(promErr => res.status(500).send(promErr))
             .finally(() => cleanTempDir());
     });
 });

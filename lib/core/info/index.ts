@@ -20,7 +20,9 @@ function validateRequired(name, def, props) {
 function validateTypeEnum(name, def, props) {
     const val = props[name];
     if (!def.values.some(v => v.id === val)) {
-        throw new ValidationError(`Invalid enumeration value for property '${name}': '${val}', should be one of: ${def.values.map(v => v.id)}`);
+        const items = def.values.map(v => v.id);
+        throw new ValidationError(
+            `Invalid enumeration value for property '${name}': '${val}', should be one of: ${items}`);
     }
 }
 
