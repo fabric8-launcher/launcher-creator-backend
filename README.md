@@ -60,6 +60,7 @@ instance. Generators and Capabilities don't do anything in this stage (although 
      - **deploy** - Module that can execute Capabilites, manages the `deployment.json` descriptor file,
        can generate a project's Resource file and can deploy it to OpenShift.
      - **info** - Module that deals with input validation mostly.
+     - **maven** - Module with maven-specific utilities, like merging `pom.xml` files.
      - **resources** - Module that deals with OpenShift/K8s Resource lists.
      - **utils** - Miscelleaneous utility functions.
    
