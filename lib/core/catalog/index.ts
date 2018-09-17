@@ -1,4 +1,4 @@
-import {readdir, statSync} from 'fs-extra';
+import { readdir, statSync } from 'fs-extra';
 
 export function getCapabilityModule(capability) {
     return require('../../capabilities/' + capability);

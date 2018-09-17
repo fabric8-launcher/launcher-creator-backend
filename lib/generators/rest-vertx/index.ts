@@ -2,9 +2,9 @@
 import { copy } from 'fs-extra';
 import { join } from 'path';
 import { getGeneratorModule } from '../../core/catalog';
-import {mergePoms} from '../../core/maven';
+import { mergePoms } from '../../core/maven';
 
-export function apply(resources, targetDir, props?: any = {}) {
+export function apply(resources, targetDir, props: any = {}) {
     // First copy the files from the base Vert.x platform module
     // and then copy our own over that
     return getGeneratorModule('platform-vertx').apply(resources, targetDir, props)

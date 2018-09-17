@@ -1,9 +1,10 @@
+
 import * as _ from 'lodash';
 // @ts-ignore
-import {spawn} from 'child-process-promise';
+import { spawn } from 'child-process-promise';
 // @ts-ignore
 import * as streamToString from 'stream-to-string';
-import {Readable} from 'stream';
+import { Readable } from 'stream';
 
 // Wrapper class for an object containing OpenShift/K8s resources.
 // It intends to make it easier to query and update the resources
