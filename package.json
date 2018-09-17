@@ -14,7 +14,8 @@
     "generate": "ts-node ./lib/core/deploy/generate.ts",
     "deploy": "ts-node ./lib/core/deploy/deploy.ts",
     "lint": "tslint -t verbose --project . && eslint ./lib/capabilities && eslint ./lib/generators",
-    "test": "yarn build && ts-node node_modules/tape/bin/tape ./test/**/*.test.ts | tap-spec"
+    "test": "yarn build && ts-node node_modules/tape/bin/tape ./test/**/*.test.ts | tap-spec",
+    "watch": "nodemon"
   },
   "dependencies": {
     "archiver": "^3.0.0",
