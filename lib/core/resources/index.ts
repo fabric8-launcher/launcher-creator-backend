@@ -1,13 +1,16 @@
-'use strict';
-
-const _ = require('lodash');
-const { spawn } = require('child-process-promise');
-const streamToString = require('stream-to-string');
-const { Readable } = require('stream');
+import * as _ from 'lodash';
+// @ts-ignore
+import {spawn} from 'child-process-promise';
+// @ts-ignore
+import * as streamToString from 'stream-to-string';
+import {Readable} from 'stream';
 
 // Wrapper class for an object containing OpenShift/K8s resources.
 // It intends to make it easier to query and update the resources
 class Resources {
+
+    private res: any;
+
     constructor(res) {
         this.res = res;
     }
@@ -18,7 +21,7 @@ class Resources {
     // item that's neither a List nor a Template. Will return an empty
     // array if no resources were found at all. And finally if the argument
     // already is an array it will return that as-is.
-    static asList(res) {
+    public static asList(res) {
         if (res instanceof Resources) {
             return Resources.asList(res.json);
         } else if (Array.isArray(res)) {
@@ -35,12 +38,12 @@ class Resources {
     }
 
     // Returns true if no resources were found in the given argument
-    static isEmpty(res) {
+    public static isEmpty(res) {
         return Resources.asList(res).length === 0;
     }
 
     // Takes an array of resources and turns them into a List
-    static makeList(items) {
+    public static makeList(items) {
         return {
             apiVersion: 'v1',
             kind: 'List',
@@ -49,12 +52,12 @@ class Resources {
     }
 
     // Selects resources by their 'kind' property
-    static selectByKind(res, kind) {
+    public static selectByKind(res, kind) {
         return Resources.asList(res).filter(r => r.kind && r.kind.toLowerCase() === kind.toLowerCase());
     }
 
     // Selects resources by their 'metadata/name' property
-    static selectByName(res, name) {
+    public static selectByName(res, name) {
         return Resources.asList(res).filter(r => r.metadata && r.metadata.name === name);
     }
 
@@ -70,7 +73,7 @@ class Resources {
     // plus all the new ones. If the current wrapped object is empty a new List
     // will be created if 'newres' has multiple resources or it will be set to
     // contain the single 'newres' item if there's only one.
-    add(newres) {
+    public add(newres) {
         const items = Resources.asList(newres);
         if (this.res.kind && this.res.kind.toLowerCase() === 'list') {
             this.res.items = [...this.res.items, ...items];
@@ -92,7 +95,7 @@ class Resources {
         return Resources.selectByKind(this.res, 'build');
     }
 
-    build(name) {
+    public build(name) {
         return Resources.selectByName(this.builds, name);
     }
 
@@ -100,7 +103,7 @@ class Resources {
         return Resources.selectByKind(this.res, 'buildconfig');
     }
 
-    buildConfig(name) {
+    public buildConfig(name) {
         return Resources.selectByName(this.buildConfigs, name);
     }
 
@@ -108,7 +111,7 @@ class Resources {
         return Resources.selectByKind(this.res, 'configmap');
     }
 
-    configMap(name) {
+    public configMap(name) {
         return Resources.selectByName(this.configMaps, name);
     }
 
@@ -116,7 +119,7 @@ class Resources {
         return Resources.selectByKind(this.res, 'deployment');
     }
 
-    deployment(name) {
+    public deployment(name) {
         return Resources.selectByName(this.deployments, name);
     }
 
@@ -124,7 +127,7 @@ class Resources {
         return Resources.selectByKind(this.res, 'deploymentconfig');
     }
 
-    deploymentConfig(name) {
+    public deploymentConfig(name) {
         return Resources.selectByName(this.deploymentConfigs, name);
     }
 
@@ -132,7 +135,7 @@ class Resources {
         return Resources.selectByKind(this.res, 'imagestreamimage');
     }
 
-    imageStreamImage(name) {
+    public imageStreamImage(name) {
         return Resources.selectByName(this.imageStreamImages, name);
     }
 
@@ -140,7 +143,7 @@ class Resources {
         return Resources.selectByKind(this.res, 'imagestream');
     }
 
-    imageStream(name) {
+    public imageStream(name) {
         return Resources.selectByName(this.imageStreams, name);
     }
 
@@ -148,7 +151,7 @@ class Resources {
         return Resources.selectByKind(this.res, 'imagestreamtag');
     }
 
-    imageStreamTag(name) {
+    public imageStreamTag(name) {
         return Resources.selectByName(this.imageStreamTags, name);
     }
 
@@ -156,7 +159,7 @@ class Resources {
         return Resources.selectByKind(this.res, 'persistentvolume');
     }
 
-    persistentVolume(name) {
+    public persistentVolume(name) {
         return Resources.selectByName(this.persistentVolumes, name);
     }
 
@@ -164,7 +167,7 @@ class Resources {
         return Resources.selectByKind(this.res, 'persistentvolumeclaim');
     }
 
-    persistentVolumeClaim(name) {
+    public persistentVolumeClaim(name) {
         return Resources.selectByName(this.persistentVolumeClaims, name);
     }
 
@@ -172,7 +175,7 @@ class Resources {
         return Resources.selectByKind(this.res, 'role');
     }
 
-    role(name) {
+    public role(name) {
         return Resources.selectByName(this.roles, name);
     }
 
@@ -180,7 +183,7 @@ class Resources {
         return Resources.selectByKind(this.res, 'rolebinding');
     }
 
-    roleBinding(name) {
+    public roleBinding(name) {
         return Resources.selectByName(this.roleBindings, name);
     }
 
@@ -188,7 +191,7 @@ class Resources {
         return Resources.selectByKind(this.res, 'route');
     }
 
-    route(name) {
+    public route(name) {
         return Resources.selectByName(this.routes, name);
     }
 
@@ -196,7 +199,7 @@ class Resources {
         return Resources.selectByKind(this.res, 'secret');
     }
 
-    secret(name) {
+    public secret(name) {
         return Resources.selectByName(this.secrets, name);
     }
 
@@ -204,34 +207,33 @@ class Resources {
         return Resources.selectByKind(this.res, 'service');
     }
 
-    service(name) {
+    public service(name) {
         return Resources.selectByName(this.services, name);
     }
 }
 
 // Wraps the given 'res' object in a instance of Resources.
 // If 'res' is already of type Resources it will be returned as-is
-function resources(res) {
+export function resources(res) {
     return (res instanceof Resources) ? res : new Resources(res);
 }
 
 // Returns a list of resources that when applied will create
 // an instance of the given image or template.
-function newApp(name, appName, imageName, env={}, cwd) {
-    const envStr = Object.entries(env).map(([key,val]) => `-e${key}=${val}`);
-    const opts = {};
-    if (cwd) opts.cwd = cwd;
+export function newApp(name, appName, imageName, env = {}, cwd?: any) {
+    const envStr = Object.entries(env).map(([key, val]) => `-e${key}=${val}`);
+    const opts = {cwd};
     const proc = spawn('oc', ['new-app',
-                    `--name=${name}`,
-                    `--labels=app=${appName}`,
-                    ...envStr,
-                    imageName,
-                    '--dry-run',
-                    '-o', 'json'], opts);
+        `--name=${name}`,
+        `--labels=app=${appName}`,
+        ...envStr,
+        imageName,
+        '--dry-run',
+        '-o', 'json'], opts);
     proc.catch((error) => {
-            console.error(`Spawn error: ${error}`);
-            throw error;
-        });
+        console.error(`Spawn error: ${error}`);
+        throw error;
+    });
     return streamToString(proc.childProcess.stdout).then(json => resources(JSON.parse(json)));
 }
 
@@ -246,17 +248,17 @@ function setEnv(targetEnv, env, resFunc) {
 // Updates the environment variables for the DeploymentConfig selected
 // by 'dcName' with the given variables in 'env' from a previously
 // created Secret indicated by 'secretName'
-function setDeploymentEnvFromSecret(res, secretName, env, dcName) {
+export function setDeploymentEnvFromSecret(res, secretName, env, dcName?: any) {
     if (res.deploymentConfigs.length > 0) {
         const dc = (dcName) ? res.deploymentConfig(dcName) : res.deploymentConfigs[0];
         const dcc = _.get(dc, 'spec.template.spec.containers[0]');
         if (dcc) {
             dcc.env = setEnv(dcc.env, env, (envKey, secretKey) => ({
-                'name': envKey,
-                'valueFrom': {
-                    'secretKeyRef': {
-                        'name': secretName,
-                        'key': secretKey
+                name: envKey,
+                valueFrom: {
+                    secretKeyRef: {
+                        name: secretName,
+                        key: secretKey
                     }
                 }
             }));
@@ -269,40 +271,40 @@ function setDeploymentEnvFromSecret(res, secretName, env, dcName) {
 // and the given environment variables from 'env' and 'secretEnv' (the
 // latter being taken from a previously created Secret indicated by
 // 'secretName').
-function newDatabaseUsingSecret(resources, appName, dbImageName, dbServiceName, secretName, env, secretEnv) {
-    if (resources.service(dbServiceName).length === 0) {
+export function newDatabaseUsingSecret(res, appName, dbImageName, dbServiceName, secretName, env, secretEnv) {
+    if (res.service(dbServiceName).length === 0) {
         // Create the database resource definitions
         return newApp(appName + '-database', appName, dbImageName, env)
             .then((appRes) => setDeploymentEnvFromSecret(appRes, secretName, secretEnv))
             .then((appRes) => {
-                const res = resources.add(appRes);
-                //console.log(`Database ${dbServiceName} added`);
-                return res;
+                const resNew = res.add(appRes);
+                // console.log(`Database ${dbServiceName} added`);
+                return resNew;
             });
     } else {
-        //console.log(`Database ${dbServiceName} already exists`);
+        // console.log(`Database ${dbServiceName} already exists`);
     }
     return Promise.resolve(resources);
 }
 
 // Applies the given resources to the active OpenShift instance
-function apply(resources) {
+export function apply(res) {
     // Run 'oc apply' using the given resources
-    const proc = spawn('oc', ['apply', '-f', '-'], { stdio: ['pipe', 1, 2] })
+    const proc = spawn('oc', ['apply', '-f', '-'], {stdio: ['pipe', 1, 2]})
         .catch((error) => {
             console.error(`Spawn error: ${error}`);
             throw error;
         });
     // Create a Stream containing the resource's json as text and pipe it to the oc command
     const ins = new Readable();
-    ins.push(JSON.stringify(resources.json));
+    ins.push(JSON.stringify(res.json));
     ins.push(null);
     ins.pipe(proc.childProcess.stdin);
     return proc;
 }
 
 // Applies the given resources to the active OpenShift instance
-function applyFromFile(resourcesFile) {
+export function applyFromFile(resourcesFile) {
     // Run 'oc apply' using the given resources
     const proc = spawn('oc', ['apply', '-f', resourcesFile])
         .catch((error) => {
@@ -311,10 +313,3 @@ function applyFromFile(resourcesFile) {
         });
     return proc;
 }
-
-exports.resources = resources;
-exports.newApp = newApp;
-exports.setDeploymentEnvFromSecret = setDeploymentEnvFromSecret;
-exports.newDatabaseUsingSecret = newDatabaseUsingSecret;
-exports.apply = apply;
-exports.applyFromFile = applyFromFile;

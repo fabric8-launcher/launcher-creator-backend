@@ -1,11 +1,10 @@
-'use strict';
-
-const { spawn } = require('child-process-promise');
-const { join } =  require('path');
+// @ts-ignore
+import { spawn } from 'child-process-promise';
+import { join } from 'path';
 
 const jar = join(__dirname, 'maven-model-helper.jar');
 
-function mergePoms(targetPath, sourcePath) {
+export function mergePoms(targetPath, sourcePath) {
     const proc = spawn('java', ['-jar', jar, targetPath, sourcePath])
         .catch((error) => {
             console.error(`Spawn error: ${error}`);
@@ -13,5 +12,3 @@ function mergePoms(targetPath, sourcePath) {
         });
     return proc;
 }
-
-exports.mergePoms = mergePoms;

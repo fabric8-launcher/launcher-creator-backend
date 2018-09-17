@@ -1,18 +1,14 @@
-'use strict';
-
-const { printUsage } = require('../../core/info');
-const {listCapabilities, getCapabilityModule } = require('../../core/catalog');
-const { resources } = require('../../core/resources');
+import { printUsage } from '../info';
+import { listCapabilities, getCapabilityModule } from '../catalog';
+import { resources } from '../resources';
+import { apply } from '.';
 
 const args = process.argv.slice(2);
 
 if (args.length === 1 && args[0] === '--list') {
     process.stdout.write('Available capabilities:\n');
     listCapabilities().then(caps => caps.forEach(c => process.stdout.write(`    ${c.module.padEnd(15)} - ${c.description}\n`)));
-    return;
-}
-
-if (args.length === 2 && args[1] === '--help') {
+} else if (args.length === 2 && args[1] === '--help') {
     const CAP = args[0];
     console.log(`yarn run -s apply ${CAP} <project_dir> [<capability_name>] [<json_props>]`);
     console.log(`    ${CAP.padEnd(15)} - The name of the Capability to apply.`);
@@ -21,9 +17,7 @@ if (args.length === 2 && args[1] === '--help') {
     console.log(`    json_props      - These will be passed to the Capability:`);
     printUsage(getCapabilityModule(CAP).info());
     process.exit(0);
-}
-
-if (args.length < 2) {
+} else if (args.length < 2) {
     console.error(`Missing arguments`);
     console.log(`Usage: yarn run -s apply <capability> <project_dir> [<capability_name>] [<json_props>]`);
     console.log(`                         <capability> --help`);
@@ -35,12 +29,12 @@ if (args.length < 2) {
     console.log(`    json_props      - The properties that will be passed to the Capability.`);
     console.log(`                      Use 'yarn run -s apply <capability> --help' for more information.`);
     process.exit(1);
+} else {
+  const CAP = args[0];
+  const TARGET_DIR = args[1];
+  const CAP_NAME = args[2] || CAP;
+  const PROPS = args[3] || '{}';
+
+  apply(CAP_NAME, resources({}), TARGET_DIR, CAP, JSON.parse(PROPS))
+    //.catch((err) => console.error(`Application Error: ${err}`));
 }
-
-const CAP = args[0];
-const TARGET_DIR = args[1];
-const CAP_NAME = args[2] || CAP;
-const PROPS = args[3] || '{}';
-
-require('.').apply(CAP_NAME, resources({}), TARGET_DIR, CAP, JSON.parse(PROPS))
-    .catch(err => console.error(`Application Error: ${err}`));

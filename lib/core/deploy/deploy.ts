@@ -1,6 +1,4 @@
-'use strict';
-
-const { resources } = require('../../core/resources');
+import { deploy } from '.';
 
 const args = process.argv.slice(2);
 
@@ -13,5 +11,4 @@ if (args.length !== 1) {
 
 const TARGET_DIR = args[0];
 
-require('.').deploy(TARGET_DIR)
-    .catch(err => console.error(`Deployment Error: ${err}`));
+deploy(TARGET_DIR).catch(err => console.error(`Deployment Error: ${err}`));

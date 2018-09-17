@@ -1,8 +1,8 @@
-'use strict';
-
-const _ = require('lodash');
+import * as _ from 'lodash';
 
 class ValidationError extends Error {
+    private msg: string;
+
     constructor(msg) {
         super(msg);
         this.msg = msg;
@@ -35,8 +35,8 @@ function validateProperty(name, def, props) {
     validateType(name, def, props);
 }
 
-function validate(info, props) {
-    Object.entries(info.props).forEach(([name,def]) => validateProperty(name, def, props));
+export function validate(info, props) {
+    Object.entries(info.props).forEach(([name, def]) => validateProperty(name, def, props));
 }
 
 function printRequired(name, def) {
@@ -65,10 +65,7 @@ function printProperty(name, def, namePad) {
     process.stdout.write(`\n`);
 }
 
-function printUsage(info) {
+export function printUsage(info) {
     const maxLen = Math.max(13, Math.min(20, _.max(Object.entries(info.props).map(([name, def]) => name.length))));
     Object.entries(info.props).forEach(([name, def]) => printProperty(name, def, maxLen));
 }
-
-exports.validate = validate;
-exports.printUsage = printUsage;
