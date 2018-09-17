@@ -70,7 +70,7 @@ app.get('/create', (req, res) => {
                 // Clean the temp dir after closing
                 archive.on('close', ()=>{
                     cleanTempDir();
-                })
+                });
                 // Send the file to the page output.
                 archive.pipe(res);
                 // append files from tempDir, putting its contents at the root of archive
