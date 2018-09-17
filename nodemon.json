@@ -1,0 +1,6 @@
+{
+  "watch": ["lib"],
+  "ext": "ts",
+  "ignore": ["test"],
+  "exec": "ts-node ./lib/core/server/rest.ts"
+}

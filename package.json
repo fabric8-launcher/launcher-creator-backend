@@ -2,7 +2,6 @@
   "name": "launcher-creator-backend",
   "version": "1.0.0",
   "description": "Root package for the App Creator Backend",
-  "main": "lib/core/server/server.js",
   "repository": "git@github.com:fabric8-launcher/launcher-creator-backend",
   "author": "Tako Schotanus <tschotan@redhat.com>",
   "license": "Apache-2.0",
