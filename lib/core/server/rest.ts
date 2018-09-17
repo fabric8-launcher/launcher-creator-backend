@@ -4,7 +4,7 @@ import * as cors from 'cors';
 import * as catalog from '../catalog';
 import * as deploy from '../deploy';
 import { resources } from '../resources';
-import * as Archiver from 'archiver';
+import Archiver from 'archiver';
 import * as tmp from 'tmp';
 
 tmp.setGracefulCleanup();
