@@ -4,7 +4,7 @@ import * as cors from 'cors';
 import * as catalog from './core/catalog/index';
 import * as deploy from './core/deploy/index';
 import { resources } from './core/resources/index';
-import Archiver from 'archiver';
+import * as Archiver from 'archiver';
 import * as tmp from 'tmp';
 
 tmp.setGracefulCleanup();
@@ -52,19 +52,32 @@ app.get('/create', (req, res) => {
                     'Content-Type': 'application/zip',
                     'Content-disposition': `attachment; filename=${appName}.zip`
                 });
-                const zip = Archiver('zip');
+                const archive = Archiver('zip');
+                // good practice to catch warnings (ie stat failures and other non-blocking errors)
+                archive.on('warning', (err) =>{
+                    if (err.code === 'ENOENT') {
+                        // log warning
+                        console.log(err);
+                    } else {
+                        // throw error
+                        throw err;
+                    }
+                });
                 // good practice to catch this error explicitly
-                zip.on('error', (zipErr) => {
+                archive.on('error', (zipErr) => {
                     throw zipErr;
                 });
+                // Clean the temp dir after closing
+                archive.on('close', ()=>{
+                    cleanTempDir();
+                })
                 // Send the file to the page output.
-                zip.pipe(res);
+                archive.pipe(res);
                 // append files from tempDir, putting its contents at the root of archive
-                zip.directory(tempDir, false);
-                zip.finalize();
-            })
-            .catch(promErr => res.status(500).send(promErr))
-            .finally(() => cleanTempDir());
+                archive.directory(tempDir, false);
+                archive.finalize();
+           })
+            .catch(promErr => res.status(500).send(promErr));
     });
 });
 
