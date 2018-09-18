@@ -37,7 +37,7 @@ $ yarn run -s apply database --help
 To actually apply the Capability to the project pass all the required arguments and properties, for example:
 
 ```
-$ yarn run -s apply path/to/project "my-app" database '{ "databaseType": "postgresql", "runtime": "vertx" }'
+$ yarn run -s apply path/to/project "my-app" vertx database '{ "databaseType": "mysql" }'
 ```
 
 ## Stages
