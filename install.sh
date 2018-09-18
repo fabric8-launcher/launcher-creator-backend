@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ARTIFACT_URL="https://oss.sonatype.org/content/repositories/releases/io/fabric8/maven-model-helper/5/maven-model-helper-5-uber.jar"
+ARTIFACT_URL="https://oss.sonatype.org/content/repositories/releases/io/fabric8/maven-model-helper/6/maven-model-helper-6-uber.jar"
 TARGET_DIR="lib/core/maven"
 TARGET="${TARGET_DIR}/maven-model-helper.jar"
 
