@@ -28,7 +28,7 @@ function readDeployment(deploymentFile) {
                 return readJson(deploymentFile)
                     .catch((error) => console.error(`Failed to read deployment file ${deploymentFile}: ${error}`));
             } else {
-                return {'capabilities': []};
+                return {'applications': []};
             }
         });
 }
@@ -43,18 +43,26 @@ function writeDeployment(deploymentFile, deployment) {
 
 // Returns a name based on the given prefix that is
 // guaranteed to be unique in the given deployment
-function uniqueName(deployment, prefix) {
+function uniqueName(deployment, appName, prefix) {
     let idx = 1;
     let name;
     do {
         name = prefix + '-' + idx++;
-    } while (deployment.capabilities[name]);
+    } while (deployment.applications[appName].capabilities[name]);
     return name;
 }
 
 // Adds the given capability to the given deployment
 function addCapability(deployment, capability) {
-    deployment.capabilities = [ ...deployment.capabilities, capability ];
+    const cap = { ...capability };
+    delete cap.application;
+    delete cap.runtime;
+    let app = deployment.applications.find(item => item.application === capability.application);
+    if (!app) {
+        app = {'application': capability.application, 'runtime': capability.runtime, 'capabilities': []};
+        deployment.applications = [...deployment.applications, app];
+    }
+    app.capabilities = [ ...app.capabilities, cap ];
 }
 
 // Returns a promise that will resolve when the given
@@ -90,10 +98,10 @@ function applyCapability(resources, targetDir, appName, props) {
 }
 
 // Calls `applyCapability()` on all the given capabilities
-export function apply(resources, targetDir, appName, capabilities) {
+export function apply(resources, targetDir, appName, runtime, capabilities) {
     const p = Promise.resolve(true);
     return capabilities.reduce((acc, cur) => acc
-        .then(() => applyCapability(resources, targetDir, appName, cur)), p);
+        .then(() => applyCapability(resources, targetDir, appName, { ...cur, 'runtime': runtime })), p);
 }
 
 export function deploy(targetDir) {
