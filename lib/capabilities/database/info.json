@@ -16,7 +16,8 @@
           "id": "mysql",
           "name": "mySQL"
         }
-      ]
+      ],
+      "default": "postgresql"
     },
     "runtime": {
       "name": "Runtime Type",
