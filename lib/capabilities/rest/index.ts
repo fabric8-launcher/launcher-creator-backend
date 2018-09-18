@@ -10,9 +10,9 @@ function runtimeByType(type) {
     }
 }
 
-export function apply(capName, resources, targetDir, props) {
+export function apply(resources, targetDir, props) {
     const rtprops = {
-        'appName': capName
+        'appName': props.name
     };
     return runtimeByType(props.runtime).apply(resources, targetDir, rtprops);
 }

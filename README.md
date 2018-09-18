@@ -37,7 +37,7 @@ $ yarn run -s apply database --help
 To actually apply the Capability to the project pass all the required arguments and properties, for example:
 
 ```
-$ yarn run -s apply database path/to/project "my-database" '{ "databaseType": "mysql", "runtime": "vertx" }'
+$ yarn run -s apply path/to/project "my-app" database '{ "databaseType": "postgresql", "runtime": "vertx" }'
 ```
 
 ## Stages
@@ -109,7 +109,7 @@ you want it to be.
 
 Each Capability exposes the following public API:
 
-### apply( capName, resources, targetDir, props )
+### apply( resources, targetDir, props )
 
 When called the Capability takes a list of all the Generators it will use, prepares the properties that it will
 pass on to each of them and calls their `apply()` function one by one. The end result will be that the user's

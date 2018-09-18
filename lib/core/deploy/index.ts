@@ -28,7 +28,7 @@ function readDeployment(deploymentFile) {
                 return readJson(deploymentFile)
                     .catch((error) => console.error(`Failed to read deployment file ${deploymentFile}: ${error}`));
             } else {
-                return {'capabilities': {}};
+                return {'capabilities': []};
             }
         });
 }
@@ -53,8 +53,8 @@ function uniqueName(deployment, prefix) {
 }
 
 // Adds the given capability to the given deployment
-function addCapability(deployment, capName, capability) {
-    deployment.capabilities[capName] = capability;
+function addCapability(deployment, capability) {
+    deployment.capabilities = [ ...deployment.capabilities, capability ];
 }
 
 // Returns a promise that will resolve when the given
@@ -65,26 +65,35 @@ function writeResources(resourcesFile, resources) {
         .catch((error) => console.error(`Failed to write resources file ${resourcesFile}: ${error}`));
 }
 
-// Calls `apply()` on the given capability (which allows it to copy, generate
-// and change files in the user's project) and adds information about the
-// capability to the `deployment.json` in the project's root.
-export function apply(capName, resources, targetDir, capability, props) {
-    const module = getCapabilityModule(capability);
+function applyCapability_(resources, targetDir, props) {
+    const module = getCapabilityModule(props.module);
     const df = deploymentFileName(targetDir);
     const rf = resourcesFileName(targetDir);
     validate(module.info(), props);
-    return module.apply(capName, resources, targetDir, props)
+    return module.apply(resources, targetDir, props)
         .then(res => writeResources(rf, res))
         .then(() => readDeployment(df))
         .then(deployment => {
-            const cap = {
-                'module': capability,
-                'props': props
-            };
-            const newDeployment = addCapability(deployment, capName, cap);
+            const newDeployment = addCapability(deployment, props);
             return writeDeployment(df, deployment)
                 .then(() => newDeployment);
         });
+}
+
+// Calls `apply()` on the given capability (which allows it to copy, generate
+// and change files in the user's project) and adds information about the
+// capability to the `deployment.json` in the project's root.
+function applyCapability(resources, targetDir, appName, props) {
+    props.application = appName;
+    props.name = props.name || appName + '-' + props.module + '-1';
+    return applyCapability_(resources, targetDir, props);
+}
+
+// Calls `applyCapability()` on all the given capabilities
+export function apply(resources, targetDir, appName, capabilities) {
+    const p = Promise.resolve(true);
+    return capabilities.reduce((acc, cur) => acc
+        .then(() => applyCapability(resources, targetDir, appName, cur)), p);
 }
 
 export function deploy(targetDir) {

@@ -47,7 +47,7 @@ app.get('/create', (req, res) => {
     tmp.dir({'unsafeCleanup': true}, (err, tempDir, cleanTempDir) => {
         // Generate contents TODO: Use request parameters
         const appName = 'my-database';
-        deploy.apply(appName, resources({}), tempDir, 'database', { 'databaseType' : 'postgresql', 'runtime':  'vertx' })
+        deploy.apply(resources({}), tempDir, appName, [{ 'module': 'database', 'databaseType' : 'postgresql', 'runtime':  'vertx' }])
             .then(() => {
                 // Tell the browser that this is a zip file.
                 res.writeHead(200, {
