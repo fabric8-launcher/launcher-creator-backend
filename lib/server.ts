@@ -1,11 +1,14 @@
+
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
 import * as cors from 'cors';
-import * as catalog from './core/catalog/index';
-import * as deploy from './core/deploy/index';
-import { resources } from './core/resources/index';
 import * as Archiver from 'archiver';
 import * as tmp from 'tmp';
+
+import * as catalog from './core/catalog';
+import * as deploy from './core/deploy';
+import { resources } from './core/resources';
+import { zip } from './core/utils';
 
 tmp.setGracefulCleanup();
 const app = express();
@@ -52,31 +55,9 @@ app.get('/create', (req, res) => {
                     'Content-Type': 'application/zip',
                     'Content-disposition': `attachment; filename=${appName}.zip`
                 });
-                const archive = Archiver('zip');
-                // good practice to catch warnings (ie stat failures and other non-blocking errors)
-                archive.on('warning', (err) =>{
-                    if (err.code === 'ENOENT') {
-                        // log warning
-                        console.log(err);
-                    } else {
-                        // throw error
-                        throw err;
-                    }
-                });
-                // good practice to catch this error explicitly
-                archive.on('error', (zipErr) => {
-                    throw zipErr;
-                });
-                // Clean the temp dir after closing
-                archive.on('close', ()=>{
-                    cleanTempDir();
-                });
-                // Send the file to the page output.
-                archive.pipe(res);
-                // append files from tempDir, making the appName as root
-                archive.directory(tempDir, appName);
-                archive.finalize();
-           })
+                return zip(res, tempDir, appName)
+                    .finally(() => cleanTempDir());
+            })
             .catch(promErr => res.status(500).send(promErr));
     });
 });

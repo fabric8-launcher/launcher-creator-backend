@@ -1,9 +1,12 @@
-import { pathExists, readJson, ensureFile, writeFile } from 'fs-extra';
+
+import { pathExists, readJson, ensureFile, writeFile, createWriteStream } from 'fs-extra';
 import { join } from 'path';
 import YAML from 'yaml';
+
 import { validate } from '../info';
 import { getCapabilityModule } from '../catalog';
 import { applyFromFile } from '../resources';
+import { zipFolder } from '../utils';
 
 // Returns the name of the deployment file in the given directory
 function deploymentFileName(targetDir) {
@@ -87,4 +90,10 @@ export function apply(capName, resources, targetDir, capability, props) {
 export function deploy(targetDir) {
     const rf = resourcesFileName(targetDir);
     return applyFromFile(rf);
+}
+
+export function zip(targetDir, zipFileName) {
+    const archiveFolderName = 'app';
+    const out = createWriteStream(zipFileName);
+    return zipFolder(out, targetDir, archiveFolderName);
 }

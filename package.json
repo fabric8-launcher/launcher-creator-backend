@@ -11,8 +11,8 @@
     "build": "tsc --project .",
     "start": "ts-node ./lib/server.ts",
     "apply": "ts-node ./lib/core/deploy/apply.ts",
-    "generate": "ts-node ./lib/core/deploy/generate.ts",
     "deploy": "ts-node ./lib/core/deploy/deploy.ts",
+    "zip": "ts-node ./lib/core/deploy/zip.ts",
     "lint": "tslint -t verbose --project . && eslint ./lib/capabilities && eslint ./lib/generators",
     "test": "yarn build && ts-node node_modules/tape/bin/tape ./test/**/*.test.ts | tap-spec",
     "watch": "nodemon"
