@@ -5,6 +5,7 @@ import { newApp } from '../../core/resources';
 
 export function apply(applyGenerator, resources, targetDir, props: any = {}) {
     return copy(join(__dirname, 'files'), targetDir)
+        .then(() => applyGenerator('maven-setup', resources, targetDir, props))
         .then(() => newApp(
             props.application + '-vertx',
             props.application,

@@ -43,7 +43,9 @@ function validateProperty(name, def, props) {
 }
 
 export function validate(info, props) {
-    Object.entries(info.props).forEach(([name, def]) => validateProperty(name, def, props));
+    if (info.props) {
+        Object.entries(info.props).forEach(([name, def]) => validateProperty(name, def, props));
+    }
 }
 
 function printRequired(name, def) {
@@ -73,6 +75,8 @@ function printProperty(name, def, namePad) {
 }
 
 export function printUsage(info) {
-    const maxLen = Math.max(13, Math.min(20, _.max(Object.entries(info.props).map(([name, def]) => name.length))));
-    Object.entries(info.props).forEach(([name, def]) => printProperty(name, def, maxLen));
+    if (info.props) {
+        const maxLen = Math.max(13, Math.min(20, _.max(Object.entries(info.props).map(([name, def]) => name.length))));
+        Object.entries(info.props).forEach(([name, def]) => printProperty(name, def, maxLen));
+    }
 }

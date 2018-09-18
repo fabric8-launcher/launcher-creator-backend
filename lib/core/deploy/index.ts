@@ -102,10 +102,19 @@ function applyCapability(applyGenerator, resources, targetDir, appName, props) {
 export function apply(resources, targetDir, appName, runtime, capabilities) {
     const appliedModules = {};
     const appliedModuleProps = {};
+
+    // The following function gets passed to all Capability `apply()` methods
+    // which they then should use whenever they need to apply a Generator
+    // to the target project. The same holds true for Generators when they
+    // want to apply other Generators.
+    // The function makes sure that any particular Generator only gets applied
+    // once for each call to `deploy/apply()`.
     const applyGenerator = (generator, resources2, targetDir2, props2) => {
         if (!appliedModules[generator]) {
-            appliedModuleProps[generator] = { ...props2 };
-            return appliedModules[generator] = getGeneratorModule(generator).apply(applyGenerator, resources2, targetDir2, props2);
+            const module = getGeneratorModule(generator);
+            validate(module.info(), props2);
+            appliedModuleProps[generator] = {...props2};
+            return appliedModules[generator] = module.apply(applyGenerator, resources2, targetDir2, props2);
         } else {
             if (!isEqual(appliedModuleProps[generator], props2)) {
                 const j1 = JSON.stringify(appliedModuleProps[generator]);
@@ -115,6 +124,7 @@ export function apply(resources, targetDir, appName, runtime, capabilities) {
             return appliedModules[generator];
         }
     };
+
     const p = Promise.resolve(true);
     return capabilities.reduce((acc, cur) => acc
         .then(() => applyCapability(applyGenerator, resources, targetDir, appName, { ...cur, 'runtime': runtime })), p);

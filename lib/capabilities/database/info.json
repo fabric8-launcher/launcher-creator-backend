@@ -42,6 +42,27 @@
           "name": "Vert.x"
         }
       ]
+    },
+    "groupId": {
+      "name": "Group Id",
+      "description": "The Maven Group Id for the project",
+      "required": true,
+      "type": "string",
+      "default": "org.openshift.appgen"
+    },
+    "artifactId": {
+      "name": "Artifact Id",
+      "description": "The Maven Artifact Id for the project",
+      "required": true,
+      "type": "string",
+      "default": "database-app"
+    },
+    "version": {
+      "name": "Version",
+      "description": "The Maven Version for the project",
+      "required": true,
+      "type": "string",
+      "default": "1.0"
     }
   }
 }

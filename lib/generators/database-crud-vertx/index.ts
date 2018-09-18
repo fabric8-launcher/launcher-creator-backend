@@ -8,6 +8,9 @@ export function apply(applyGenerator, resources, targetDir, props: any = {}) {
     // and then copy our own over that
     const pprops = {
         'application': props.application,
+        'groupId': props.groupId,
+        'artifactId': props.artifactId,
+        'version': props.version,
     };
     return applyGenerator('platform-vertx', resources, targetDir, pprops)
         .then(() => copy(join(__dirname, 'files'), targetDir))

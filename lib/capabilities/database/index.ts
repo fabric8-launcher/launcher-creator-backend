@@ -28,6 +28,9 @@ export function apply(applyGenerator, resources, targetDir, props) {
     };
     const rtprops = {
         'application': props.application,
+        'groupId': props.groupId,
+        'artifactId': props.artifactId,
+        'version': props.version,
         'databaseType': props.databaseType
     };
     return applyGenerator('database-secret', resources, targetDir, dbprops)

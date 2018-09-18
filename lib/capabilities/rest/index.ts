@@ -10,7 +10,10 @@ function runtimeByType(type) {
 
 export function apply(applyGenerator, resources, targetDir, props) {
     const rtprops = {
-        'application': props.application
+        'application': props.application,
+        'groupId': props.groupId,
+        'artifactId': props.artifactId,
+        'version': props.version
     };
     return applyGenerator(runtimeByType(props.runtime), resources, targetDir, rtprops);
 }
