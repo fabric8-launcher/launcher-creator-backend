@@ -12,7 +12,7 @@ function runtimeByType(type) {
 
 export function apply(resources, targetDir, props) {
     const rtprops = {
-        'appName': props.name
+        'application': props.application
     };
     return runtimeByType(props.runtime).apply(resources, targetDir, rtprops);
 }

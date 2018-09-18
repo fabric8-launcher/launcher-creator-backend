@@ -8,7 +8,7 @@ export function apply(resources, targetDir, props: any = {}) {
             'metadata': {
                 'name': props.secretName,
                 'labels': {
-                    'app': props.appName,
+                    'app': props.application,
                 }
             },
             'stringData': {

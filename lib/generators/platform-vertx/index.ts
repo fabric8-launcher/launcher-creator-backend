@@ -6,8 +6,8 @@ import { newApp } from '../../core/resources';
 export function apply(resources, targetDir, props: any = {}) {
     return copy(join(__dirname, 'files'), targetDir)
         .then(() => newApp(
-            props.appName + '-vertx',
-            props.appName,
+            props.application + '-vertx',
+            props.application,
             'registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift~.',
             {},
             targetDir))

@@ -23,13 +23,13 @@ function runtimeByType(type) {
 
 export function apply(resources, targetDir, props) {
     const dbprops = {
-        'appName': props.name,
+        'application': props.application,
         'databaseUri': props.name,
         'databaseName': 'my_data',
         'secretName': props.name + '-bind',
     };
     const rtprops = {
-        'appName': props.name,
+        'application': props.application,
         'databaseType': props.databaseType
     };
     return getGeneratorModule('database-secret').apply(resources, targetDir, dbprops)
