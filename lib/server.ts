@@ -8,7 +8,7 @@ import * as tmp from 'tmp';
 import * as catalog from './core/catalog';
 import * as deploy from './core/deploy';
 import { resources } from './core/resources';
-import { zip } from './core/utils';
+import { zipFolder } from './core/utils';
 
 tmp.setGracefulCleanup();
 const app = express();
@@ -55,7 +55,7 @@ app.get('/create', (req, res) => {
                     'Content-Type': 'application/zip',
                     'Content-disposition': `attachment; filename=${appName}.zip`
                 });
-                return zip(res, tempDir, appName)
+                return zipFolder(res, tempDir, appName)
                     .finally(() => cleanTempDir());
             })
             .catch(promErr => res.status(500).send(promErr));
