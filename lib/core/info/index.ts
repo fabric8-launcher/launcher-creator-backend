@@ -13,7 +13,11 @@ class ValidationError extends Error {
 function validateRequired(name, def, props) {
     if (def.required === true) {
         if (!props.hasOwnProperty(name)) {
-            throw new ValidationError(`Missing property: '${name}'`);
+            if (def.default) {
+                props[name] = def.default;
+            } else {
+                throw new ValidationError(`Missing property: '${name}'`);
+            }
         }
     }
 }
