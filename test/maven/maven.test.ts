@@ -43,7 +43,7 @@ test('merge poms', (t) => {
 });
 
 
-test('replace GAV', (t) => {
+test('update GAV', (t) => {
     t.plan(1);
 
     // Write target (original) file
@@ -55,6 +55,22 @@ test('replace GAV', (t) => {
         .then( () => {
             const result = readFileSync(targetFile.name, 'utf8');
             const expected = '<?xml version="1.0" encoding="UTF-8"?>\n<project>\n  <groupId>foo</groupId>\n  <artifactId>bar</artifactId>\n  <version>1.0</version>\n</project>\n\n';
+            t.is(result,expected);
+        });
+});
+
+test('update parent GAV', (t) => {
+    t.plan(1);
+
+    // Write target (original) file
+    const targetFile = fileSync();
+    writeFileSync(targetFile.name,
+        `<project><groupId>empty</groupId><artifactId>empty</artifactId></project>`, 'utf8');
+
+    updateParentGav(targetFile.name, "foo", "bar")
+        .then( () => {
+            const result = readFileSync(targetFile.name, 'utf8');
+            const expected = '<?xml version="1.0" encoding="UTF-8"?>\n<project>\n  <groupId>empty</groupId>\n  <parent>\n    <artifactId>bar</artifactId>\n    <groupId>foo</groupId>\n  </parent>\n  <artifactId>empty</artifactId>\n</project>\n\n';
             t.is(result,expected);
         });
 });
