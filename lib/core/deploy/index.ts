@@ -1,10 +1,11 @@
 
 import { pathExists, readJson, ensureFile, writeFile, createWriteStream } from 'fs-extra';
 import { join } from 'path';
+import { isEqual } from 'lodash';
 import YAML from 'yaml';
 
 import { validate } from '../info';
-import { getCapabilityModule } from '../catalog';
+import { getCapabilityModule, getGeneratorModule } from '../catalog';
 import { applyFromFile } from '../resources';
 import { zipFolder } from '../utils';
 
@@ -73,12 +74,12 @@ function writeResources(resourcesFile, resources) {
         .catch((error) => console.error(`Failed to write resources file ${resourcesFile}: ${error}`));
 }
 
-function applyCapability_(resources, targetDir, props) {
+function applyCapability_(applyGenerator, resources, targetDir, props) {
     const module = getCapabilityModule(props.module);
     const df = deploymentFileName(targetDir);
     const rf = resourcesFileName(targetDir);
     validate(module.info(), props);
-    return module.apply(resources, targetDir, props)
+    return module.apply(applyGenerator, resources, targetDir, props)
         .then(res => writeResources(rf, res))
         .then(() => readDeployment(df))
         .then(deployment => {
@@ -91,17 +92,32 @@ function applyCapability_(resources, targetDir, props) {
 // Calls `apply()` on the given capability (which allows it to copy, generate
 // and change files in the user's project) and adds information about the
 // capability to the `deployment.json` in the project's root.
-function applyCapability(resources, targetDir, appName, props) {
+function applyCapability(applyGenerator, resources, targetDir, appName, props) {
     props.application = appName;
     props.name = props.name || appName + '-' + props.module + '-1';
-    return applyCapability_(resources, targetDir, props);
+    return applyCapability_(applyGenerator, resources, targetDir, props);
 }
 
 // Calls `applyCapability()` on all the given capabilities
 export function apply(resources, targetDir, appName, runtime, capabilities) {
+    const appliedModules = {};
+    const appliedModuleProps = {};
+    const applyGenerator = (generator, resources2, targetDir2, props2) => {
+        if (!appliedModules[generator]) {
+            appliedModuleProps[generator] = { ...props2 };
+            return appliedModules[generator] = getGeneratorModule(generator).apply(applyGenerator, resources2, targetDir2, props2);
+        } else {
+            if (!isEqual(appliedModuleProps[generator], props2)) {
+                const j1 = JSON.stringify(appliedModuleProps[generator]);
+                const j2 = JSON.stringify(props2);
+                console.warn(`Duplicate generator: ${generator} with different properties! ${j1} vs ${j2}`);
+            }
+            return appliedModules[generator];
+        }
+    };
     const p = Promise.resolve(true);
     return capabilities.reduce((acc, cur) => acc
-        .then(() => applyCapability(resources, targetDir, appName, { ...cur, 'runtime': runtime })), p);
+        .then(() => applyCapability(applyGenerator, resources, targetDir, appName, { ...cur, 'runtime': runtime })), p);
 }
 
 export function deploy(targetDir) {

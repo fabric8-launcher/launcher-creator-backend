@@ -1,12 +1,10 @@
 
-import { getGeneratorModule } from '../../core/catalog';
-
 // Returns the corresponding database generator depending on the given database type
 function databaseByType(type) {
     if (type === 'postgresql') {
-        return getGeneratorModule('database-postgresql');
+        return 'database-postgresql';
     } else if (type === 'mysql') {
-        return getGeneratorModule('database-mysql');
+        return 'database-mysql';
     } else {
         throw new Error(`Unsupported database type: ${type}`);
     }
@@ -15,13 +13,13 @@ function databaseByType(type) {
 // Returns the corresponding runtime generator depending on the given runtime type
 function runtimeByType(type) {
     if (type === 'vertx') {
-        return getGeneratorModule('database-crud-vertx');
+        return 'database-crud-vertx';
     } else {
         throw new Error(`Unsupported runtime type: ${type}`);
     }
 }
 
-export function apply(resources, targetDir, props) {
+export function apply(applyGenerator, resources, targetDir, props) {
     const dbprops = {
         'application': props.application,
         'databaseUri': props.name,
@@ -32,9 +30,9 @@ export function apply(resources, targetDir, props) {
         'application': props.application,
         'databaseType': props.databaseType
     };
-    return getGeneratorModule('database-secret').apply(resources, targetDir, dbprops)
-        .then(res => databaseByType(props.databaseType).apply(res, targetDir, dbprops))
-        .then(res => runtimeByType(props.runtime).apply(res, targetDir, rtprops));
+    return applyGenerator('database-secret', resources, targetDir, dbprops)
+        .then(res => applyGenerator(databaseByType(props.databaseType), res, targetDir, dbprops))
+        .then(res => applyGenerator(runtimeByType(props.runtime), res, targetDir, rtprops));
 }
 
 export function info() {

@@ -1,5 +1,5 @@
 
-export function apply(resources, targetDir, props: any = {}) {
+export function apply(applyGenerator, resources, targetDir, props: any = {}) {
     // Create Secret holding Database connection/authentication information
     if (resources.secret(props.secretName).length === 0) {
         const secret = {

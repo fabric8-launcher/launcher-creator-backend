@@ -1,20 +1,18 @@
 
-import { getGeneratorModule } from '../../core/catalog';
-
 // Returns the corresponding runtime generator depending on the given runtime type
 function runtimeByType(type) {
     if (type === 'vertx') {
-        return getGeneratorModule('rest-vertx');
+        return 'rest-vertx';
     } else {
         throw new Error(`Unsupported runtime type: ${type}`);
     }
 }
 
-export function apply(resources, targetDir, props) {
+export function apply(applyGenerator, resources, targetDir, props) {
     const rtprops = {
         'application': props.application
     };
-    return runtimeByType(props.runtime).apply(resources, targetDir, rtprops);
+    return applyGenerator(runtimeByType(props.runtime), resources, targetDir, rtprops);
 }
 
 export function info() {

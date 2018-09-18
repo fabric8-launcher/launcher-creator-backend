@@ -82,7 +82,7 @@ So make _Generators_ simple, move the complexity to the _Capabilities_.
 
 Each Generator exposes the following public API:
 
-### apply( resources, targetDir, props )
+### apply( applyGenerator, resources, targetDir, props )
 
 When called this method allows the Generator to make changes to the user's project pointed at by `targetDir`
 and to the OpenShift/K8s Resources list that get passed in as `resources`. Files can be copyied and/or generated.
@@ -109,7 +109,7 @@ you want it to be.
 
 Each Capability exposes the following public API:
 
-### apply( resources, targetDir, props )
+### apply( applyGenerator, resources, targetDir, props )
 
 When called the Capability takes a list of all the Generators it will use, prepares the properties that it will
 pass on to each of them and calls their `apply()` function one by one. The end result will be that the user's
