@@ -2,7 +2,6 @@
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
 import * as cors from 'cors';
-import * as Archiver from 'archiver';
 import * as tmp from 'tmp';
 
 import * as catalog from './core/catalog';
