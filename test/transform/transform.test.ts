@@ -1,8 +1,9 @@
 
 import * as test from 'tape';
 import { writeFileSync, readFileSync } from 'fs-extra';
-import { fileSync } from 'tmp';
-import { transform } from '../../lib/core/template';
+import { join} from 'path';
+import { fileSync, dirSync } from 'tmp';
+import { transform, transformFiles } from '../../lib/core/template';
 import { pipe2 as pipe } from '../../lib/core/utils';
 
 const testContents =
@@ -29,6 +30,24 @@ test('transform identity', (t) => {
     const id = (line: string) => line;
 
     transform(targetFile.name, targetFile.name, id)
+        .then((tfn: string) => {
+            const result = readFileSync(tfn, 'utf8');
+            const expected = testContents;
+            t.is(result, expected);
+        });
+});
+
+test('transform identity 2', (t) => {
+    t.plan(1);
+
+    // Write test file
+    const targetFile = fileSync();
+    writeFileSync(targetFile.name, testContents, 'utf8');
+
+    // ID "transformer" that just returns the input unchanged
+    const id = (line: string) => line;
+
+    transform(targetFile.name, null, id)
         .then((tfn: string) => {
             const result = readFileSync(tfn, 'utf8');
             const expected = testContents;
@@ -103,5 +122,29 @@ test('transform empty', (t) => {
             const result = readFileSync(tfn, 'utf8');
             const expected = ``;
             t.is(result, expected);
+        });
+});
+
+test('transformFiles', (t) => {
+    t.plan(2);
+
+    // Write test files
+    const targetDir = dirSync({ 'unsafeCleanup': true });
+    writeFileSync(join(targetDir.name, 'test.foo'), testContents, 'utf8');
+    writeFileSync(join(targetDir.name, 'test.bar'), testContents, 'utf8');
+    writeFileSync(join(targetDir.name, 'test.baz'), testContents, 'utf8');
+
+    // Nil "transformer" that drops everything
+    const nil = (line: string) => null;
+
+    transformFiles(join(targetDir.name, '**/*.bar'), nil)
+        .then(() => {
+            const result1 = readFileSync(join(targetDir.name, 'test.foo'), 'utf8');
+            const expected1 = testContents;
+            t.is(result1, expected1);
+
+            const result2 = readFileSync(join(targetDir.name, 'test.bar'), 'utf8');
+            const expected2 = ``;
+            t.is(result2, expected2);
         });
 });

@@ -2,6 +2,7 @@
 import { Transform } from 'stream';
 import { createReadStream, createWriteStream, move } from 'fs-extra';
 import { tmpNameSync } from 'tmp';
+import * as fg from 'fast-glob';
 
 class LineTransform extends Transform {
     private transformLine: (line: string) => string;
@@ -41,7 +42,7 @@ class LineTransform extends Transform {
 }
 
 export function transform(inFile: string, outFile: string, transformLine: (line: string) => string) {
-    const actualOutFile = (outFile === inFile) ? tmpNameSync() : outFile;
+    const actualOutFile = (outFile === inFile || !outFile) ? tmpNameSync() : outFile;
     const ins = createReadStream(inFile);
     const outs = createWriteStream(actualOutFile);
 
@@ -51,11 +52,24 @@ export function transform(inFile: string, outFile: string, transformLine: (line:
             .pipe(outs)
             .on('finish', () => {
                 if (outFile !== actualOutFile) {
-                    resolve(move(actualOutFile, outFile, { 'overwrite': true })
-                        .then(() => outFile));
+                    resolve(move(actualOutFile, inFile, { 'overwrite': true })
+                        .then(() => inFile));
                 } else {
                     resolve(outFile);
                 }
             });
+    });
+}
+
+export function transformFiles(pattern: string, transformLine: (line: string) => string): Promise<number> {
+    let result = Promise.resolve(0);
+    return new Promise((resolve, reject) => {
+        fg.stream(pattern)
+            .on('data', entry => {
+                result = result.then((cnt) =>
+                    transform(entry, null, transformLine).then(() => cnt + 1));
+            })
+            .on('error', err => reject(err))
+            .on('end', () => resolve(result));
     });
 }
