@@ -9,7 +9,8 @@
   "scripts": {
     "install": "./install.sh",
     "build": "tsc --project .",
-    "start": "ts-node ./lib/server.ts",
+    "start": "node dist/lib/server.js",
+    "start:dev": "ts-node ./lib/server.ts",
     "apply": "ts-node ./lib/core/deploy/apply.ts",
     "deploy": "ts-node ./lib/core/deploy/deploy.ts",
     "zip": "ts-node ./lib/core/deploy/zip.ts",
