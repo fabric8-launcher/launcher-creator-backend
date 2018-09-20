@@ -12,4 +12,5 @@ if [[ ${npm_config_force} = "true" || ${npm_config_argv} = *"--force"* ]]; then
 fi
 
 [[ ! -f "${TARGET}" || ${FORCE} -eq 1 ]] && mkdir -p "${TARGET_DIR}" && curl -sSL "${ARTIFACT_URL}" -o "${TARGET}"
+[[ ! -f "dist/${TARGET}" || ${FORCE} -eq 1 ]] && mkdir -p "dist/${TARGET_DIR}" && cp "${TARGET}" "dist/${TARGET_DIR}"
 exit 0

@@ -8,7 +8,8 @@
   "private": true,
   "scripts": {
     "install": "./install.sh",
-    "postinstall": "npm run build",
+    "postinstall": "npm run build && find catalog/ -type f -name 'info.json' | xargs cp --parents -t dist",
+    "clean": "rm -rf ./dist",
     "build": "tsc --project .",
     "start": "node dist/lib/server.js",
     "start:dev": "ts-node ./lib/server.ts",
@@ -16,7 +17,7 @@
     "deploy": "ts-node ./lib/core/deploy/deploy.ts",
     "zip": "ts-node ./lib/core/deploy/zip.ts",
     "lint": "tslint -t verbose --project .",
-    "test": "yarn build && ts-node node_modules/tape/bin/tape ./test/**/*.test.ts | tap-spec",
+    "test": "yarn build && node node_modules/tape/bin/tape ./dist/test/**/*.test.js | tap-spec",
     "watch": "nodemon"
   },
   "dependencies": {
