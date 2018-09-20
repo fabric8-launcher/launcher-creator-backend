@@ -9,14 +9,15 @@
   "scripts": {
     "install": "./install.sh",
     "build": "tsc --project .",
-    "start": "npm run build && node dist/lib/server.js",
+    "start": "node dist/lib/server.js",
     "start:dev": "ts-node ./lib/server.ts",
     "apply": "ts-node ./lib/core/deploy/apply.ts",
     "deploy": "ts-node ./lib/core/deploy/deploy.ts",
     "zip": "ts-node ./lib/core/deploy/zip.ts",
     "lint": "tslint -t verbose --project . && eslint ./lib/capabilities && eslint ./lib/generators",
     "test": "yarn build && ts-node node_modules/tape/bin/tape ./test/**/*.test.ts | tap-spec",
-    "watch": "nodemon"
+    "watch": "nodemon",
+    "postinstall": "npm run build"
   },
   "dependencies": {
     "archiver": "^3.0.0",
