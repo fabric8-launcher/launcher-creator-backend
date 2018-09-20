@@ -24,20 +24,20 @@ $ yarn install
 To get a list of the capabilities you can apply to your project run:
 
 ```
-$ yarn run -s apply --list
+$ yarn -s apply --list
 ```
 
 To apply a specific capability you need its name and which properties to pass. Use the `--help` option to find out what
 properties are supported/required by the Capability, for example:
 
 ```
-$ yarn run -s apply database --help
+$ yarn -s apply database --help
 ```
 
 To actually apply the Capability to the project pass all the required arguments and properties, for example:
 
 ```
-$ yarn run -s apply path/to/project "my-app" vertx database '{ "databaseType": "mysql" }'
+$ yarn -s apply path/to/project "my-app" vertx database '{ "databaseType": "mysql" }'
 ```
 
 ## Stages
