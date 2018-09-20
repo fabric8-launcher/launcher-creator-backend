@@ -2,25 +2,25 @@
 import { readdir, statSync } from 'fs-extra';
 
 export function getCapabilityModule(capability) {
-    return require('../../capabilities/' + capability);
+    return require('../../../catalog/capabilities/' + capability);
 }
 
 export function listCapabilities() {
-    return readdir('./lib/capabilities')
+    return readdir('./catalog/capabilities')
         .then(files => files
-            .filter(f => statSync('./lib/capabilities/' + f).isDirectory())
+            .filter(f => statSync('./catalog/capabilities/' + f).isDirectory())
             .map(f => ({'module': f, ...getCapabilityModule(f).info()}))
         );
 }
 
 export function getGeneratorModule(generator) {
-    return require('../../generators/' + generator);
+    return require('../../../catalog/generators/' + generator);
 }
 
 export function listGenerators() {
-    return readdir('./lib/generators')
+    return readdir('./catalog/generators')
         .then(files => files
-            .filter(f => statSync('./lib/generators/' + f).isDirectory())
+            .filter(f => statSync('./catalog/generators/' + f).isDirectory())
             .map(f => ({'module': f, ...getGeneratorModule(f).info()}))
         );
 }

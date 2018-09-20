@@ -1,7 +1,7 @@
 
 import { copy } from 'fs-extra' ;
 import { join } from 'path';
-import { newApp } from '../../core/resources';
+import { newApp } from '../../../lib/core/resources/index';
 
 export function apply(applyGenerator, resources, targetDir, props: any = {}) {
     return copy(join(__dirname, 'files'), targetDir)

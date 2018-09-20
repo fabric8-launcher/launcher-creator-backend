@@ -1,7 +1,25 @@
 {
-  "name": "REST",
-  "description": "Adds REST capability to the user's project",
+  "type": "capability",
+  "name": "Database",
+  "description": "Adds Database capability to the user's project",
   "props": {
+    "databaseType": {
+      "name": "Database Type",
+      "description": "The type of database to use",
+      "required": true,
+      "type": "enum",
+      "values": [
+        {
+          "id": "postgresql",
+          "name": "PostgreSQL"
+        },
+        {
+          "id": "mysql",
+          "name": "mySQL"
+        }
+      ],
+      "default": "postgresql"
+    },
     "runtime": {
       "name": "Runtime Type",
       "description": "The type of runtime to use",

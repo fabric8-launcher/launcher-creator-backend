@@ -1,9 +1,9 @@
 
 import { copy } from 'fs-extra';
 import { join } from 'path';
-import { mergePoms } from '../../core/maven';
-import { transformFiles } from '../../core/template';
-import { cases } from '../../core/template/transformers';
+import { mergePoms } from '../../../lib/core/maven/index';
+import { transformFiles } from '../../../lib/core/template/index';
+import { cases } from '../../../lib/core/template/transformers';
 
 export function apply(applyGenerator, resources, targetDir, props: any = {}) {
     // First copy the files from the base Vert.x platform module

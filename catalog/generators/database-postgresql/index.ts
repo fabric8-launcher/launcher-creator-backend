@@ -1,5 +1,5 @@
 
-import { newDatabaseUsingSecret } from '../../core/resources';
+import { newDatabaseUsingSecret } from '../../../lib/core/resources/index';
 
 export function apply(applyGenerator, resources, targetDir, props: any = {}) {
     return newDatabaseUsingSecret(resources, props.application, 'postgresql', props.databaseUri, props.secretName, {}, {
