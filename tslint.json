@@ -35,6 +35,7 @@
     "ordered-imports": false,
     "no-empty-interface": false,
     "no-empty": false,
+    "one-variable-per-declaration": false,
     "object-literal-key-quotes": [
       true,
       "always"
