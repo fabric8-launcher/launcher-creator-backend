@@ -45,8 +45,13 @@ public class CrudApplication extends AbstractVerticle {
 
     // Create a JDBC client
     JDBCClient jdbc = JDBCClient.createShared(vertx, new JsonObject()
+      //$$CASE:databaseType:postgresql
       .put("url", "jdbc:postgresql://" + getEnv("MY_DATABASE_SERVICE_HOST", "localhost") + ":5432/my_data")
       .put("driver_class", "org.postgresql.Driver")
+      //$$CASE:databaseType:mysql
+      //.put("url", "jdbc:mysql://" + getEnv("MY_DATABASE_SERVICE_HOST", "localhost") + ":3306/my_data")
+      //.put("driver_class", "com.mysql.jdbc.Driver")
+      //$$
       .put("user", getEnv("DB_USERNAME", "user"))
       .put("password", getEnv("DB_PASSWORD", "password"))
     );
