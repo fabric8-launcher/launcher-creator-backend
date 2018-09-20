@@ -7,11 +7,15 @@ import { cases } from '../../lib/core/template/transformers';
 
 const testContents = `
     function connect(host) {
-    //$$CASE:database:postgresql
+    //{{if database == postgresql}}
         return ConnectionManager.connect("jdbc:postgresql" + host);
-    //$$CASE:database:mysql
+    //{{else if database==mysql }}
     //    return ConnectionManager.connect("jdbc:mysql" + host);
-    //$$
+    //{{else if booleanOpt }}
+    //    throw new Exception("Dummy option");
+    //{{else}}
+    //    throw new Exception("Not implemented");
+    //{{end}}
     }
 `;
 
@@ -27,7 +31,19 @@ const resultMysql = `
     }
 `;
 
-test('transform cases option 1', (t) => {
+const resultBool = `
+    function connect(host) {
+        throw new Exception("Dummy option");
+    }
+`;
+
+const resultElse = `
+    function connect(host) {
+        throw new Exception("Not implemented");
+    }
+`;
+
+test('transform cases compare 1', (t) => {
     t.plan(1);
 
     // Write test file
@@ -44,7 +60,7 @@ test('transform cases option 1', (t) => {
         });
 });
 
-test('transform cases option 2', (t) => {
+test('transform cases compare 2', (t) => {
     t.plan(1);
 
     // Write test file
@@ -57,6 +73,40 @@ test('transform cases option 2', (t) => {
         .then((tfn: string) => {
             const result = readFileSync(tfn, 'utf8');
             const expected = resultMysql;
+            t.is(result, expected);
+        });
+});
+
+test('transform cases exist', (t) => {
+    t.plan(1);
+
+    // Write test file
+    const targetFile = fileSync();
+    writeFileSync(targetFile.name, testContents, 'utf8');
+
+    const props = {'booleanOpt': true};
+
+    transform(targetFile.name, targetFile.name, cases(props))
+        .then((tfn: string) => {
+            const result = readFileSync(tfn, 'utf8');
+            const expected = resultBool;
+            t.is(result, expected);
+        });
+});
+
+test('transform cases else', (t) => {
+    t.plan(1);
+
+    // Write test file
+    const targetFile = fileSync();
+    writeFileSync(targetFile.name, testContents, 'utf8');
+
+    const props = {};
+
+    transform(targetFile.name, targetFile.name, cases(props))
+        .then((tfn: string) => {
+            const result = readFileSync(tfn, 'utf8');
+            const expected = resultElse;
             t.is(result, expected);
         });
 });
