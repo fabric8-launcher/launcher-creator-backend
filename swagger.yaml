@@ -1,7 +1,9 @@
 openapi: 3.0.0
 servers:
-  - url: http://api-creator-backend.devtools-dev.ext.devshift.net/
-    description: Development server
+- url: http://api-creator-backend.devtools-dev.ext.devshift.net/
+  description: Development server
+- url: http://localhost:8081
+  description: Local Development
 
 info:
   version: "1.0.0"
@@ -11,9 +13,9 @@ info:
     launcher-creator-backend component
 
 security:
-  - application:
-      - read
-      - write
+- application:
+  - read
+  - write
 
 paths:
   /runtimes:
@@ -23,7 +25,7 @@ paths:
       description: >-
         This endpoint returns all known Runtimes
       tags:
-        - runtimes
+      - runtimes
       responses:
         '200':
           description: OK
@@ -40,7 +42,7 @@ paths:
       description: >-
         This endpoint returns all known Capabilities
       tags:
-        - capabilities
+      - capabilities
       responses:
         '200':
           description: OK
@@ -50,39 +52,81 @@ paths:
                 $ref: '#/components/schemas/Capability'
         '404':
           description: Not Found
-  /create:
+  /zip:
     get:
       summary: Returns a ZIP containing a generated project
       security: []
       description: >-
         This endpoint returns all ZIP containing code that was
-        generated using the specified Capability
+        generated using the specified Capabilities
       tags:
-        - zip
+      - zip
       parameters:
-        - name: name
-          in: query
-          required: true
-          schema:
-            type: string
-          description: The name to be used for the created capability
-        - name: capability
-          in: query
-          required: true
-          schema:
-            type: string
-          description: The capability that should be created
-        - name: props
-          in: query
-          required: true
-          schema:
+      - name: name
+        in: query
+        required: true
+        schema:
+          type: string
+        description: The application name to use for the project
+      - name: runtime
+        in: query
+        required: true
+        schema:
+          type: string
+        description: The runtime to use for the project
+      - name: capability
+        in: query
+        required: true
+        schema:
+          type: array
+          items:
             type: object
-          description: The properties to pass to the capability
+            properties:
+              module:
+                type: string
+        description: The capabilities to add to the project
       responses:
         '200':
           description: OK
           content:
             application/zip: {}
+        '404':
+          description: Not Found
+  /launch:
+    post:
+      summary: Pushes a generated project to GitHub and OpenShift
+      security:
+      - bearerAuth: []
+      description: >-
+        This endpoint pushes code that was generated using the specified
+        Capabilities to a user's GitHub and OpenShift accounts
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                name:
+                  description: The application name to use for the project
+                  type: string
+                runtime:
+                  description: The runtime to use for the project
+                  type: string
+                capability:
+                  description: The capabilities to add to the project
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      module:
+                        type: string
+              required:
+              - name
+              - runtime
+              - capability
+      responses:
+        '200':
+          description: OK
         '404':
           description: Not Found
 
