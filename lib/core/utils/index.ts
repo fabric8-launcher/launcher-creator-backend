@@ -18,31 +18,11 @@ export function moduleName(module) {
 
 export function zipFolder(out, dir, archiveFolderName) {
     const archive = Archiver('zip');
-    const promise = new Promise((resolve, reject) => {
-        // good practice to catch warnings (ie stat failures and other non-blocking errors)
-        archive.on('warning', err => {
-            if (err.code === 'ENOENT') {
-                // log warning
-                console.log(err);
-            } else {
-                reject(err);
-            }
-        });
-        // good practice to catch this error explicitly
-        archive.on('error', err => {
-            reject(err);
-        });
-        // Perform an action after closing
-        archive.on('close', () => {
-            resolve();
-        });
-    });
     // Send the file to the output.
     archive.pipe(out);
     // append files from tempDir, making the appName as root
     archive.directory(dir, archiveFolderName);
-    archive.finalize();
-    return promise;
+    return Promise.resolve(archive.finalize());
 }
 
 // Function composition in regular way from right to left (in reverse order of the arguments)
