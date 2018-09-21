@@ -12,7 +12,7 @@
     "clean": "rm -rf ./dist",
     "build": "./build.sh",
     "start": "node dist/lib/server.js",
-    "start:dev": "ts-node ./lib/server.ts",
+    "start:dev": "ts-node ./lib/server.ts 8081",
     "apply": "ts-node ./lib/core/deploy/apply.ts",
     "deploy": "ts-node ./lib/core/deploy/deploy.ts",
     "zip": "ts-node ./lib/core/deploy/zip.ts",

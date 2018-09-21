@@ -27,41 +27,57 @@ app.use('/swagger.yaml', express.static('./swagger.yaml'));
 app.get('/capabilities', (req, res) => {
     catalog.listCapabilities()
         .then(caps => res.status(200).send(caps))
-        .catch(err => res.status(500).send(err));
+        .catch(err => res.status(500).send(result(500, err)));
 });
 
 app.get('/generators', (req, res) => {
     catalog.listGenerators()
         .then(caps => res.status(200).send(caps))
-        .catch(err => res.status(500).send(err));
+        .catch(err => res.status(500).send(result(500, err)));
 });
 
 app.get('/runtimes', (req, res) => {
     catalog.listRuntimes()
         .then(list => res.status(200).send(list))
-        .catch(err => res.status(500).send(err));
+        .catch(err => res.status(500).send(result(500, err)));
 });
 
-app.get('/create', (req, res) => {
+app.get('/zip', (req, res) => {
     // Create temp dir
     tmp.dir({'unsafeCleanup': true}, (err, tempDir, cleanTempDir) => {
-        // Generate contents TODO: Use request parameters
-        const appName = 'my-database';
-        deploy.apply(resources({}), tempDir, appName, 'vertx', [{ 'module': 'database', 'databaseType' : 'postgresql' }])
+        // Generate contents
+        deploy.apply(resources({}), tempDir, req.query.name, req.query.runtime, normalizeCapabilities(req.query.capabilities))
             .then(() => {
                 // Tell the browser that this is a zip file.
                 res.writeHead(200, {
                     'Content-Type': 'application/zip',
-                    'Content-disposition': `attachment; filename=${appName}.zip`
+                    'Content-disposition': `attachment; filename=${req.query.name}.zip`
                 });
-                return zipFolder(res, tempDir, appName)
+                return zipFolder(res, tempDir, req.query.name)
                     .finally(() => cleanTempDir());
             })
-            .catch(promErr => res.status(500).send(promErr));
+            .catch(promErr => res.status(500).send(result(500, promErr)));
     });
 });
 
-const server = app.listen(8080, onListening);
+function normalizeCapabilities(items) {
+    return Array.isArray(items) ? items.map(i => (i.trim().startsWith('{')) ? JSON.parse(i) : {'module': i}) : [];
+}
+
+function result(code, msg) {
+    const res = { 'code': code };
+    if (msg instanceof Error) {
+        res['message'] = msg.toString();
+        if (msg.stack) {
+            res['stack'] = msg.stack.toString();
+        }
+    } else if (msg) {
+        res['message'] = msg.toString();
+    }
+    return res;
+}
+
+const server = app.listen(parseInt(process.argv[2] || '8080', 10), onListening);
 
 function onListening(): void {
     const address = server.address();
