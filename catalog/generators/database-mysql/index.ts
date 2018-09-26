@@ -2,12 +2,11 @@
 import { newDatabaseUsingSecret } from '../../../lib/core/resources/index';
 
 export function apply(applyGenerator, resources, targetDir, props: any = {}) {
-    return newDatabaseUsingSecret(resources, props.application, 'mysql', props.databaseUri, props.secretName, {
-        'MYSQL_ROOT_PASSWORD': 'verysecretrootpassword'
-    }, {
-        'MYSQL_DATABASE': 'database',
-        'MYSQL_USER': 'user',
-        'MYSQL_PASSWORD': 'password'
+    return newDatabaseUsingSecret(resources, props.application, 'mysql', {
+        'MYSQL_ROOT_PASSWORD': 'verysecretrootpassword',
+        'MYSQL_DATABASE': { 'secret': props.secretName, 'key': 'database' },
+        'MYSQL_USER': { 'secret': props.secretName, 'key': 'user'},
+        'MYSQL_PASSWORD': { 'secret': props.secretName, 'key': 'password'}
     });
 }
 

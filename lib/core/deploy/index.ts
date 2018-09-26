@@ -6,7 +6,7 @@ import YAML from 'yaml';
 
 import { validate } from '../info';
 import { getCapabilityModule, getGeneratorModule } from '../catalog';
-import { applyFromFile } from '../resources';
+import { applyFromFile } from '../oc';
 import { zipFolder } from '../utils';
 
 // Returns the name of the deployment file in the given directory

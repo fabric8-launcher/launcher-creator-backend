@@ -9,9 +9,9 @@ export function apply(applyGenerator, resources, targetDir, props: any = {}) {
         .then(() => newApp(
             props.application + '-vertx',
             props.application,
-            'registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift~.',
-            {},
-            targetDir))
+            'registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift',
+            targetDir,
+            {}))
         .then(res => resources.add(res));
 }
 

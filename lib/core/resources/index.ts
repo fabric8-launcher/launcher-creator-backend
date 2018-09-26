@@ -1,16 +1,29 @@
 
 import * as _ from 'lodash';
-// @ts-ignore
-import { spawn } from 'child-process-promise';
-// @ts-ignore
-import * as streamToString from 'stream-to-string';
-import { Readable } from 'stream';
+import { readTemplate } from './templates';
+
+interface Metadata {
+    name?: string;
+    annotations?: {
+        [key: string]: string;
+    };
+    [key: string]: any;
+}
+
+interface Resource {
+    apiVersion?: string;
+    kind: string;
+    items?: Resource[];
+    objects?: Resource[];
+    metadata?: Metadata;
+    [key: string]: any;
+}
 
 // Wrapper class for an object containing OpenShift/K8s resources.
 // It intends to make it easier to query and update the resources
-class Resources {
+export class Resources {
 
-    private res: any;
+    private res: Resource;
 
     constructor(res) {
         this.res = res;
@@ -27,20 +40,19 @@ class Resources {
             return Resources.asList(res.json);
         } else if (Array.isArray(res)) {
             return res;
-        } else if (res.kind && res.kind.toLowerCase() === 'list') {
-            return res.items || [];
-        } else if (res.kind && res.kind.toLowerCase() === 'template') {
-            return res.objects || [];
-        } else if (res.kind) {
-            return [res];
+        } else if (typeof res === 'object') {
+            if (res.kind && res.kind.toLowerCase() === 'list') {
+                return res.items || [];
+            } else if (res.kind && res.kind.toLowerCase() === 'template') {
+                return res.objects || [];
+            } else if (res.kind) {
+                return [res];
+            } else {
+                return [];
+            }
         } else {
-            return [];
+            throw new Error(`Unsupported resource type '${typeof res}', should be object or array`);
         }
-    }
-
-    // Returns true if no resources were found in the given argument
-    public static isEmpty(res) {
-        return Resources.asList(res).length === 0;
     }
 
     // Takes an array of resources and turns them into a List
@@ -60,6 +72,16 @@ class Resources {
     // Selects resources by their 'metadata/name' property
     public static selectByName(res, name) {
         return Resources.asList(res).filter(r => r.metadata && r.metadata.name === name);
+    }
+
+    // Returns an array of the separate resource items
+    get items() {
+        return Resources.asList(this.res);
+    }
+
+    // Returns true if no resources were found in the given argument
+    public isEmpty() {
+        return this.items.length === 0;
     }
 
     // Returns the wrapped object
@@ -215,30 +237,11 @@ class Resources {
 
 // Wraps the given 'res' object in a instance of Resources.
 // If 'res' is already of type Resources it will be returned as-is
-export function resources(res) {
+export function resources(res): Resources {
     return (res instanceof Resources) ? res : new Resources(res);
 }
 
-// Returns a list of resources that when applied will create
-// an instance of the given image or template.
-export function newApp(name, appName, imageName, env = {}, cwd?: any) {
-    const envStr = Object.entries(env).map(([key, val]) => `-e${key}=${val}`);
-    const opts = {cwd};
-    const proc = spawn('oc', ['new-app',
-        `--name=${name}`,
-        `--labels=app=${appName}`,
-        ...envStr,
-        imageName,
-        '--dry-run',
-        '-o', 'json'], opts);
-    proc.catch((error) => {
-        console.error(`Spawn error: ${error}`);
-        throw error;
-    });
-    return streamToString(proc.childProcess.stdout).then(json => resources(JSON.parse(json)));
-}
-
-function setEnv(targetEnv, env, resFunc) {
+function mergeEnv(targetEnv, env, resFunc) {
     let result = targetEnv || [];
     Object.entries(env).forEach(([key, val]) => {
         result = [...result.filter(e => e.name !== key), resFunc(key, val)];
@@ -246,37 +249,75 @@ function setEnv(targetEnv, env, resFunc) {
     return result;
 }
 
+function mergeEnvWithRefs(targetEnv, complexEnv) {
+    return mergeEnv(targetEnv, complexEnv, (envKey, envValue) => {
+        if (typeof envValue === 'object') {
+            let from, name;
+            if (envValue.secret) {
+                from = 'secretKeyRef';
+                name = envValue.secret;
+            } else if (envValue.configMap) {
+                from = 'configMapKeyRef';
+                name = envValue.configMap;
+            } else {
+                throw new Error("Missing ENV value 'secret' or 'configMap' property");
+            }
+            const envVar = {
+                'name': envKey,
+                'valueFrom': {}
+            };
+            envVar.valueFrom[from] = {
+                'name': name,
+                'key': envValue.key
+            };
+            return envVar;
+        } else {
+            return {
+                'name': envKey,
+                'value': envValue.toString()
+            };
+        }
+    });
+}
+
 // Updates the environment variables for the DeploymentConfig selected
-// by 'dcName' with the given variables in 'env' from a previously
-// created Secret indicated by 'secretName'
-export function setDeploymentEnvFromSecret(res, secretName, env, dcName?: any) {
+// by 'dcName' with the given variables in 'env'
+function setDeploymentEnv(res: Resources, env, dcName?: any): Resources {
     if (res.deploymentConfigs.length > 0) {
         const dc = (dcName) ? res.deploymentConfig(dcName) : res.deploymentConfigs[0];
         const dcc = _.get(dc, 'spec.template.spec.containers[0]');
         if (dcc) {
-            dcc.env = setEnv(dcc.env, env, (envKey, secretKey) => ({
-                'name': envKey,
-                'valueFrom': {
-                    'secretKeyRef': {
-                        'name': secretName,
-                        'key': secretKey
-                    }
-                }
-            }));
+            dcc.env = mergeEnvWithRefs(dcc.env, env);
         }
     }
     return res;
+}
+
+function setAppLabel(res: Resources, label?: string): Resources {
+    res.items.forEach(r => {
+        _.set(r, 'metadata.labels.app', label);
+    });
+    return res;
+}
+
+// Returns a list of resources that when applied will create
+// an instance of the given image or template.
+export function newApp(appName: string, appLabel: string, imageName: string, sourceUri: string, env = {}): Promise<Resources> {
+    return readTemplate(imageName, appName, appLabel)
+        .then(json => resources(json))
+        .then((appRes) => setAppLabel(appRes, appLabel))
+        .then((appRes) => setDeploymentEnv(appRes, env));
 }
 
 // Helper function that creates a database using the given 'dbImageName'
 // and the given environment variables from 'env' and 'secretEnv' (the
 // latter being taken from a previously created Secret indicated by
 // 'secretName').
-export function newDatabaseUsingSecret(res, appName, dbImageName, dbServiceName, secretName, env, secretEnv) {
-    if (res.service(dbServiceName).length === 0) {
+export function newDatabaseUsingSecret(res: Resources, appName: string, dbImageName: string, env) {
+    const dbName = appName + '-database';
+    if (res.service(dbName).length === 0) {
         // Create the database resource definitions
-        return newApp(appName + '-database', appName, dbImageName, env)
-            .then((appRes) => setDeploymentEnvFromSecret(appRes, secretName, secretEnv))
+        return newApp(dbName, appName, dbImageName, null, env)
             .then((appRes) => {
                 const resNew = res.add(appRes);
                 // console.log(`Database ${dbServiceName} added`);
@@ -284,33 +325,6 @@ export function newDatabaseUsingSecret(res, appName, dbImageName, dbServiceName,
             });
     } else {
         // console.log(`Database ${dbServiceName} already exists`);
+        return Promise.resolve(res);
     }
-    return Promise.resolve(resources);
-}
-
-// Applies the given resources to the active OpenShift instance
-export function apply(res) {
-    // Run 'oc apply' using the given resources
-    const proc = spawn('oc', ['apply', '-f', '-'], {'stdio': ['pipe', 1, 2]})
-        .catch((error) => {
-            console.error(`Spawn error: ${error}`);
-            throw error;
-        });
-    // Create a Stream containing the resource's json as text and pipe it to the oc command
-    const ins = new Readable();
-    ins.push(JSON.stringify(res.json));
-    ins.push(null);
-    ins.pipe(proc.childProcess.stdin);
-    return proc;
-}
-
-// Applies the given resources to the active OpenShift instance
-export function applyFromFile(resourcesFile) {
-    // Run 'oc apply' using the given resources
-    const proc = spawn('oc', ['apply', '-f', resourcesFile])
-        .catch((error) => {
-            console.error(`Spawn error: ${error}`);
-            throw error;
-        });
-    return proc;
 }
