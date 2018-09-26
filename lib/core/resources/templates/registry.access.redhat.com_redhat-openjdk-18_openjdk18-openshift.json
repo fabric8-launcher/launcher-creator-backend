@@ -1,0 +1,261 @@
+{
+  "kind": "List",
+  "apiVersion": "v1",
+  "metadata": {},
+  "items": [
+    {
+      "kind": "ImageStream",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "openjdk18-openshift",
+        "creationTimestamp": null,
+        "labels": {
+          "app": "placeholder-app-label-d46881878f594a2dadfd963843452aab"
+        },
+        "annotations": {
+          "openshift.io/generated-by": "OpenShiftNewApp"
+        }
+      },
+      "spec": {
+        "lookupPolicy": {
+          "local": false
+        },
+        "tags": [
+          {
+            "name": "latest",
+            "annotations": {
+              "openshift.io/imported-from": "registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift"
+            },
+            "from": {
+              "kind": "DockerImage",
+              "name": "registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift"
+            },
+            "generation": null,
+            "importPolicy": {},
+            "referencePolicy": {
+              "type": ""
+            }
+          }
+        ]
+      },
+      "status": {
+        "dockerImageRepository": ""
+      }
+    },
+    {
+      "kind": "ImageStream",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "placeholder-app-name-730040e0c873453f877c10cd07912d1f",
+        "creationTimestamp": null,
+        "labels": {
+          "app": "placeholder-app-label-d46881878f594a2dadfd963843452aab"
+        },
+        "annotations": {
+          "openshift.io/generated-by": "OpenShiftNewApp"
+        }
+      },
+      "spec": {
+        "lookupPolicy": {
+          "local": false
+        }
+      },
+      "status": {
+        "dockerImageRepository": ""
+      }
+    },
+    {
+      "kind": "BuildConfig",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "placeholder-app-name-730040e0c873453f877c10cd07912d1f",
+        "creationTimestamp": null,
+        "labels": {
+          "app": "placeholder-app-label-d46881878f594a2dadfd963843452aab"
+        },
+        "annotations": {
+          "openshift.io/generated-by": "OpenShiftNewApp"
+        }
+      },
+      "spec": {
+        "triggers": [
+          {
+            "type": "GitHub",
+            "github": {
+              "secret": "KteuVddsX-xGtc9OzluL"
+            }
+          },
+          {
+            "type": "Generic",
+            "generic": {
+              "secret": "pF6j15udpirCsrA20maP"
+            }
+          },
+          {
+            "type": "ConfigChange"
+          },
+          {
+            "type": "ImageChange",
+            "imageChange": {}
+          }
+        ],
+        "source": {
+          "type": "Git",
+          "git": {
+            "uri": "https://github.com/dummy/dummy"
+          }
+        },
+        "strategy": {
+          "type": "Source",
+          "sourceStrategy": {
+            "from": {
+              "kind": "ImageStreamTag",
+              "name": "openjdk18-openshift:latest"
+            }
+          }
+        },
+        "output": {
+          "to": {
+            "kind": "ImageStreamTag",
+            "name": "placeholder-app-name-730040e0c873453f877c10cd07912d1f:latest"
+          }
+        },
+        "resources": {},
+        "postCommit": {},
+        "nodeSelector": null
+      },
+      "status": {
+        "lastVersion": 0
+      }
+    },
+    {
+      "kind": "DeploymentConfig",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "placeholder-app-name-730040e0c873453f877c10cd07912d1f",
+        "creationTimestamp": null,
+        "labels": {
+          "app": "placeholder-app-label-d46881878f594a2dadfd963843452aab"
+        },
+        "annotations": {
+          "openshift.io/generated-by": "OpenShiftNewApp"
+        }
+      },
+      "spec": {
+        "strategy": {
+          "resources": {}
+        },
+        "triggers": [
+          {
+            "type": "ConfigChange"
+          },
+          {
+            "type": "ImageChange",
+            "imageChangeParams": {
+              "automatic": true,
+              "containerNames": [
+                "placeholder-app-name-730040e0c873453f877c10cd07912d1f"
+              ],
+              "from": {
+                "kind": "ImageStreamTag",
+                "name": "placeholder-app-name-730040e0c873453f877c10cd07912d1f:latest"
+              }
+            }
+          }
+        ],
+        "replicas": 1,
+        "test": false,
+        "selector": {
+          "app": "placeholder-app-label-d46881878f594a2dadfd963843452aab",
+          "deploymentconfig": "placeholder-app-name-730040e0c873453f877c10cd07912d1f"
+        },
+        "template": {
+          "metadata": {
+            "creationTimestamp": null,
+            "labels": {
+              "app": "placeholder-app-label-d46881878f594a2dadfd963843452aab",
+              "deploymentconfig": "placeholder-app-name-730040e0c873453f877c10cd07912d1f"
+            },
+            "annotations": {
+              "openshift.io/generated-by": "OpenShiftNewApp"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "name": "placeholder-app-name-730040e0c873453f877c10cd07912d1f",
+                "image": "placeholder-app-name-730040e0c873453f877c10cd07912d1f:latest",
+                "ports": [
+                  {
+                    "containerPort": 8080,
+                    "protocol": "TCP"
+                  },
+                  {
+                    "containerPort": 8443,
+                    "protocol": "TCP"
+                  },
+                  {
+                    "containerPort": 8778,
+                    "protocol": "TCP"
+                  }
+                ],
+                "resources": {}
+              }
+            ]
+          }
+        }
+      },
+      "status": {
+        "latestVersion": 0,
+        "observedGeneration": 0,
+        "replicas": 0,
+        "updatedReplicas": 0,
+        "availableReplicas": 0,
+        "unavailableReplicas": 0
+      }
+    },
+    {
+      "kind": "Service",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "placeholder-app-name-730040e0c873453f877c10cd07912d1f",
+        "creationTimestamp": null,
+        "labels": {
+          "app": "placeholder-app-label-d46881878f594a2dadfd963843452aab"
+        },
+        "annotations": {
+          "openshift.io/generated-by": "OpenShiftNewApp"
+        }
+      },
+      "spec": {
+        "ports": [
+          {
+            "name": "8080-tcp",
+            "protocol": "TCP",
+            "port": 8080,
+            "targetPort": 8080
+          },
+          {
+            "name": "8443-tcp",
+            "protocol": "TCP",
+            "port": 8443,
+            "targetPort": 8443
+          },
+          {
+            "name": "8778-tcp",
+            "protocol": "TCP",
+            "port": 8778,
+            "targetPort": 8778
+          }
+        ],
+        "selector": {
+          "app": "placeholder-app-label-d46881878f594a2dadfd963843452aab",
+          "deploymentconfig": "placeholder-app-name-730040e0c873453f877c10cd07912d1f"
+        }
+      },
+      "status": {
+        "loadBalancer": {}
+      }
+    }
+  ]
+}

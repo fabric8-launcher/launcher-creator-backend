@@ -1,0 +1,175 @@
+{
+  "kind": "List",
+  "apiVersion": "v1",
+  "metadata": {},
+  "items": [
+    {
+      "kind": "ImageStreamTag",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "placeholder-app-name-730040e0c873453f877c10cd07912d1f:9.6",
+        "creationTimestamp": null,
+        "labels": {
+          "app": "placeholder-app-label-d46881878f594a2dadfd963843452aab"
+        },
+        "annotations": {
+          "openshift.io/generated-by": "OpenShiftNewApp",
+          "openshift.io/imported-from": "172.30.1.1:5000/openshift/postgresql:9.6"
+        }
+      },
+      "tag": {
+        "name": "9.6",
+        "annotations": null,
+        "from": {
+          "kind": "DockerImage",
+          "name": "172.30.1.1:5000/openshift/postgresql:9.6"
+        },
+        "generation": null,
+        "importPolicy": {},
+        "referencePolicy": {
+          "type": ""
+        }
+      },
+      "generation": 0,
+      "lookupPolicy": {
+        "local": false
+      },
+      "image": {
+        "metadata": {
+          "creationTimestamp": null
+        },
+        "dockerImageMetadata": {
+          "kind": "DockerImage",
+          "apiVersion": "1.0",
+          "Id": "",
+          "Created": null,
+          "ContainerConfig": {}
+        },
+        "dockerImageMetadataVersion": "1.0",
+        "dockerImageLayers": null
+      }
+    },
+    {
+      "kind": "DeploymentConfig",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "placeholder-app-name-730040e0c873453f877c10cd07912d1f",
+        "creationTimestamp": null,
+        "labels": {
+          "app": "placeholder-app-label-d46881878f594a2dadfd963843452aab"
+        },
+        "annotations": {
+          "openshift.io/generated-by": "OpenShiftNewApp"
+        }
+      },
+      "spec": {
+        "strategy": {
+          "resources": {}
+        },
+        "triggers": [
+          {
+            "type": "ConfigChange"
+          },
+          {
+            "type": "ImageChange",
+            "imageChangeParams": {
+              "automatic": true,
+              "containerNames": [
+                "placeholder-app-name-730040e0c873453f877c10cd07912d1f"
+              ],
+              "from": {
+                "kind": "ImageStreamTag",
+                "namespace": "openshift",
+                "name": "postgresql:9.6"
+              }
+            }
+          }
+        ],
+        "replicas": 1,
+        "test": false,
+        "selector": {
+          "app": "placeholder-app-label-d46881878f594a2dadfd963843452aab",
+          "deploymentconfig": "placeholder-app-name-730040e0c873453f877c10cd07912d1f"
+        },
+        "template": {
+          "metadata": {
+            "creationTimestamp": null,
+            "labels": {
+              "app": "placeholder-app-label-d46881878f594a2dadfd963843452aab",
+              "deploymentconfig": "placeholder-app-name-730040e0c873453f877c10cd07912d1f"
+            },
+            "annotations": {
+              "openshift.io/generated-by": "OpenShiftNewApp"
+            }
+          },
+          "spec": {
+            "volumes": [
+              {
+                "name": "placeholder-app-name-730040e0c873453f877c10cd07912d1f-volume-1",
+                "emptyDir": {}
+              }
+            ],
+            "containers": [
+              {
+                "name": "placeholder-app-name-730040e0c873453f877c10cd07912d1f",
+                "image": "172.30.1.1:5000/openshift/postgresql:9.6",
+                "ports": [
+                  {
+                    "containerPort": 5432,
+                    "protocol": "TCP"
+                  }
+                ],
+                "resources": {},
+                "volumeMounts": [
+                  {
+                    "name": "placeholder-app-name-730040e0c873453f877c10cd07912d1f-volume-1",
+                    "mountPath": "/var/lib/pgsql/data"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "status": {
+        "latestVersion": 0,
+        "observedGeneration": 0,
+        "replicas": 0,
+        "updatedReplicas": 0,
+        "availableReplicas": 0,
+        "unavailableReplicas": 0
+      }
+    },
+    {
+      "kind": "Service",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "placeholder-app-name-730040e0c873453f877c10cd07912d1f",
+        "creationTimestamp": null,
+        "labels": {
+          "app": "placeholder-app-label-d46881878f594a2dadfd963843452aab"
+        },
+        "annotations": {
+          "openshift.io/generated-by": "OpenShiftNewApp"
+        }
+      },
+      "spec": {
+        "ports": [
+          {
+            "name": "5432-tcp",
+            "protocol": "TCP",
+            "port": 5432,
+            "targetPort": 5432
+          }
+        ],
+        "selector": {
+          "app": "placeholder-app-label-d46881878f594a2dadfd963843452aab",
+          "deploymentconfig": "placeholder-app-name-730040e0c873453f877c10cd07912d1f"
+        }
+      },
+      "status": {
+        "loadBalancer": {}
+      }
+    }
+  ]
+}
