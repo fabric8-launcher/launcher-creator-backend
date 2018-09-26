@@ -25,7 +25,7 @@ paths:
       description: >-
         This endpoint returns all known Runtimes
       tags:
-      - runtimes
+      - catalog
       responses:
         '200':
           description: OK
@@ -42,7 +42,7 @@ paths:
       description: >-
         This endpoint returns all known Capabilities
       tags:
-      - capabilities
+      - catalog
       responses:
         '200':
           description: OK
@@ -60,7 +60,7 @@ paths:
         This endpoint returns all ZIP containing code that was
         generated using the specified Capabilities
       tags:
-      - zip
+      - project
       parameters:
       - name: name
         in: query
@@ -100,6 +100,8 @@ paths:
       description: >-
         This endpoint pushes code that was generated using the specified
         Capabilities to a user's GitHub and OpenShift accounts
+      tags:
+      - project
       requestBody:
         content:
           application/x-www-form-urlencoded:
@@ -120,10 +122,26 @@ paths:
                     properties:
                       module:
                         type: string
+                clusterId:
+                  description: The OpenShift cluster to use
+                  type: string
+                projectName:
+                  description: The OpenShift project name to be used
+                  type: string
+                gitOrganization:
+                  description: The Git Organization to push the code
+                  type: string
+                gitRepository:
+                  description: The Git Repository to push the code
+                  type: string
               required:
               - name
               - runtime
               - capability
+              - clusterId
+              - projectName
+              - gitOrganization
+              - gitRepository
       responses:
         '200':
           description: OK
