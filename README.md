@@ -40,13 +40,25 @@ To actually apply the Capability to the project pass all the required arguments 
 $ yarn -s apply path/to/project "my-app" vertx database '{ "databaseType": "mysql" }'
 ```
 
+After the application has been generated it can be deployed in the currently active project on OpenShift by running:
+
+```
+$ yarn -s deploy path/to/project
+```
+
+Now the only thing that is left to do is push the project's code to OpenShift to built and run:
+
+```
+$ yarn -s push path/to/project
+```
+
 ## Stages
 
  - **Apply** Stage - This is where the Generators, executed by the Capabilities, can make changes to the user's project
  and add their own Resources to the final list of OpenShift/K8s Resources that will be created in the user's OpenShift
  environment. In this stage a _Generator_ can copy (template) files from the Generators to the user's project, generate
  files or change already existing files. This is done _only once_ when the user _applies_ the Capability to their project.
-- **Deploy** Stage - This is where the result from a previous **Generate** Stage is taken and installed in an OpenShift
+- **Deploy** Stage - This is where the result from a previous **Apply** Stage is taken and installed in an OpenShift
 instance. Generators and Capabilities don't do anything in this stage (although this might be revisted in the future).
 
 ## Folder structure
