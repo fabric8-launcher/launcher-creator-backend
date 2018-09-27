@@ -39,7 +39,7 @@
       "description": "The Maven Artifact Id for the project",
       "required": true,
       "type": "string",
-      "default": "database-app"
+      "default": "my-app"
     },
     "version": {
       "name": "Version",
