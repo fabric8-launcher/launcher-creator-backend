@@ -148,19 +148,19 @@ export function zip(targetDir, zipFileName) {
     return zipFolder(out, targetDir, archiveFolderName);
 }
 
-export function push(targetDir, pushType) {
+export function push(targetDir: string, pushType: string, follow: boolean = false) {
     // TODO MAKE THIS NOT HARD-CODED!
     const targetJar = targetDir + '/target/my-app-1.0.jar';
     let fromPath;
     if (!pushType) {
-        pushType = pathExistsSync(targetJar) ? '--binary' : '--source';
+        pushType = pathExistsSync(targetJar) ? 'binary' : 'source';
     }
-    if (pushType === '--source') {
+    if (pushType === 'source') {
         fromPath = targetDir;
-    } else if (pushType === '--binary') {
+    } else if (pushType === 'binary') {
         fromPath = targetJar;
     } else {
-        throw new Error(`Unknown push type '${pushType}', should be '--source' or '--binary'`);
+        throw new Error(`Unknown push type '${pushType}', should be 'source' or 'binary'`);
     }
 
     const rf = resourcesFileName(targetDir);
@@ -173,6 +173,6 @@ export function push(targetDir, pushType) {
                 throw new Error(`Multiple BuildConfig resources found in ${rf}, support for this had not been implemented yet!`);
             }
             const bcName = bcs[0].metadata.name;
-            return startBuild(bcName, fromPath);
+            return startBuild(bcName, fromPath, follow);
         });
 }

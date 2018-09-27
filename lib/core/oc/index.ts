@@ -29,7 +29,8 @@ export function newApp(name: string, appName: string, imageName: string, sourceU
 // Applies the given resources to the active OpenShift instance
 export function apply(res) {
     // Run 'oc apply' using the given resources
-    const proc = spawn('oc', ['apply', '-f', '-'], {'stdio': ['pipe', 1, 2]})
+    const opts = { 'stdio': ['pipe', 1, 2] };
+    const proc = spawn('oc', ['apply', '-f', '-'], opts)
         .catch((error) => {
             console.error(`Spawn error: ${error}`);
             return Promise.reject(error);
@@ -45,7 +46,8 @@ export function apply(res) {
 // Applies the given resources to the active OpenShift instance
 export function applyFromFile(resourcesFile) {
     // Run 'oc apply' using the given resources
-    const proc = spawn('oc', ['apply', '-f', resourcesFile])
+    const opts = { 'stdio': ['ignore', 1, 2] };
+    const proc = spawn('oc', ['apply', '-f', resourcesFile], opts)
         .catch((error) => {
             console.error(`Spawn error: ${error}`);
             return Promise.reject(error);
@@ -54,10 +56,15 @@ export function applyFromFile(resourcesFile) {
 }
 
 // Starts a build on OpenShift using either local sources or a previously built local binary
-export function startBuild(buildConfigName: string, fromPath: string) {
+export function startBuild(buildConfigName: string, fromPath: string, follow: boolean = false) {
     // Run 'oc start-build' using the given file or directory
     const fromArg = statSync(fromPath).isDirectory() ? '--from-dir' : '--from-file';
-    const proc = spawn('oc', ['start-build', buildConfigName, fromArg, fromPath])
+    let args = ['start-build', buildConfigName, fromArg, fromPath];
+    if (follow) {
+        args = [ ...args, '--follow' ];
+    }
+    const opts = { 'stdio': [ 'ignore', 1, 2 ] };
+    const proc = spawn('oc', args, opts)
         .catch((error) => {
             console.error(`Spawn error: ${error}`);
             return Promise.reject(error);
