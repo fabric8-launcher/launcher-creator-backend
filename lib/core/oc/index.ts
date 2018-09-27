@@ -2,6 +2,7 @@
 import { spawn } from 'child-process-promise';
 import * as streamToString from 'stream-to-string';
 import { Readable } from 'stream';
+import { statSync } from 'fs-extra';
 
 import { resources, Resources } from '../resources';
 
@@ -45,6 +46,18 @@ export function apply(res) {
 export function applyFromFile(resourcesFile) {
     // Run 'oc apply' using the given resources
     const proc = spawn('oc', ['apply', '-f', resourcesFile])
+        .catch((error) => {
+            console.error(`Spawn error: ${error}`);
+            return Promise.reject(error);
+        });
+    return proc;
+}
+
+// Starts a build on OpenShift using either local sources or a previously built local binary
+export function startBuild(buildConfigName: string, fromPath: string) {
+    // Run 'oc start-build' using the given file or directory
+    const fromArg = statSync(fromPath).isDirectory() ? '--from-dir' : '--from-file';
+    const proc = spawn('oc', ['start-build', buildConfigName, fromArg, fromPath])
         .catch((error) => {
             console.error(`Spawn error: ${error}`);
             return Promise.reject(error);

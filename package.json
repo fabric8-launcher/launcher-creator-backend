@@ -16,6 +16,7 @@
     "apply": "ts-node ./lib/core/deploy/apply.ts",
     "deploy": "ts-node ./lib/core/deploy/deploy.ts",
     "zip": "ts-node ./lib/core/deploy/zip.ts",
+    "push": "ts-node ./lib/core/deploy/push.ts",
     "generate": "ts-node ./lib/core/resources/generate.ts",
     "lint": "tslint -t verbose --project .",
     "test": "npm run build && node node_modules/tape/bin/tape ./dist/test/**/*.test.js | tap-spec",

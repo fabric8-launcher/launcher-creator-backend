@@ -35,7 +35,7 @@ export class Resources {
     // item that's neither a List nor a Template. Will return an empty
     // array if no resources were found at all. And finally if the argument
     // already is an array it will return that as-is.
-    public static asList(res) {
+    public static asList(res): Resource[] {
         if (res instanceof Resources) {
             return Resources.asList(res.json);
         } else if (Array.isArray(res)) {

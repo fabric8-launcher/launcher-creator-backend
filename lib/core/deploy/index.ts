@@ -1,13 +1,14 @@
 
-import { pathExists, readJson, ensureFile, writeFile, createWriteStream } from 'fs-extra';
+import { pathExistsSync, readJson, ensureFile, readFile, writeFile, createWriteStream } from 'fs-extra';
 import { join } from 'path';
 import { isEqual } from 'lodash';
 import YAML from 'yaml';
 
 import { validate } from '../info';
 import { getCapabilityModule, getGeneratorModule } from '../catalog';
-import { applyFromFile } from '../oc';
+import { applyFromFile, startBuild } from '../oc';
 import { zipFolder } from '../utils';
+import { resources, Resources } from '../resources';
 
 // Returns the name of the deployment file in the given directory
 function deploymentFileName(targetDir) {
@@ -23,15 +24,12 @@ function resourcesFileName(targetDir) {
 // contents of the given file or to an empty object
 // if the file wasn't found
 function readDeployment(deploymentFile) {
-    return pathExists(deploymentFile)
-        .then(exists => {
-            if (exists) {
-                return readJson(deploymentFile)
-                    .catch((error) => console.error(`Failed to read deployment file ${deploymentFile}: ${error}`));
-            } else {
-                return {'applications': []};
-            }
-        });
+    if (pathExistsSync(deploymentFile)) {
+        return readJson(deploymentFile)
+            .catch((error) => console.error(`Failed to read deployment file ${deploymentFile}: ${error}`));
+    } else {
+        return Promise.resolve({'applications': []});
+    }
 }
 
 // Returns a promise that will resolve when the given
@@ -67,20 +65,29 @@ function addCapability(deployment, capability) {
 }
 
 // Returns a promise that will resolve when the given
-// resources were written to the given file
-function writeResources(resourcesFile, resources) {
-    return ensureFile(resourcesFile)
-        .then(() => writeFile(resourcesFile, YAML.stringify(resources.json)))
-        .catch((error) => console.error(`Failed to write resources file ${resourcesFile}: ${error}`));
+// resources were read from the given file
+function readResources(resourcesFile): Promise<Resources> {
+    const p = readFile(resourcesFile, 'utf8')
+        .then(text => resources(YAML.parse(text)));
+    p.catch(error => console.error(`Failed to read resources file ${resourcesFile}: ${error}`));
+    return p;
 }
 
-function applyCapability_(applyGenerator, resources, targetDir, props) {
+// Returns a promise that will resolve when the given
+// resources were written to the given file
+function writeResources(resourcesFile, res) {
+    return ensureFile(resourcesFile)
+        .then(() => writeFile(resourcesFile, YAML.stringify(res.json)))
+        .catch(error => console.error(`Failed to write resources file ${resourcesFile}: ${error}`));
+}
+
+function applyCapability_(applyGenerator, res, targetDir, props) {
     const module = getCapabilityModule(props.module);
     const df = deploymentFileName(targetDir);
     const rf = resourcesFileName(targetDir);
     validate(module.info(), props);
-    return module.apply(applyGenerator, resources, targetDir, props)
-        .then(res => writeResources(rf, res))
+    return module.apply(applyGenerator, res, targetDir, props)
+        .then(res2 => writeResources(rf, res2))
         .then(() => readDeployment(df))
         .then(deployment => {
             const newDeployment = addCapability(deployment, props);
@@ -92,14 +99,14 @@ function applyCapability_(applyGenerator, resources, targetDir, props) {
 // Calls `apply()` on the given capability (which allows it to copy, generate
 // and change files in the user's project) and adds information about the
 // capability to the `deployment.json` in the project's root.
-function applyCapability(applyGenerator, resources, targetDir, appName, props) {
+function applyCapability(applyGenerator, res, targetDir, appName, props) {
     props.application = appName;
     props.name = props.name || appName + '-' + props.module + '-1';
-    return applyCapability_(applyGenerator, resources, targetDir, props);
+    return applyCapability_(applyGenerator, res, targetDir, props);
 }
 
 // Calls `applyCapability()` on all the given capabilities
-export function apply(resources, targetDir, appName, runtime, capabilities) {
+export function apply(res, targetDir, appName, runtime, capabilities) {
     const appliedModules = {};
     const appliedModuleProps = {};
 
@@ -127,7 +134,7 @@ export function apply(resources, targetDir, appName, runtime, capabilities) {
 
     const p = Promise.resolve(true);
     return capabilities.reduce((acc, cur) => acc
-        .then(() => applyCapability(applyGenerator, resources, targetDir, appName, { ...cur, 'runtime': runtime })), p);
+        .then(() => applyCapability(applyGenerator, res, targetDir, appName, { ...cur, 'runtime': runtime })), p);
 }
 
 export function deploy(targetDir) {
@@ -139,4 +146,33 @@ export function zip(targetDir, zipFileName) {
     const archiveFolderName = 'app';
     const out = createWriteStream(zipFileName);
     return zipFolder(out, targetDir, archiveFolderName);
+}
+
+export function push(targetDir, pushType) {
+    // TODO MAKE THIS NOT HARD-CODED!
+    const targetJar = targetDir + '/target/my-app-1.0.jar';
+    let fromPath;
+    if (!pushType) {
+        pushType = pathExistsSync(targetJar) ? '--binary' : '--source';
+    }
+    if (pushType === '--source') {
+        fromPath = targetDir;
+    } else if (pushType === '--binary') {
+        fromPath = targetJar;
+    } else {
+        throw new Error(`Unknown push type '${pushType}', should be '--source' or '--binary'`);
+    }
+
+    const rf = resourcesFileName(targetDir);
+    return readResources(rf)
+        .then(res => {
+            const bcs = res.buildConfigs;
+            if (bcs.length === 0) {
+                throw new Error(`Missing BuildConfig in ${rf}`);
+            } else if (bcs.length > 1) {
+                throw new Error(`Multiple BuildConfig resources found in ${rf}, support for this had not been implemented yet!`);
+            }
+            const bcName = bcs[0].metadata.name;
+            return startBuild(bcName, fromPath);
+        });
 }
