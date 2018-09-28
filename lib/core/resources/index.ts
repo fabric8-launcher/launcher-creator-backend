@@ -74,6 +74,11 @@ export class Resources {
         return Resources.asList(res).filter(r => r.metadata && r.metadata.name === name);
     }
 
+    // Selects the first resource that matches the given 'metadata/name' property
+    public static findByName(res, name) {
+        return Resources.asList(res).find(r => r.metadata && r.metadata.name === name);
+    }
+
     // Returns an array of the separate resource items
     get items() {
         return Resources.asList(this.res);
@@ -119,7 +124,7 @@ export class Resources {
     }
 
     public build(name) {
-        return Resources.selectByName(this.builds, name);
+        return Resources.findByName(this.builds, name);
     }
 
     get buildConfigs() {
@@ -127,7 +132,7 @@ export class Resources {
     }
 
     public buildConfig(name) {
-        return Resources.selectByName(this.buildConfigs, name);
+        return Resources.findByName(this.buildConfigs, name);
     }
 
     get configMaps() {
@@ -135,7 +140,7 @@ export class Resources {
     }
 
     public configMap(name) {
-        return Resources.selectByName(this.configMaps, name);
+        return Resources.findByName(this.configMaps, name);
     }
 
     get deployments() {
@@ -143,7 +148,7 @@ export class Resources {
     }
 
     public deployment(name) {
-        return Resources.selectByName(this.deployments, name);
+        return Resources.findByName(this.deployments, name);
     }
 
     get deploymentConfigs() {
@@ -151,7 +156,7 @@ export class Resources {
     }
 
     public deploymentConfig(name) {
-        return Resources.selectByName(this.deploymentConfigs, name);
+        return Resources.findByName(this.deploymentConfigs, name);
     }
 
     get imageStreamImages() {
@@ -159,7 +164,7 @@ export class Resources {
     }
 
     public imageStreamImage(name) {
-        return Resources.selectByName(this.imageStreamImages, name);
+        return Resources.findByName(this.imageStreamImages, name);
     }
 
     get imageStreams() {
@@ -167,7 +172,7 @@ export class Resources {
     }
 
     public imageStream(name) {
-        return Resources.selectByName(this.imageStreams, name);
+        return Resources.findByName(this.imageStreams, name);
     }
 
     get imageStreamTags() {
@@ -175,7 +180,7 @@ export class Resources {
     }
 
     public imageStreamTag(name) {
-        return Resources.selectByName(this.imageStreamTags, name);
+        return Resources.findByName(this.imageStreamTags, name);
     }
 
     get persistentVolumes() {
@@ -183,7 +188,7 @@ export class Resources {
     }
 
     public persistentVolume(name) {
-        return Resources.selectByName(this.persistentVolumes, name);
+        return Resources.findByName(this.persistentVolumes, name);
     }
 
     get persistentVolumeClaims() {
@@ -191,7 +196,7 @@ export class Resources {
     }
 
     public persistentVolumeClaim(name) {
-        return Resources.selectByName(this.persistentVolumeClaims, name);
+        return Resources.findByName(this.persistentVolumeClaims, name);
     }
 
     get roles() {
@@ -199,7 +204,7 @@ export class Resources {
     }
 
     public role(name) {
-        return Resources.selectByName(this.roles, name);
+        return Resources.findByName(this.roles, name);
     }
 
     get roleBindings() {
@@ -207,7 +212,7 @@ export class Resources {
     }
 
     public roleBinding(name) {
-        return Resources.selectByName(this.roleBindings, name);
+        return Resources.findByName(this.roleBindings, name);
     }
 
     get routes() {
@@ -215,7 +220,7 @@ export class Resources {
     }
 
     public route(name) {
-        return Resources.selectByName(this.routes, name);
+        return Resources.findByName(this.routes, name);
     }
 
     get secrets() {
@@ -223,7 +228,7 @@ export class Resources {
     }
 
     public secret(name) {
-        return Resources.selectByName(this.secrets, name);
+        return Resources.findByName(this.secrets, name);
     }
 
     get services() {
@@ -231,13 +236,13 @@ export class Resources {
     }
 
     public service(name) {
-        return Resources.selectByName(this.services, name);
+        return Resources.findByName(this.services, name);
     }
 }
 
 // Wraps the given 'res' object in a instance of Resources.
 // If 'res' is already of type Resources it will be returned as-is
-export function resources(res): Resources {
+export function resources(res = {}): Resources {
     return (res instanceof Resources) ? res : new Resources(res);
 }
 
@@ -313,7 +318,7 @@ export function newApp(appName: string, appLabel: string, imageName: string, sou
 // and the given environment variables from 'env' and 'secretEnv' (the
 // latter being taken from a previously created Secret indicated by
 // 'secretName').
-export function newDatabaseUsingSecret(res: Resources, appName: string, dbImageName: string, env) {
+export function newDatabaseUsingSecret(res: Resources, appName: string, dbImageName: string, env): Promise<Resources> {
     const dbName = appName + '-database';
     if (res.service(dbName).length === 0) {
         // Create the database resource definitions
