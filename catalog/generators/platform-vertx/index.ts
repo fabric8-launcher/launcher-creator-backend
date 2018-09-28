@@ -1,7 +1,7 @@
 
 import { copy } from 'fs-extra' ;
 import { join } from 'path';
-import { newApp } from '../../../lib/core/resources/index';
+import { newApp, newRoute } from '../../../lib/core/resources/index';
 
 export function apply(applyGenerator, resources, targetDir, props: any = {}) {
     return copy(join(__dirname, 'files'), targetDir)
@@ -12,7 +12,8 @@ export function apply(applyGenerator, resources, targetDir, props: any = {}) {
             'registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift',
             targetDir,
             {}))
-        .then(res => resources.add(res));
+        .then(res => resources.add(res))
+        .then(res => newRoute(res, props.application, props.application + '-vertx'));
 }
 
 export function info() {

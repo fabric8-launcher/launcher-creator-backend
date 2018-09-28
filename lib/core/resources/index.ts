@@ -333,3 +333,33 @@ export function newDatabaseUsingSecret(res: Resources, appName: string, dbImageN
         return Promise.resolve(res);
     }
 }
+
+export function newRoute(res: Resources, appName: string, serviceName: string, port: number = -1): Promise<Resources> {
+    let portName;
+    if (port === -1) {
+        portName = res.service(serviceName)['spec'].ports[0].name;
+    } else {
+        portName = res.service(serviceName)['spec'].ports.find(p => p.port === port).name;
+    }
+    const name = appName + '-route';
+    res.add({
+        'apiVersion': 'v1',
+        'kind': 'Route',
+        'metadata': {
+            'name': name,
+            'labels': {
+                'app': appName
+            }
+        },
+        'spec': {
+            'port': {
+                'targetPort': portName
+            },
+            'to': {
+                'kind': 'Service',
+                'name': serviceName
+            }
+        }
+    });
+    return Promise.resolve(res);
+}
