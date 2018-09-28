@@ -6,7 +6,7 @@ import YAML from 'yaml';
 
 import { validate } from '../info';
 import { getCapabilityModule, getGeneratorModule } from '../catalog';
-import { applyFromFile, startBuild } from '../oc';
+import { applyFromFile, startBuild, deleteApp } from '../oc';
 import { zipFolder } from '../utils';
 import { resources, Resources } from '../resources';
 
@@ -174,5 +174,14 @@ export function push(targetDir: string, pushType: string, follow: boolean = fals
             }
             const bcName = bcs[0].metadata.name;
             return startBuild(bcName, fromPath, follow);
+        });
+}
+
+export function del(targetDir: string) {
+    const df = deploymentFileName(targetDir);
+    return readDeployment(df)
+        .then(deployment => {
+            const appLabel = deployment.applications[0].application;
+            return deleteApp(appLabel);
         });
 }

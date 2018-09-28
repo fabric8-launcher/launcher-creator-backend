@@ -71,3 +71,15 @@ export function startBuild(buildConfigName: string, fromPath: string, follow: bo
         });
     return proc;
 }
+
+// Deletes all resources with the given app label from the active OpenShift project
+export function deleteApp(appName: string) {
+    // Run 'oc apply' using the given resources
+    const opts = { 'stdio': ['ignore', 1, 2] };
+    const proc = spawn('oc', ['delete', 'all,secrets', '-l', 'app=' + appName], opts)
+        .catch((error) => {
+            console.error(`Spawn error: ${error}`);
+            return Promise.reject(error);
+        });
+    return proc;
+}
