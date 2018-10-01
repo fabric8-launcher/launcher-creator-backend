@@ -104,7 +104,7 @@ paths:
       - project
       requestBody:
         content:
-          application/x-www-form-urlencoded:
+          application/json:
             schema:
               type: object
               properties:
@@ -114,7 +114,7 @@ paths:
                 runtime:
                   description: The runtime to use for the project
                   type: string
-                capability:
+                capabilities:
                   description: The capabilities to add to the project
                   type: array
                   items:
@@ -137,7 +137,7 @@ paths:
               required:
               - name
               - runtime
-              - capability
+              - capabilities
               - clusterId
               - projectName
               - gitOrganization

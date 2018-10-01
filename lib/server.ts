@@ -71,7 +71,7 @@ app.post('/launch', (req, res) => {
     // Create temp dir
     tmp.dir({'unsafeCleanup': true}, (err, tempDir, cleanTempDir) => {
         // Generate contents
-        deploy.apply(resources({}), tempDir, req.body.name, req.body.runtime, normalizeCapabilities(req.body.capability))
+        deploy.apply(resources({}), tempDir, req.body.name, req.body.runtime, req.body.capabilities)
             .then(() => {
                 const passThru = new PassThrough();
                 // Prepare to zip
@@ -79,14 +79,16 @@ app.post('/launch', (req, res) => {
                     .finally(() => cleanTempDir());
                 // Prepare to post
                 const formData = {
-                    'projectName': 'test',
-                    'gitRepository': 'test',
+                    'projectName': req.body.projectName,
+                    'gitRepository': req.body.gitRepository,
+                    'gitOrganization': req.body.gitOrganization,
                     'file': passThru
                 };
                 const auth = {
                     'bearer': req.header('Authorization').slice(7)
                 };
                 const headers = {
+                    'X-OpenShift-Cluster': req.body.clusterId
                 };
                 const options = {
                     'url': 'http://localhost:8080/api/launcher/upload',
