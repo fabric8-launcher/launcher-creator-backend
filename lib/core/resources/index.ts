@@ -64,6 +64,17 @@ export class Resources {
         };
     }
 
+    // Takes an array of resources and turns them into a Template
+    public static makeTemplate(objects, params = []) {
+        const ps = params || [];
+        return {
+            'apiVersion': 'v1',
+            'kind': 'Template',
+            'parameters': [...ps],
+            'objects': [...objects]
+        };
+    }
+
     // Selects resources by their 'kind' property
     public static selectByKind(res, kind) {
         return Resources.asList(res).filter(r => r.kind && r.kind.toLowerCase() === kind.toLowerCase());
@@ -94,6 +105,27 @@ export class Resources {
         return this.res;
     }
 
+    // Returns the parameters (if any)
+    get parameters() {
+        return this.res.parameters || [];
+    }
+
+    // Turns the current resources into a List
+    public toList() {
+        if (this.res.kind && this.res.kind.toLowerCase() !== 'list') {
+            this.res = Resources.makeList(this.items);
+        }
+        return this;
+    }
+
+    // Turns the current resources into a Template
+    public toTemplate(params = []) {
+        if (this.res.kind && this.res.kind.toLowerCase() !== 'template') {
+            this.res = Resources.makeTemplate(this.items, params);
+        }
+        return this;
+    }
+
     // Adds new resources from 'newres' to the wrapped object.
     // If the current wrapped object is a List the new resources will be added
     // to its items. If it's a Template they will be added to its objects. If
@@ -116,6 +148,14 @@ export class Resources {
                 this.res = items[0];
             }
         }
+        return this;
+    }
+
+    // Adds the given parameter to the current list of parameters.
+    // The resources will be turned into a Template first if necessary
+    public addParam(param): Resources {
+        const params = this.toTemplate().parameters;
+        params.push(param);
         return this;
     }
 
