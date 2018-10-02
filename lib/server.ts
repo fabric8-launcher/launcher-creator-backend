@@ -44,18 +44,18 @@ app.get('/runtimes', (req, res) => {
         .catch(err => res.status(500).send(result(500, err)));
 });
 
-app.get('/zip', (req, res) => {
+app.post('/zip', (req, res) => {
     // Create temp dir
     tmp.dir({'unsafeCleanup': true}, (err, tempDir, cleanTempDir) => {
         // Generate contents
-        deploy.apply(resources({}), tempDir, req.query.name, req.query.runtime, normalizeCapabilities(req.query.capability))
+        deploy.apply(resources({}), tempDir, req.body.name, req.body.runtime, req.body.capabilities)
             .then(() => {
                 // Tell the browser that this is a zip file.
                 res.writeHead(200, {
                     'Content-Type': 'application/zip',
-                    'Content-disposition': `attachment; filename=${req.query.name}.zip`
+                    'Content-disposition': `attachment; filename=${req.body.name}.zip`
                 });
-                return zipFolder(res, tempDir, req.query.name)
+                return zipFolder(res, tempDir, req.body.name)
                     .finally(() => cleanTempDir());
             })
             .catch(promErr => res.status(500).send(result(500, promErr)));
@@ -109,14 +109,6 @@ app.post('/launch', (req, res) => {
             .catch(promErr => res.status(500).send(result(500, promErr)));
     });
 });
-
-function normalizeCapabilities(items) {
-    if (Array.isArray(items)) {
-        return items.map(i => (i.trim().startsWith('{')) ? JSON.parse(i) : {'module': i});
-    } else {
-        return [{'module': items}];
-    }
-}
 
 function result(code, msg) {
     const res = { 'code': code };
