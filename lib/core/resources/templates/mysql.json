@@ -1,8 +1,8 @@
 {
-  "kind": "List",
   "apiVersion": "v1",
-  "metadata": {},
-  "items": [
+  "kind": "Template",
+  "parameters": [],
+  "objects": [
     {
       "kind": "ImageStreamTag",
       "apiVersion": "v1",

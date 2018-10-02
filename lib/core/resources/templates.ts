@@ -54,6 +54,7 @@ export function generate() {
         const srcUri = isBuilder ? dummyGitUrl : null;
         return newApp(dummyName, dummyLabel, image, srcUri, {})
             .then((res) => {
+                res.toTemplate();
                 if (isBuilder) {
                     // Turn the resources into a template and add parameters
                     res
