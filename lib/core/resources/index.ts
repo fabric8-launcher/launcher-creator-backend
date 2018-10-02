@@ -320,7 +320,7 @@ export function newApp(appName: string, appLabel: string, imageName: string, sou
 // 'secretName').
 export function newDatabaseUsingSecret(res: Resources, appName: string, dbImageName: string, env): Promise<Resources> {
     const dbName = appName + '-database';
-    if (res.service(dbName).length === 0) {
+    if (!res.service(dbName)) {
         // Create the database resource definitions
         return newApp(dbName, appName, dbImageName, null, env)
             .then((appRes) => {
