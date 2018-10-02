@@ -53,7 +53,7 @@ paths:
         '404':
           description: Not Found
   /zip:
-    get:
+    post:
       summary: Returns a ZIP containing a generated project
       security: []
       description: >-
@@ -61,30 +61,30 @@ paths:
         generated using the specified Capabilities
       tags:
       - project
-      parameters:
-      - name: name
-        in: query
-        required: true
-        schema:
-          type: string
-        description: The application name to use for the project
-      - name: runtime
-        in: query
-        required: true
-        schema:
-          type: string
-        description: The runtime to use for the project
-      - name: capability
-        in: query
-        required: true
-        schema:
-          type: array
-          items:
-            type: object
-            properties:
-              module:
-                type: string
-        description: The capabilities to add to the project
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  description: The application name to use for the project
+                  type: string
+                runtime:
+                  description: The runtime to use for the project
+                  type: string
+                capabilities:
+                  description: The capabilities to add to the project
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      module:
+                        type: string
+                required:
+                - name
+                - runtime
+                - capabilities
       responses:
         '200':
           description: OK
@@ -104,7 +104,7 @@ paths:
       - project
       requestBody:
         content:
-          application/x-www-form-urlencoded:
+          application/json:
             schema:
               type: object
               properties:
@@ -114,7 +114,7 @@ paths:
                 runtime:
                   description: The runtime to use for the project
                   type: string
-                capability:
+                capabilities:
                   description: The capabilities to add to the project
                   type: array
                   items:
@@ -137,7 +137,7 @@ paths:
               required:
               - name
               - runtime
-              - capability
+              - capabilities
               - clusterId
               - projectName
               - gitOrganization
