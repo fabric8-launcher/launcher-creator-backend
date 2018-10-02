@@ -2,9 +2,16 @@
 import { copy } from 'fs-extra' ;
 import { join } from 'path';
 import { newApp, newRoute } from '../../../lib/core/resources/index';
+import { transformFiles } from '../../../lib/core/template';
+import { cases } from '../../../lib/core/template/transformers';
 
 export function apply(applyGenerator, resources, targetDir, props: any = {}) {
+    const tprops = {
+        ...props,
+        'serviceName': props.application + '-vertx'
+    };
     return copy(join(__dirname, 'files'), targetDir)
+        .then(() => transformFiles(join(targetDir, 'gap'), cases(tprops)))
         .then(() => applyGenerator('maven-setup', resources, targetDir, props))
         .then(() => newApp(
             props.application + '-vertx',
