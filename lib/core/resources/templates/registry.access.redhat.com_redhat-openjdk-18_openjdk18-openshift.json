@@ -111,7 +111,8 @@
             "from": {
               "kind": "ImageStreamTag",
               "name": "openjdk18-openshift:latest"
-            }
+            },
+            "incremental": true
           }
         },
         "output": {

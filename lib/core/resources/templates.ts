@@ -1,6 +1,7 @@
 
 import { ensureFile, writeFile, readFile } from 'fs-extra';
 import { join } from 'path';
+import * as _ from 'lodash';
 
 import { newApp } from '../oc';
 
@@ -23,6 +24,12 @@ export function generate() {
         const srcUri = isBuilder ? 'https://github.com/dummy/dummy' : null;
         return newApp(dummyName, dummyLabel, image, srcUri,{})
             .then((res) => {
+                if (isBuilder) {
+                    // Make sure incremental builds are enabled
+                    const bc = res.buildConfig(dummyName);
+                    _.set(bc, 'spec.strategy.sourceStrategy.incremental', true);
+                }
+                // Write the resources to a file
                 const name = templateFileName(image);
                 return ensureFile(name)
                     .then(() => writeFile(name, JSON.stringify(res.json, null, 2)))
