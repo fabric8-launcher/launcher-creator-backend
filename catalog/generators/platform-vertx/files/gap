@@ -8,7 +8,11 @@ SCRIPT_DIR=$(cd "$(dirname "$BASH_SOURCE")" ; pwd -P)
 
 case "$1" in
     "deploy")
-        oc apply -f ${SCRIPT_DIR}/.openshiftio/application.yaml
+        REPO_URL=$(git config --get remote.origin.url || echo "")
+        if [[ ! -z "${REPO_URL}" ]]; then
+            PARAMS=-p=SOURCE_REPOSITORY_URL=${REPO_URL}
+        fi
+        oc process -f ${SCRIPT_DIR}/.openshiftio/application.yaml ${PARAMS} | oc apply -f -
         ;;
     "push")
         shift
