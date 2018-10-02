@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+
+APP_NAME={{.application}}
+SERVICE_NAME={{.serviceName}}
+JAR_NAME={{.artifactId}}-{{.version}}.jar
+
+SCRIPT_DIR=$(cd "$(dirname "$BASH_SOURCE")" ; pwd -P)
+
+case "$1" in
+    "deploy")
+        oc apply -f ${SCRIPT_DIR}/.openshiftio/application.yaml
+        ;;
+    "push")
+        shift
+        FROM=${SCRIPT_DIR}/target/${JAR_NAME}
+        if [[ "$1" == "--binary" || "$1" == "-b" ]]; then
+            shift
+            FROM_ARG=--from-file
+        elif [[ -f ${FROM} ]]; then
+            FROM_ARG=--from-file
+        else
+            if [[ "$1" == "--source" || "$1" == "-s" ]]; then
+                shift
+            fi
+            FROM_ARG=--from-dir
+            FROM=${SCRIPT_DIR}
+        fi
+        
+        oc start-build ${SERVICE_NAME} ${FROM_ARG} ${FROM} "$@"
+        ;;
+    "delete")
+        oc delete all,secrets -l app=${APP_NAME}
+        ;;
+    *)
+        echo "Usage: gap [deploy|push|delete] ..."
+        echo "   deploy  - Deploys the application to OpenShift"
+        echo "   push    - Pushes code to the application. By default this will push the pe-compile"
+        echo "            binary if it exists, otherwise it will push the sources to be compiled on"
+        echo "            OpenShift. This can be overridden by using one of the following flags:"
+        echo "      -b, --binary - Pushes a pre-compiled binary"
+        echo "      -s, --source - Pushes the sources"
+        echo "   delete - Deletes the application from OpenShift"
+    ;;
+esac
