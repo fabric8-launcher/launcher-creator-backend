@@ -1,8 +1,24 @@
 {
-  "kind": "List",
   "apiVersion": "v1",
-  "metadata": {},
-  "items": [
+  "kind": "Template",
+  "parameters": [
+    {
+      "name": "SOURCE_REPOSITORY_URL",
+      "description": "The source URL for the application",
+      "displayName": "Source URL",
+      "value": "https://github.com/dummy_org/dummy_repo",
+      "required": true
+    },
+    {
+      "name": "GITHUB_WEBHOOK_SECRET",
+      "description": "The secret used to configure a GitHub webhook",
+      "displayName": "GitHub Webhook Secret",
+      "required": true,
+      "from": "[a-zA-Z0-9]{40}",
+      "generate": "expression"
+    }
+  ],
+  "objects": [
     {
       "kind": "ImageStream",
       "apiVersion": "v1",
@@ -82,13 +98,7 @@
           {
             "type": "GitHub",
             "github": {
-              "secret": "KteuVddsX-xGtc9OzluL"
-            }
-          },
-          {
-            "type": "Generic",
-            "generic": {
-              "secret": "pF6j15udpirCsrA20maP"
+              "secret": "${GITHUB_WEBHOOK_SECRET}"
             }
           },
           {
@@ -102,7 +112,7 @@
         "source": {
           "type": "Git",
           "git": {
-            "uri": "https://github.com/dummy/dummy"
+            "uri": "${SOURCE_REPOSITORY_URL}"
           }
         },
         "strategy": {
