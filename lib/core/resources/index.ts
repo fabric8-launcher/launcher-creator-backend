@@ -134,6 +134,7 @@ export class Resources {
     // will be created if 'newres' has multiple resources or it will be set to
     // contain the single 'newres' item if there's only one.
     public add(newres) {
+        const params = this.res.parameters;
         const items = Resources.asList(newres);
         if (this.res.kind && this.res.kind.toLowerCase() === 'list') {
             this.res.items = [...this.res.items, ...items];
@@ -148,6 +149,13 @@ export class Resources {
                 this.res = items[0];
             }
         }
+
+        // If there are any parameters merge them
+        if (params || newres.parameters) {
+            const newparams = [ ...(params || []), ...(newres.parameters || []) ];
+            this.toTemplate().json.parameters = newparams;
+        }
+
         return this;
     }
 
