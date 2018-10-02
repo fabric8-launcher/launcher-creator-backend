@@ -7,12 +7,12 @@ import { cases } from '../../lib/core/template/transformers';
 
 const testContents = `
     function connect(host) {
-    //{{if database == postgresql}}
+    //{{if .database == postgresql}}
         return ConnectionManager.connect("jdbc:postgresql" + host);
-    //{{else if database==mysql }}
+    //{{else if .database==mysql }}
     //    return ConnectionManager.connect("jdbc:mysql" + host);
-    //{{else if booleanOpt }}
-    //    throw new Exception("Dummy option");
+    //{{else if .booleanOpt }}
+    //    throw new Exception("Dummy option {{.booleanOpt}}");
     //{{else}}
     //    throw new Exception("Not implemented");
     //{{end}}
@@ -33,7 +33,7 @@ const resultMysql = `
 
 const resultBool = `
     function connect(host) {
-        throw new Exception("Dummy option");
+        throw new Exception("Dummy option true");
     }
 `;
 

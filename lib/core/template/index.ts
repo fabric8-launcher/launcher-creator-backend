@@ -1,6 +1,6 @@
 
 import { Transform } from 'stream';
-import { createReadStream, createWriteStream, move } from 'fs-extra';
+import { createReadStream, createWriteStream, move, statSync } from 'fs-extra';
 import { tmpNameSync } from 'tmp';
 import * as fg from 'fast-glob';
 
@@ -43,8 +43,11 @@ class LineTransform extends Transform {
 
 export function transform(inFile: string, outFile: string, transformLine: (line: string) => string) {
     const actualOutFile = (outFile === inFile || !outFile) ? tmpNameSync() : outFile;
+
     const ins = createReadStream(inFile);
-    const outs = createWriteStream(actualOutFile);
+
+    const instat = statSync(inFile);
+    const outs = createWriteStream(actualOutFile, { 'mode': instat.mode });
 
     return new Promise((resolve, reject) => {
         ins
@@ -61,7 +64,7 @@ export function transform(inFile: string, outFile: string, transformLine: (line:
     });
 }
 
-export function transformFiles(pattern: string, transformLine: (line: string) => string): Promise<number> {
+export function transformFiles(pattern: string|string[], transformLine: (line: string) => string): Promise<number> {
     let result = Promise.resolve(0);
     return new Promise((resolve, reject) => {
         fg.stream(pattern)

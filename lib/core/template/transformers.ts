@@ -77,6 +77,10 @@ export function cases(props: object, lineComment: string = '//'): (line: string)
             skipLine = true;
         }
 
+        // Perform any variable replacements
+        const re = new RegExp('{{\s*\.([a-zA-Z-]+)\s*}}', 'g');
+        line = line.replace(re, (match, key) => props[key]);
+
         if (skipLine || (inIf && skipBlock)) {
             return null;
         } else if (inIf) {
@@ -95,7 +99,7 @@ export function cases(props: object, lineComment: string = '//'): (line: string)
 
 function testCondition(cond: string, props: object): boolean {
     const parts = cond.split('==');
-    const key = parts[0].trim();
+    const key = parts[0].trim().slice(1);
     if (parts.length > 1) {
         return props[key] === parts[1].trim();
     } else {
