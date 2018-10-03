@@ -17,7 +17,7 @@ import * as fs from 'fs';
 tmp.setGracefulCleanup();
 const app = express();
 
-const zipCache = new NodeCache({'checkperiod': 10});
+const zipCache = new NodeCache({'checkperiod': 60});
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({'extended': true}));
@@ -86,7 +86,7 @@ app.post('/zip', (req, res) => {
               return zipFolder(stream, projectDir, req.body.name)
                 .then((content) => {
                     const id = shortid.generate();
-                    zipCache.set(id, { 'file': projectZip, 'name': `${req.body.name}.zip`, cleanTempDir }, 30);
+                    zipCache.set(id, { 'file': projectZip, 'name': `${req.body.name}.zip`, cleanTempDir }, 600);
                     res.status(200).send({ id });
                 });
           })
