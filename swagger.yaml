@@ -4,6 +4,8 @@ servers:
   description: Development server
 - url: http://localhost:8081
   description: Local Development
+- url: http://localhost:8080
+  description: Local Dist
 
 info:
   version: "1.0.0"
@@ -54,10 +56,10 @@ paths:
           description: Not Found
   /zip:
     post:
-      summary: Returns a ZIP containing a generated project
+      summary: Create ZIP containing a generated project and returns and id to download it
       security: []
       description: >-
-        This endpoint returns all ZIP containing code that was
+        This endpoint returns and id to download the ZIP containing code that was
         generated using the specified Capabilities
       tags:
       - project
@@ -85,6 +87,34 @@ paths:
               - name
               - runtime
               - capabilities
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    description: The id to download the zip
+                    type: string
+        '404':
+          description: Not Found
+  /download:
+    get:
+      summary: Returns a ZIP containing a generated project for the specified id
+      security: []
+      description: >-
+        This endpoint returns a ZIP containing a generated project for the specified id
+      tags:
+      - project
+      parameters:
+      - name: id
+        in: query
+        required: true
+        schema:
+          type: string
+        description: The id returned by the zip method
       responses:
         '200':
           description: OK
