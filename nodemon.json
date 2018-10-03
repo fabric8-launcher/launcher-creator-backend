@@ -1,5 +1,5 @@
 {
-  "watch": ["lib"],
+  "watch": ["lib", "catalog"],
   "ext": "ts",
   "ignore": ["test"],
   "exec": "ts-node ./lib/server.ts 8081"
