@@ -81,10 +81,10 @@ paths:
                     properties:
                       module:
                         type: string
-                required:
-                - name
-                - runtime
-                - capabilities
+              required:
+              - name
+              - runtime
+              - capabilities
       responses:
         '200':
           description: OK
