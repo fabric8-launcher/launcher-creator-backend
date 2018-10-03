@@ -10,9 +10,14 @@ import * as catalog from './core/catalog';
 import * as deploy from './core/deploy';
 import { resources } from './core/resources';
 import { zipFolder } from './core/utils';
+import * as NodeCache from 'node-cache';
+import * as shortid from 'shortid';
+import * as fs from 'fs';
 
 tmp.setGracefulCleanup();
 const app = express();
+
+const zipCache = new NodeCache({'checkperiod': 10});
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({'extended': true}));
@@ -44,21 +49,48 @@ app.get('/runtimes', (req, res) => {
         .catch(err => res.status(500).send(result(500, err)));
 });
 
+app.get('/download', (req, res) => {
+
+    const id = req.query.id;
+    zipCache.get(id, (err, data?: { name, file }) => {
+        if (err) {
+            res.status(500).send(result(500, err));
+            return;
+        }
+        if (!data) {
+            res.status(404).send(result(404, new Error('Not found')));
+        }
+        res.writeHead(200, {
+            'Content-Type': 'application/zip',
+            'Content-disposition': `attachment; filename=${data.name}`
+        });
+        fs.createReadStream(data.file).pipe(res);
+    });
+});
+
+zipCache.on('del', (key, value) => {
+    value.cleanTempDir();
+    console.info(`Cleaning zip cache key: ${key}`);
+});
+
 app.post('/zip', (req, res) => {
     // Create temp dir
     tmp.dir({'unsafeCleanup': true}, (err, tempDir, cleanTempDir) => {
         // Generate contents
-        deploy.apply(resources({}), tempDir, req.body.name, req.body.runtime, req.body.capabilities)
-            .then(() => {
-                // Tell the browser that this is a zip file.
-                res.writeHead(200, {
-                    'Content-Type': 'application/zip',
-                    'Content-disposition': `attachment; filename=${req.body.name}.zip`
+        const projectDir = `${tempDir}/project`;
+        fs.mkdirSync(projectDir);
+        const projectZip = `${tempDir}/project.zip`;
+        const stream = fs.createWriteStream(projectZip);
+        deploy.apply(resources({}), projectDir, req.body.name, req.body.runtime, req.body.capabilities)
+          .then(() => {
+              return zipFolder(stream, projectDir, req.body.name)
+                .then((content) => {
+                    const id = shortid.generate();
+                    zipCache.set(id, { 'file': projectZip, 'name': `${req.body.name}.zip`, cleanTempDir }, 30);
+                    res.status(200).send({ id });
                 });
-                return zipFolder(res, tempDir, req.body.name)
-                    .finally(() => cleanTempDir());
-            })
-            .catch(promErr => res.status(500).send(result(500, promErr)));
+          })
+          .catch(promErr => res.status(500).send(result(500, promErr)));
     });
 });
 
