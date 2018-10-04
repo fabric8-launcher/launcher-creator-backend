@@ -22,7 +22,8 @@ export function zipFolder(out, dir, archiveFolderName) {
     archive.pipe(out);
     // append files from tempDir, making the appName as root
     archive.directory(dir, archiveFolderName);
-    return Promise.resolve(archive.finalize());
+    archive.finalize();
+    return Promise.resolve(archive);
 }
 
 // Function composition in regular way from right to left (in reverse order of the arguments)
