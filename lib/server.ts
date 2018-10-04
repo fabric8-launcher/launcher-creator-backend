@@ -134,17 +134,16 @@ app.post('/launch', (req, res) => {
                         headers
                     };
                     request.post(options, (err2, res2, body) => {
-                            if (err2) {
-                                res.status(200).send(result(200, err2));
-                            } else {
-                                res.status(res2.statusCode).send({
-                                    'code': res2.statusCode,
-                                    'message': res2.statusMessage
-                                });
-                            }
-                            cleanTempDir();
-                        })
-                        .on('error', reqErr => console.error(reqErr));
+                        if (err2) {
+                            res.status(200).send(result(200, err2));
+                        } else {
+                            res.status(res2.statusCode).send({
+                                'code': res2.statusCode,
+                                'message': res2.statusMessage
+                            });
+                        }
+                        cleanTempDir();
+                    });
                 });
             })
             .catch(promErr => res.status(500).send(result(500, promErr)));
