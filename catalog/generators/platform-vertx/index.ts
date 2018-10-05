@@ -1,9 +1,9 @@
 
 import { copy } from 'fs-extra' ;
 import { join } from 'path';
-import { newApp, newRoute } from '../../../lib/core/resources/index';
-import { transformFiles } from '../../../lib/core/template';
-import { cases } from '../../../lib/core/template/transformers';
+import { newApp, newRoute } from 'core/resources/index';
+import { transformFiles } from 'core/template';
+import { cases } from 'core/template/transformers';
 
 export function apply(applyGenerator, resources, targetDir, props: any = {}) {
     const tprops = {

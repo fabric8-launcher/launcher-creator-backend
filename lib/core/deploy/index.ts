@@ -4,11 +4,11 @@ import { join } from 'path';
 import { isEqual } from 'lodash';
 import YAML from 'yaml';
 
-import { validate } from '../info';
-import { getCapabilityModule, getGeneratorModule } from '../catalog';
-import { applyFromFile, startBuild, deleteApp } from '../oc';
-import { zipFolder } from '../utils';
-import { resources, Resources } from '../resources';
+import { validate } from 'core/info';
+import { getCapabilityModule, getGeneratorModule } from 'core/catalog';
+import { applyFromFile, startBuild, deleteApp } from 'core/oc';
+import { zipFolder } from 'core/utils';
+import { resources, Resources } from 'core/resources';
 
 // Returns the name of the deployment file in the given directory
 function deploymentFileName(targetDir) {

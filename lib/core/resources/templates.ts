@@ -3,7 +3,7 @@ import { ensureFile, writeFile, readFile } from 'fs-extra';
 import { join } from 'path';
 import * as _ from 'lodash';
 
-import { newApp } from '../oc';
+import { newApp } from 'core/oc';
 
 const dummyName = 'placeholder-app-name-730040e0c873453f877c10cd07912d1f';
 const dummyLabel = 'placeholder-app-label-d46881878f594a2dadfd963843452aab';

@@ -1,7 +1,7 @@
 
-import { printUsage } from '../info';
-import { listCapabilities, getCapabilityModule } from '../catalog';
-import { resources } from '../resources';
+import { printUsage } from 'core/info';
+import { listCapabilities, getCapabilityModule } from 'core/catalog';
+import { resources } from 'core/resources';
 import { apply } from '.';
 
 const args = process.argv.slice(2);

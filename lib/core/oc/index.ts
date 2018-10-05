@@ -4,7 +4,7 @@ import * as streamToString from 'stream-to-string';
 import { Readable } from 'stream';
 import { statSync } from 'fs-extra';
 
-import { resources, Resources } from '../resources';
+import { resources, Resources } from 'core/resources';
 
 // Returns a list of resources that when applied will create
 // an instance of the given image or template.
