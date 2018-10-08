@@ -11,7 +11,7 @@
     "postinstall": "npm run build",
     "clean": "rm -rf ./dist",
     "build": "./build.sh",
-    "start": "NODE_PATH=dist/lib:dist/catalog node dist/lib/server.js",
+    "start": "NODE_PATH=dist/lib:dist/catalog node $NODE_DEBUG_OPTION dist/lib/server.js",
     "start:dev": "NODE_PATH=lib:catalog ts-node ./lib/server.ts 8081",
     "apply": "NODE_PATH=lib:catalog ts-node ./lib/core/deploy/apply.ts",
     "deploy": "NODE_PATH=lib:catalog ts-node ./lib/core/deploy/deploy.ts",
@@ -21,7 +21,7 @@
     "generate": "NODE_PATH=lib:catalog ts-node ./lib/core/resources/generate.ts",
     "lint": "tslint -t verbose --project .",
     "test": "npm run build && NODE_PATH=dist/lib:dist/catalog node node_modules/tape/bin/tape ./dist/test/**/*.test.js | tap-spec",
-    "watch": "nodemon"
+    "watch": "nodemon $NODE_DEBUG_OPTION"
   },
   "dependencies": {
     "archiver": "^3.0.0",
