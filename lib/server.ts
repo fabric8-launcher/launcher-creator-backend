@@ -8,10 +8,10 @@ import * as NodeCache from 'node-cache';
 import * as shortid from 'shortid';
 import * as fs from 'fs';
 
-import * as catalog from './core/catalog';
-import * as deploy from './core/deploy';
-import { resources } from './core/resources';
-import { zipFolder } from './core/utils';
+import * as catalog from 'core/catalog';
+import * as deploy from 'core/deploy';
+import { resources } from 'core/resources';
+import { zipFolder } from 'core/utils';
 
 tmp.setGracefulCleanup();
 const app = express();
