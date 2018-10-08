@@ -58,12 +58,13 @@ app.get('/download', (req, res) => {
         }
         if (!data) {
             res.status(404).send(result(404, new Error('Not found')));
+        } else {
+            res.writeHead(200, {
+                'Content-Type': 'application/zip',
+                'Content-disposition': `attachment; filename=${data.name}`
+            });
+            fs.createReadStream(data.file).pipe(res);
         }
-        res.writeHead(200, {
-            'Content-Type': 'application/zip',
-            'Content-disposition': `attachment; filename=${data.name}`
-        });
-        fs.createReadStream(data.file).pipe(res);
     });
 });
 
