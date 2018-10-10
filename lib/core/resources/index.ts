@@ -294,16 +294,23 @@ export function resources(res = {}): Resources {
     return (res instanceof Resources) ? res : new Resources(res);
 }
 
-function mergeEnv(targetEnv, env, resFunc) {
-    let result = targetEnv || [];
-    Object.entries(env).forEach(([key, val]) => {
-        result = [...result.filter(e => e.name !== key), resFunc(key, val)];
-    });
-    return result;
+// Merges the vars from the `env` object with the `targetEnv` object.
+// Both objects should be arrays of DeploymentConfig environment definitions
+function mergeEnv(targetEnv, env) {
+    const tenv = targetEnv || [];
+    return [ ...tenv.filter(t => !env.find(e => e.name === t.name)), ...env ];
 }
 
-function mergeEnvWithRefs(targetEnv, complexEnv) {
-    return mergeEnv(targetEnv, complexEnv, (envKey, envValue) => {
+// Converts an object with key/values to an array of DeploymentConfig environment definitions.
+// If the value of a key/value pair is a string a simple object with name/value properties will
+// be created. In the case that the value is an object it will be assumed to contain a reference
+// to a key in a ConfigMap or Secret. In each case the object must have a `key` property and
+// either a `secretKeyRef` with the name of a Secret or a `configMapKeyRef` with the name of
+// a ConfigMap
+function convertObjectToEnvWithRefs(env) {
+    return Object.entries(env).map(e => {
+        const envKey = e[0];
+        const envValue: any = e[1];
         if (typeof envValue === 'object') {
             let from, name;
             if (envValue.secret) {
@@ -334,29 +341,36 @@ function mergeEnvWithRefs(targetEnv, complexEnv) {
 }
 
 // Updates the environment variables for the DeploymentConfig selected
-// by 'dcName' with the given variables in 'env'
+// by 'dcName' with the given key/values in the object 'env'. The values
+// are either simple strings or they can be objects themselves in which
+// case they are references to keys in a ConfigMap or a Secret.
 function setDeploymentEnv(res: Resources, env, dcName?: any): Resources {
     if (res.deploymentConfigs.length > 0) {
         const dc = (dcName) ? res.deploymentConfig(dcName) : res.deploymentConfigs[0];
         const dcc = _.get(dc, 'spec.template.spec.containers[0]');
         if (dcc) {
-            dcc.env = mergeEnvWithRefs(dcc.env, env);
+            dcc.env = mergeEnv(dcc.env, convertObjectToEnvWithRefs(env));
         }
     }
     return res;
 }
 
-function setAppLabel(res: Resources, label?: string): Resources {
+// Sets the "app" label on all resources to the given value
+function setAppLabel(res: Resources, label: string|object): Resources {
     res.items.forEach(r => {
-        _.set(r, 'metadata.labels.app', label);
+        if (typeof label === 'string') {
+            _.set(r, 'metadata.labels.app', label);
+        } else {
+            Object.entries(label).forEach(([key, value]) => _.set(r, `metadata.labels.${key}`, value));
+        }
     });
     return res;
 }
 
 // Returns a list of resources that when applied will create
 // an instance of the given image or template.
-export function newApp(appName: string, appLabel: string, imageName: string, sourceUri: string, env = {}): Promise<Resources> {
-    return readTemplate(imageName, appName, appLabel)
+export function newApp(appName: string, appLabel: string|object, imageName: string, sourceUri?: string, env = {}): Promise<Resources> {
+    return readTemplate(imageName, appName, null, sourceUri)
         .then(json => resources(json))
         .then((appRes) => setAppLabel(appRes, appLabel))
         .then((appRes) => setDeploymentEnv(appRes, env));
@@ -382,22 +396,23 @@ export function newDatabaseUsingSecret(res: Resources, appName: string, dbImageN
     }
 }
 
-export function newRoute(res: Resources, appName: string, serviceName: string, port: number = -1): Promise<Resources> {
+export function newRoute(res: Resources,
+                         appName: string,
+                         appLabel: string|object,
+                         serviceName: string, port: number = -1): Promise<Resources> {
     let portName;
     if (port === -1) {
         portName = res.service(serviceName)['spec'].ports[0].name;
     } else {
         portName = res.service(serviceName)['spec'].ports.find(p => p.port === port).name;
     }
-    const name = appName + '-route';
+    const lbls = (typeof appLabel === 'string') ? { 'app': appLabel } : appLabel;
     res.add({
         'apiVersion': 'v1',
         'kind': 'Route',
         'metadata': {
-            'name': name,
-            'labels': {
-                'app': appName
-            }
+            'name': appName,
+            'labels': lbls
         },
         'spec': {
             'port': {

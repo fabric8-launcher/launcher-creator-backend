@@ -78,9 +78,12 @@ export function generate() {
     });
 }
 
-export function readTemplate(img: string, appName: string, appLabel: string): Promise<object> {
+export function readTemplate(img: string, appName: string, appLabel?: string, gitUrl?: string): Promise<object> {
     const name = templateFileName(img);
     return readFile(name, 'utf8')
-        .then(text => text.replace(dummyNameRe, appName).replace(dummyLabelRe, appLabel))
+        .then(text => text
+            .replace(dummyNameRe, appName)
+            .replace(dummyLabelRe, appLabel || dummyLabel)
+            .replace(dummyGitUrl, gitUrl || dummyGitUrl))
         .then(text => JSON.parse(text));
 }
