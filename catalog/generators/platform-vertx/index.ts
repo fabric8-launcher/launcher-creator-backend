@@ -1,7 +1,7 @@
 
 import { copy } from 'fs-extra' ;
 import { join } from 'path';
-import { newApp, newRoute } from 'core/resources/index';
+import { newApp, newRoute } from 'core/resources';
 import { transformFiles } from 'core/template';
 import { cases } from 'core/template/transformers';
 

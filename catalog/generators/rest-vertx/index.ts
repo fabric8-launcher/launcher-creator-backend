@@ -1,7 +1,7 @@
 
 import { copy } from 'fs-extra';
 import { join } from 'path';
-import { mergePoms } from 'core/maven/index';
+import { mergePoms } from 'core/maven';
 
 export function apply(applyGenerator, resources, targetDir, props: any = {}) {
     // First copy the files from the base Vert.x platform module

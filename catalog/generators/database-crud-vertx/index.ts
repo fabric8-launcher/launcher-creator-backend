@@ -1,8 +1,8 @@
 
 import { copy } from 'fs-extra';
 import { join } from 'path';
-import { mergePoms } from 'core/maven/index';
-import { transformFiles } from 'core/template/index';
+import { mergePoms } from 'core/maven';
+import { transformFiles } from 'core/template';
 import { cases } from 'core/template/transformers';
 
 export function apply(applyGenerator, resources, targetDir, props: any = {}) {
