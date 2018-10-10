@@ -110,3 +110,28 @@ test('transform cases else', (t) => {
             t.is(result, expected);
         });
 });
+
+test('transform line with double slashes', (t) => {
+    t.plan(1);
+
+    // Write test file
+    const targetFile = fileSync();
+    writeFileSync(targetFile.name, `
+            function connect(host) {
+            //{{if .database == postgresql}}
+                return ConnectionManager.connect("jdbc:postgresql://" + host);
+            //{{end}}
+            }`, 'utf8');
+
+    const props = {'database': 'postgresql'};
+
+    transform(targetFile.name, targetFile.name, cases(props))
+        .then((tfn: string) => {
+            const result = readFileSync(tfn, 'utf8');
+            const expected = `
+            function connect(host) {
+                return ConnectionManager.connect("jdbc:postgresql://" + host);
+            }`;
+            t.is(result, expected);
+        });
+});

@@ -86,8 +86,8 @@ export function cases(props: object, lineComment: string = '//'): (line: string)
         } else if (inIf) {
             let ln = line;
             // Remove any leading comment characters from the line
-            const idx = ln.indexOf(lineComment);
-            if (idx >= 0) {
+            if (ln.trim().startsWith(lineComment)) {
+                const idx = ln.indexOf(lineComment);
                 ln = ln.slice(0, idx) + ln.slice(idx + lineComment.length);
             }
             return ln;
