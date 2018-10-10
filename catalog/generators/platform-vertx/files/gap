@@ -13,6 +13,9 @@ case "$1" in
             PARAMS=-p=SOURCE_REPOSITORY_URL=${REPO_URL}
         fi
         oc process -f ${SCRIPT_DIR}/.openshiftio/application.yaml ${PARAMS} | oc apply -f -
+        if [[ -f ${SCRIPT_DIR}/.openshiftio/service-welcome.yaml ]]; then
+             oc apply -f ${SCRIPT_DIR}/.openshiftio/service-welcome.yaml
+        fi
         ;;
     "push")
         shift
