@@ -22,7 +22,7 @@ function runtimeByType(type) {
 export function apply(applyGenerator, resources, targetDir, props) {
     const dbprops = {
         'application': props.application,
-        'databaseUri': props.application,
+        'databaseUri': props.application + '-database',
         'databaseName': 'my_data',
         'secretName': props.application + '-database-bind',
     };
