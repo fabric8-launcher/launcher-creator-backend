@@ -31,7 +31,8 @@ export function apply(applyGenerator, resources, targetDir, props) {
         'groupId': props.groupId,
         'artifactId': props.artifactId,
         'version': props.version,
-        'databaseType': props.databaseType
+        'databaseType': props.databaseType,
+        'secretName': props.name + '-bind',
     };
     return applyGenerator('database-secret', resources, targetDir, dbprops)
         .then(res => applyGenerator(databaseByType(props.databaseType), res, targetDir, dbprops))

@@ -20,7 +20,7 @@ export function apply(applyGenerator, resources, targetDir, props: any = {}) {
             props.application,
             'registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift',
             null,
-            {}))
+            props.env || {}))
         .then(res => resources.add(res))
         .then(res => newRoute(res, props.application + '-route', props.application, serviceName));
 }

@@ -13,6 +13,20 @@ export function apply(applyGenerator, resources, targetDir, props: any = {}) {
         'groupId': props.groupId,
         'artifactId': props.artifactId,
         'version': props.version,
+        'env': {
+            'MY_DATABASE_SERVICE_HOST': {
+                'secret': props.secretName,
+                'key': 'uri'
+            },
+            'DB_USERNAME': {
+                'secret': props.secretName,
+                'key': 'user'
+            },
+            'DB_PASSWORD': {
+                'secret': props.secretName,
+                'key': 'password'
+            },
+        }
     };
     return applyGenerator('platform-vertx', resources, targetDir, pprops)
         .then(() => copy(join(__dirname, 'files'), targetDir))
