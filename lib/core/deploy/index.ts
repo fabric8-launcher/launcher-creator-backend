@@ -66,7 +66,7 @@ function addCapability(deployment, capability) {
 
 // Returns a promise that will resolve when the given
 // resources were read from the given file
-function readResources(resourcesFile): Promise<Resources> {
+export function readResources(resourcesFile): Promise<Resources> {
     const p = readFile(resourcesFile, 'utf8')
         .then(text => resources(YAML.parse(text)));
     p.catch(error => console.error(`Failed to read resources file ${resourcesFile}: ${error}`));
@@ -75,7 +75,7 @@ function readResources(resourcesFile): Promise<Resources> {
 
 // Returns a promise that will resolve when the given
 // resources were written to the given file
-function writeResources(resourcesFile, res) {
+export function writeResources(resourcesFile, res) {
     return ensureFile(resourcesFile)
         .then(() => writeFile(resourcesFile, YAML.stringify(res.json)))
         .catch(error => console.error(`Failed to write resources file ${resourcesFile}: ${error}`));

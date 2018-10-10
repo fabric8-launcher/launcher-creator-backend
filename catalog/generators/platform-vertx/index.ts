@@ -13,6 +13,7 @@ export function apply(applyGenerator, resources, targetDir, props: any = {}) {
     };
     return copy(join(__dirname, 'files'), targetDir)
         .then(() => transformFiles(join(targetDir, 'gap'), cases(tprops)))
+        .then(() => applyGenerator('welcome-app', resources, targetDir, props))
         .then(() => applyGenerator('maven-setup', resources, targetDir, props))
         .then(() => newApp(
             serviceName,
