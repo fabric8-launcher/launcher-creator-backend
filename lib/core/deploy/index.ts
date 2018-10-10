@@ -101,7 +101,6 @@ function applyCapability_(applyGenerator, res, targetDir, props) {
 // capability to the `deployment.json` in the project's root.
 function applyCapability(applyGenerator, res, targetDir, appName, props) {
     props.application = appName;
-    props.name = props.name || appName + '-' + props.module + '-1';
     return applyCapability_(applyGenerator, res, targetDir, props);
 }
 

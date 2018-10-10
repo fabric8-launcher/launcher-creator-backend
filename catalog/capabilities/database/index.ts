@@ -22,9 +22,9 @@ function runtimeByType(type) {
 export function apply(applyGenerator, resources, targetDir, props) {
     const dbprops = {
         'application': props.application,
-        'databaseUri': props.name,
+        'databaseUri': props.application,
         'databaseName': 'my_data',
-        'secretName': props.name + '-bind',
+        'secretName': props.application + '-database-bind',
     };
     const rtprops = {
         'application': props.application,
@@ -32,7 +32,7 @@ export function apply(applyGenerator, resources, targetDir, props) {
         'artifactId': props.artifactId,
         'version': props.version,
         'databaseType': props.databaseType,
-        'secretName': props.name + '-bind',
+        'secretName': props.application + '-database-bind',
     };
     return applyGenerator('database-secret', resources, targetDir, dbprops)
         .then(res => applyGenerator(databaseByType(props.databaseType), res, targetDir, dbprops))
