@@ -137,10 +137,10 @@ app.post('/launch', (req, res) => {
                     };
                     request.post(options, (err2, res2, body) => {
                         console.info(`Pushed project "${req.body.name}" to ${backendUrl} - ${res2.statusCode}`);
-                        if (!err2) {
+                        if (!err2 && res2.statusCode === 200) {
                             res.status(200).send(result(200, body));
                         } else {
-                            res.status(res2.statusCode).send(result(res2.statusCode, err2));
+                            res.status(res2.statusCode).send(result(res2.statusCode, body || err2 || res2.statusMessage));
                             console.error(err2);
                         }
                         cleanTempDir();
@@ -152,15 +152,18 @@ app.post('/launch', (req, res) => {
 });
 
 function result(code, msg) {
-    const res = { 'code': code };
+    const res = {};
     if (msg instanceof Error) {
         res['message'] = msg.toString();
         if (msg.stack) {
             res['stack'] = msg.stack.toString();
         }
+    } else if (typeof msg === 'object') {
+        Object .assign(res, msg);
     } else if (msg) {
         res['message'] = msg.toString();
     }
+    res['code'] = code;
     return res;
 }
 
