@@ -53,5 +53,11 @@ if (args.length === 1 && args[0] === '--list') {
     }
 
     apply(resources({}), TARGET_DIR, APP_NAME, RUNTIME, CAPS)
+        .then(() => {
+            console.log(`Applied capability to "${TARGET_DIR}"`);
+            console.log('Go into that folder and type "./gap deploy" while logged into OpenShift to create the application');
+            console.log('in the currently active project. Afterwards type "./gap push" at any time to push the current');
+            console.log('application code to the project.');
+        })
         .catch((err) => console.error(`Application Error: ${err}`));
 }
