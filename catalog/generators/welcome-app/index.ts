@@ -33,6 +33,8 @@ export function apply(applyGenerator, resources, targetDir, props: any = {}) {
             _.set(bc, 'spec.source.git.uri', WELCOME_APP_REPO_URL);
             // Remove GitHub webhook triggers
             _.set(bc, 'spec.triggers', buildTriggers);
+            // Remove parameters
+            res.json.parameters = [];
             // Adding Route
             newRoute(res, props.application + '-welcome-route', lbls, serviceName)
             writeResources(fileName, res);
