@@ -137,11 +137,15 @@ app.post('/launch', (req, res) => {
                     };
                     request.post(options, (err2, res2, body) => {
                         console.info(`Pushed project "${req.body.name}" to ${backendUrl} - ${res2.statusCode}`);
+                        let json = null;
+                        try {
+                            json = JSON.parse(body);
+                        } catch (e) { /* ignore parse errors */ }
                         if (!err2 && res2.statusCode === 200) {
-                            res.status(200).send(result(200, body));
+                            res.status(200).send(result(200, json || body));
                         } else {
-                            res.status(res2.statusCode).send(result(res2.statusCode, body || err2 || res2.statusMessage));
-                            console.error(body || err2 || res2.statusMessage);
+                            res.status(res2.statusCode).send(result(res2.statusCode, json || err2 || res2.statusMessage));
+                            console.error(json || err2 || res2.statusMessage);
                         }
                         cleanTempDir();
                     });
@@ -151,19 +155,21 @@ app.post('/launch', (req, res) => {
     });
 });
 
-function result(code, msg) {
+function result(statusCode, msg) {
     const res = {};
     if (msg instanceof Error) {
         res['message'] = msg.toString();
         if (msg.stack) {
             res['stack'] = msg.stack.toString();
         }
+    } else if (Array.isArray(msg)) {
+        res['message'] = msg;
     } else if (typeof msg === 'object') {
         Object .assign(res, msg);
     } else if (msg) {
         res['message'] = msg.toString();
     }
-    res['code'] = code;
+    res['statusCode'] = statusCode;
     return res;
 }
 
