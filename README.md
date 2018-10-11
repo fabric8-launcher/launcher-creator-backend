@@ -153,3 +153,12 @@ command:
 $ yarn install --force
 ```
 
+## Deploy on OpenShift
+
+```
+$ oc new-app \
+     quintesse/node-java-oc-odo~https://github.com/fabric8-launcher/launcher-creator-backend \
+     --name launcher-creator-backend \
+     -e LAUNCHER_BACKEND_URL=https://forge.api.prod-preview.openshift.io/api
+```
+
