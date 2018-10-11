@@ -136,6 +136,7 @@ app.post('/launch', (req, res) => {
                         headers
                     };
                     request.post(options, (err2, res2, body) => {
+                        console.info(`Pushed project "${req.body.name}" to ${backendUrl}`);
                         if (err2) {
                             res.status(200).send(result(200, err2));
                         } else {
