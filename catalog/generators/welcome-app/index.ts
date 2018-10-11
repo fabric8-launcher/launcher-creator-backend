@@ -35,7 +35,7 @@ export function apply(applyGenerator, resources, targetDir, props: any = {}) {
             _.set(bc, 'spec.triggers', buildTriggers);
             // Adding Route
             newRoute(res, props.application + '-welcome-route', lbls, serviceName)
-            writeResources(fileName, res.toList());
+            writeResources(fileName, res);
         });
 }
 

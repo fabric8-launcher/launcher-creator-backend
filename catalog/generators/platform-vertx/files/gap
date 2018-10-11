@@ -14,7 +14,7 @@ case "$1" in
         fi
         oc process -f ${SCRIPT_DIR}/.openshiftio/application.yaml ${PARAMS} | oc apply -f -
         if [[ -f ${SCRIPT_DIR}/.openshiftio/service-welcome.yaml ]]; then
-             oc apply -f ${SCRIPT_DIR}/.openshiftio/service-welcome.yaml
+             oc process -f ${SCRIPT_DIR}/.openshiftio/service-welcome.yaml | oc apply -f -
         fi
         ;;
     "push")
