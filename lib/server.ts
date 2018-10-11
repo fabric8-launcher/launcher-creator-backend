@@ -141,7 +141,7 @@ app.post('/launch', (req, res) => {
                             res.status(200).send(result(200, body));
                         } else {
                             res.status(res2.statusCode).send(result(res2.statusCode, body || err2 || res2.statusMessage));
-                            console.error(err2);
+                            console.error(body || err2 || res2.statusMessage);
                         }
                         cleanTempDir();
                     });
