@@ -136,14 +136,12 @@ app.post('/launch', (req, res) => {
                         headers
                     };
                     request.post(options, (err2, res2, body) => {
-                        console.info(`Pushed project "${req.body.name}" to ${backendUrl}`);
-                        if (err2) {
-                            res.status(200).send(result(200, err2));
+                        console.info(`Pushed project "${req.body.name}" to ${backendUrl} - ${res2.statusCode}`);
+                        if (!err2) {
+                            res.status(200).send(result(200, body));
                         } else {
-                            res.status(res2.statusCode).send({
-                                'code': res2.statusCode,
-                                'message': res2.statusMessage
-                            });
+                            res.status(res2.statusCode).send(result(res2.statusCode, err2));
+                            console.error(err2);
                         }
                         cleanTempDir();
                     });
