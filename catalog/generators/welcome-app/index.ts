@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 import { newApp, newRoute } from 'core/resources';
 import { writeResources } from 'core/deploy';
 
-const WELCOME_APP_REPO_URL = 'https://github.com/fabric8-launcher/application-creator-landingpage';
+const WELCOME_APP_REPO_URL = 'https://github.com/fabric8-launcher/launcher-creator-welcome-app';
 
 const buildTriggers = [{
     'type': 'ConfigChange'
