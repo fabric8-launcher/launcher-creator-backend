@@ -15,7 +15,7 @@ const buildTriggers = [{
 }];
 
 export function apply(applyGenerator, resources, targetDir, props: any = {}) {
-    const fileName = join(targetDir, '.openshiftio', 'service-welcome.yaml');
+    const fileName = join(targetDir, '.openshiftio', 'service.welcome.yaml');
     const serviceName = props.application + '-welcome';
     const lbls = {
         'app': props.application,
