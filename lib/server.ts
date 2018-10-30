@@ -7,6 +7,7 @@ import * as request from 'request';
 import * as NodeCache from 'node-cache';
 import * as shortid from 'shortid';
 import * as fs from 'fs';
+import * as HttpStatus from 'http-status-codes';
 
 import * as catalog from 'core/catalog';
 import * as deploy from 'core/deploy';
@@ -32,34 +33,38 @@ app.use('/swagger.yaml', express.static('./swagger.yaml'));
 
 app.get('/capabilities', (req, res) => {
     catalog.listCapabilities()
-        .then(caps => res.status(200).send(caps))
-        .catch(err => res.status(500).send(result(500, err)));
+        .then(caps => res.status(HttpStatus.OK).send(caps))
+        .catch(err => res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(result(HttpStatus.INTERNAL_SERVER_ERROR, err)));
 });
 
 app.get('/generators', (req, res) => {
     catalog.listGenerators()
-        .then(caps => res.status(200).send(caps))
-        .catch(err => res.status(500).send(result(500, err)));
+        .then(caps => res.status(HttpStatus.OK).send(caps))
+        .catch(err => res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(result(HttpStatus.INTERNAL_SERVER_ERROR, err)));
 });
 
 app.get('/runtimes', (req, res) => {
     catalog.listRuntimes()
-        .then(list => res.status(200).send(list))
-        .catch(err => res.status(500).send(result(500, err)));
+        .then(list => res.status(HttpStatus.OK).send(list))
+        .catch(err => res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(result(HttpStatus.INTERNAL_SERVER_ERROR, err)));
 });
 
 app.get('/download', (req, res) => {
-
+    // Make sure we have all the required inputs
+    if (!req.query.id) {
+        res.status(HttpStatus.BAD_REQUEST).send(result(HttpStatus.BAD_REQUEST, new Error('Missing download ID')));
+        return;
+    }
     const id = req.query.id;
     zipCache.get(id, (err, data?: { name, file }) => {
         if (err) {
-            res.status(500).send(result(500, err));
+            res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(result(HttpStatus.INTERNAL_SERVER_ERROR, err));
             return;
         }
         if (!data) {
-            res.status(404).send(result(404, new Error('Not found')));
+            res.status(404).send(result(HttpStatus.NOT_FOUND, new Error('Not found')));
         } else {
-            res.writeHead(200, {
+            res.writeHead(HttpStatus.OK, {
                 'Content-Type': 'application/zip',
                 'Content-disposition': `attachment; filename=${data.name}`
             });
@@ -74,6 +79,19 @@ zipCache.on('del', (key, value) => {
 });
 
 app.post('/zip', (req, res) => {
+    // Make sure we have all the required inputs
+    if (!req.body.name) {
+        res.status(HttpStatus.BAD_REQUEST).send(result(HttpStatus.BAD_REQUEST, new Error('Missing application name')));
+        return;
+    }
+    if (!req.body.runtime) {
+        res.status(HttpStatus.BAD_REQUEST).send(result(HttpStatus.BAD_REQUEST, new Error('Missing application runtime')));
+        return;
+    }
+    if (!req.body.capabilities) {
+        res.status(HttpStatus.BAD_REQUEST).send(result(HttpStatus.BAD_REQUEST, new Error('Missing application capabilities')));
+        return;
+    }
     // Create temp dir
     tmp.dir({'unsafeCleanup': true}, (err, tempDir, cleanTempDir) => {
         // Generate contents
@@ -87,17 +105,38 @@ app.post('/zip', (req, res) => {
                 .then(() => {
                     const id = shortid.generate();
                     zipCache.set(id, { 'file': projectZip, 'name': `${req.body.name}.zip`, cleanTempDir }, 600);
-                    res.status(200).send({ id });
+                    res.status(HttpStatus.OK).send({ id });
                 });
           })
-          .catch(promErr => res.status(500).send(result(500, promErr)));
+          .catch(promErr => res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(result(HttpStatus.INTERNAL_SERVER_ERROR, promErr)));
     });
 });
 
 app.post('/launch', (req, res) => {
     // Make sure we're autenticated
-    if (!req.header('Authorization')) {
-        res.status(401).send(result(401, 'Unauthorized'));
+    if (!req.get('Authorization')) {
+        res.status(401).send(result(HttpStatus.UNAUTHORIZED, 'Unauthorized'));
+        return;
+    }
+    // And have all the required inputs
+    if (!req.body.name) {
+        res.status(HttpStatus.BAD_REQUEST).send(result(HttpStatus.BAD_REQUEST, new Error('Missing application name')));
+        return;
+    }
+    if (!req.body.runtime) {
+        res.status(HttpStatus.BAD_REQUEST).send(result(HttpStatus.BAD_REQUEST, new Error('Missing application runtime')));
+        return;
+    }
+    if (!req.body.capabilities) {
+        res.status(HttpStatus.BAD_REQUEST).send(result(HttpStatus.BAD_REQUEST, new Error('Missing application capabilities')));
+        return;
+    }
+    if (!req.body.projectName) {
+        res.status(HttpStatus.BAD_REQUEST).send(result(HttpStatus.BAD_REQUEST, new Error('Missing OpenShift project name')));
+        return;
+    }
+    if (!req.body.gitRepository) {
+        res.status(HttpStatus.BAD_REQUEST).send(result(HttpStatus.BAD_REQUEST, new Error('Missing Git repository name')));
         return;
     }
     // Create temp dir
@@ -122,7 +161,7 @@ app.post('/launch', (req, res) => {
                         formData['gitOrganization'] = req.body.gitOrganization;
                     }
                     const auth = {
-                        'bearer': req.header('Authorization').slice(7)
+                        'bearer': req.get('Authorization').slice(7)
                     };
                     const headers = {};
                     if (req.body.clusterId) {
@@ -140,9 +179,10 @@ app.post('/launch', (req, res) => {
                         let json = null;
                         try {
                             json = JSON.parse(body);
-                        } catch (e) { /* ignore parse errors */ }
-                        if (!err2 && res2.statusCode === 200) {
-                            res.status(200).send(result(200, json || body));
+                        } catch (e) { /* ignore parse errors */
+                        }
+                        if (!err2 && res2.statusCode === HttpStatus.OK) {
+                            res.status(HttpStatus.OK).send(result(HttpStatus.OK, json || body));
                         } else {
                             res.status(res2.statusCode).send(result(res2.statusCode, json || err2 || res2.statusMessage));
                             console.error(json || err2 || res2.statusMessage);
@@ -151,7 +191,7 @@ app.post('/launch', (req, res) => {
                     });
                 });
             })
-            .catch(promErr => res.status(500).send(result(500, promErr)));
+            .catch(promErr => res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(result(HttpStatus.INTERNAL_SERVER_ERROR, promErr)));
     });
 });
 
