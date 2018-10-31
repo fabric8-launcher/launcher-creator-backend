@@ -62,7 +62,7 @@ app.get('/download', (req, res) => {
             return;
         }
         if (!data) {
-            res.status(404).send(result(HttpStatus.NOT_FOUND, new Error('Not found')));
+            res.status(HttpStatus.NOT_FOUND).send(result(HttpStatus.NOT_FOUND, new Error('Not found')));
         } else {
             res.writeHead(HttpStatus.OK, {
                 'Content-Type': 'application/zip',
