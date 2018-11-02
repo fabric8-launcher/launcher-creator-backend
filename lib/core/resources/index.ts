@@ -344,7 +344,7 @@ function convertObjectToEnvWithRefs(env) {
 // by 'dcName' with the given key/values in the object 'env'. The values
 // are either simple strings or they can be objects themselves in which
 // case they are references to keys in a ConfigMap or a Secret.
-function setDeploymentEnv(res: Resources, env, dcName?: any): Resources {
+export function setDeploymentEnv(res: Resources, env, dcName?: any): Resources {
     if (res.deploymentConfigs.length > 0) {
         const dc = (dcName) ? res.deploymentConfig(dcName) : res.deploymentConfigs[0];
         const dcc = _.get(dc, 'spec.template.spec.containers[0]');
