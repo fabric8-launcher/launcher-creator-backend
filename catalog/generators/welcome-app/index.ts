@@ -14,31 +14,29 @@ const buildTriggers = [{
     'imageChange': {}
 }];
 
-export function apply(applyGenerator, resources, targetDir, props: any = {}) {
+export async function apply(applyGenerator, resources, targetDir, props: any = {}) {
     const fileName = join(targetDir, '.openshiftio', 'service.welcome.yaml');
     const serviceName = props.application + '-welcome';
     const lbls = {
         'app': props.application,
         'apptype': 'welcome'
     };
-    return newApp(
+    const res = await newApp(
         serviceName,
         lbls,
         'bucharestgold/centos7-s2i-web-app',
         WELCOME_APP_REPO_URL,
-        {})
-        .then(res => {
-            const bc = res.buildConfig(serviceName);
-            // Set the Git repo URL to use the template parameter
-            _.set(bc, 'spec.source.git.uri', WELCOME_APP_REPO_URL);
-            // Remove GitHub webhook triggers
-            _.set(bc, 'spec.triggers', buildTriggers);
-            // Remove parameters
-            res.json.parameters = [];
-            // Adding Route
-            newRoute(res, props.application + '-welcome-route', lbls, serviceName)
-            writeResources(fileName, res);
-        });
+        {});
+    const bc = res.buildConfig(serviceName);
+    // Set the Git repo URL to use the template parameter
+    _.set(bc, 'spec.source.git.uri', WELCOME_APP_REPO_URL);
+    // Remove GitHub webhook triggers
+    _.set(bc, 'spec.triggers', buildTriggers);
+    // Remove parameters
+    res.json.parameters = [];
+    // Adding Route
+    await newRoute(res, props.application + '-welcome-route', lbls, serviceName);
+    return await writeResources(fileName, res);
 }
 
 export function info() {

@@ -23,21 +23,29 @@ function resourcesFileName(targetDir) {
 // Returns a promise that will resolve to the JSON
 // contents of the given file or to an empty object
 // if the file wasn't found
-function readDeployment(deploymentFile) {
+async function readDeployment(deploymentFile): Promise<any> {
     if (pathExistsSync(deploymentFile)) {
-        return readJson(deploymentFile)
-            .catch((error) => console.error(`Failed to read deployment file ${deploymentFile}: ${error}`));
+        try {
+            return await readJson(deploymentFile);
+        } catch (ex) {
+            console.error(`Failed to read deployment file ${deploymentFile}: ${ex}`);
+            throw ex;
+        }
     } else {
-        return Promise.resolve({'applications': []});
+        return {'applications': []};
     }
 }
 
 // Returns a promise that will resolve when the given
 // deployment was written to the given file
-function writeDeployment(deploymentFile, deployment) {
-    return ensureFile(deploymentFile)
-        .then(() => writeFile(deploymentFile, JSON.stringify(deployment, null, 2)))
-        .catch((error) => console.error(`Failed to write deployment file ${deploymentFile}: ${error}`));
+async function writeDeployment(deploymentFile, deployment): Promise<any> {
+    try {
+        await ensureFile(deploymentFile);
+        return writeFile(deploymentFile, JSON.stringify(deployment, null, 2));
+    } catch (ex) {
+        console.error(`Failed to write deployment file ${deploymentFile}: ${ex}`);
+        throw ex;
+    }
 }
 
 // Returns a name based on the given prefix that is
@@ -66,42 +74,47 @@ function addCapability(deployment, capability) {
 
 // Returns a promise that will resolve when the given
 // resources were read from the given file
-export function readResources(resourcesFile): Promise<Resources> {
-    const p = readFile(resourcesFile, 'utf8')
-        .then(text => resources(YAML.parse(text)));
-    p.catch(error => console.error(`Failed to read resources file ${resourcesFile}: ${error}`));
-    return p;
+export async function readResources(resourcesFile): Promise<Resources> {
+    try {
+        const text = await readFile(resourcesFile, 'utf8');
+        return resources(YAML.parse(text));
+    } catch (ex) {
+        console.error(`Failed to read resources file ${resourcesFile}: ${ex}`);
+        throw ex;
+    }
 }
 
 // Returns a promise that will resolve when the given
 // resources were written to the given file
-export function writeResources(resourcesFile, res) {
-    return ensureFile(resourcesFile)
-        .then(() => writeFile(resourcesFile, YAML.stringify(res.json)))
-        .catch(error => console.error(`Failed to write resources file ${resourcesFile}: ${error}`));
+export async function writeResources(resourcesFile, res): Promise<any> {
+    try {
+        await ensureFile(resourcesFile);
+        return await writeFile(resourcesFile, YAML.stringify(res.json));
+    } catch (ex) {
+        console.error(`Failed to write resources file ${resourcesFile}: ${ex}`);
+        throw ex;
+    }
 }
 
-function applyCapability_(applyGenerator, res, targetDir, props) {
+async function applyCapability_(applyGenerator, res, targetDir, props) {
     const module = getCapabilityModule(props.module);
     const df = deploymentFileName(targetDir);
     const rf = resourcesFileName(targetDir);
     validate(module.info(), props);
-    return module.apply(applyGenerator, res, targetDir, props)
-        .then(res2 => writeResources(rf, res2))
-        .then(() => readDeployment(df))
-        .then(deployment => {
-            const newDeployment = addCapability(deployment, props);
-            return writeDeployment(df, deployment)
-                .then(() => newDeployment);
-        });
+    const res2 = await module.apply(applyGenerator, res, targetDir, props);
+    await writeResources(rf, res2);
+    const deployment = await readDeployment(df);
+    const newDeployment = addCapability(deployment, props);
+    await writeDeployment(df, deployment);
+    return newDeployment;
 }
 
 // Calls `apply()` on the given capability (which allows it to copy, generate
 // and change files in the user's project) and adds information about the
 // capability to the `deployment.json` in the project's root.
-function applyCapability(applyGenerator, res, targetDir, appName, props) {
+async function applyCapability(applyGenerator, res, targetDir, appName, props) {
     props.application = appName;
-    return applyCapability_(applyGenerator, res, targetDir, props);
+    return await applyCapability_(applyGenerator, res, targetDir, props);
 }
 
 // Calls `applyCapability()` on all the given capabilities
@@ -147,7 +160,7 @@ export function zip(targetDir, zipFileName) {
     return zipFolder(out, targetDir, archiveFolderName);
 }
 
-export function push(targetDir: string, pushType: string, follow: boolean = false) {
+export async function push(targetDir: string, pushType: string, follow: boolean = false) {
     // TODO MAKE THIS NOT HARD-CODED!
     const targetJar = targetDir + '/target/my-app-1.0.jar';
     let fromPath;
@@ -163,24 +176,20 @@ export function push(targetDir: string, pushType: string, follow: boolean = fals
     }
 
     const rf = resourcesFileName(targetDir);
-    return readResources(rf)
-        .then(res => {
-            const bcs = res.buildConfigs;
-            if (bcs.length === 0) {
-                throw new Error(`Missing BuildConfig in ${rf}`);
-            } else if (bcs.length > 1) {
-                throw new Error(`Multiple BuildConfig resources found in ${rf}, support for this had not been implemented yet!`);
-            }
-            const bcName = bcs[0].metadata.name;
-            return startBuild(bcName, fromPath, follow);
-        });
+    const res = await readResources(rf);
+    const bcs = res.buildConfigs;
+    if (bcs.length === 0) {
+        throw new Error(`Missing BuildConfig in ${rf}`);
+    } else if (bcs.length > 1) {
+        throw new Error(`Multiple BuildConfig resources found in ${rf}, support for this had not been implemented yet!`);
+    }
+    const bcName = bcs[0].metadata.name;
+    return startBuild(bcName, fromPath, follow);
 }
 
-export function del(targetDir: string) {
+export async function del(targetDir: string) {
     const df = deploymentFileName(targetDir);
-    return readDeployment(df)
-        .then(deployment => {
-            const appLabel = deployment.applications[0].application;
-            return deleteApp(appLabel);
-        });
+    const deployment = await readDeployment(df);
+    const appLabel = deployment.applications[0].application;
+    return deleteApp(appLabel);
 }

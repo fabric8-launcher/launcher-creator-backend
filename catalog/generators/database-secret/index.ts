@@ -1,5 +1,5 @@
 
-export function apply(applyGenerator, resources, targetDir, props: any = {}) {
+export async function apply(applyGenerator, resources, targetDir, props: any = {}) {
     // Create Secret holding Database connection/authentication information
     if (!resources.secret(props.secretName)) {
         const secret = {
@@ -23,7 +23,7 @@ export function apply(applyGenerator, resources, targetDir, props: any = {}) {
     } else {
         // console.log(`Secret ${props.secretName} already exists`);
     }
-    return Promise.resolve(resources);
+    return resources;
 }
 
 export function info() {

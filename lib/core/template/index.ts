@@ -41,7 +41,7 @@ class LineTransform extends Transform {
     }
 }
 
-export function transform(inFile: string, outFile: string, transformLine: (line: string) => string) {
+export function transform(inFile: string, outFile: string, transformLine: (line: string) => string): Promise<string> {
     const actualOutFile = (outFile === inFile || !outFile) ? tmpNameSync() : outFile;
 
     const ins = createReadStream(inFile);
@@ -53,10 +53,10 @@ export function transform(inFile: string, outFile: string, transformLine: (line:
         ins
             .pipe(new LineTransform(transformLine, {}))
             .pipe(outs)
-            .on('finish', () => {
+            .on('finish', async () => {
                 if (outFile !== actualOutFile) {
-                    resolve(move(actualOutFile, inFile, { 'overwrite': true })
-                        .then(() => inFile));
+                    await move(actualOutFile, inFile, { 'overwrite': true });
+                    resolve(inFile);
                 } else {
                     resolve(outFile);
                 }

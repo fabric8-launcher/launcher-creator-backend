@@ -93,22 +93,21 @@ app.post('/zip', (req, res) => {
         return;
     }
     // Create temp dir
-    tmp.dir({'unsafeCleanup': true}, (err, tempDir, cleanTempDir) => {
+    tmp.dir({'unsafeCleanup': true}, async (err, tempDir, cleanTempDir) => {
         // Generate contents
         const projectDir = `${tempDir}/project`;
         fs.mkdirSync(projectDir);
         const projectZip = `${tempDir}/project.zip`;
         const out = fs.createWriteStream(projectZip);
-        deploy.apply(resources({}), projectDir, req.body.name, req.body.runtime, req.body.capabilities)
-          .then(() => {
-              return zipFolder(out, projectDir, req.body.name)
-                .then(() => {
-                    const id = shortid.generate();
-                    zipCache.set(id, { 'file': projectZip, 'name': `${req.body.name}.zip`, cleanTempDir }, 600);
-                    res.status(HttpStatus.OK).send({ id });
-                });
-          })
-          .catch(promErr => res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(result(HttpStatus.INTERNAL_SERVER_ERROR, promErr)));
+        try {
+            await deploy.apply(resources({}), projectDir, req.body.name, req.body.runtime, req.body.capabilities);
+            await zipFolder(out, projectDir, req.body.name);
+            const id = shortid.generate();
+            zipCache.set(id, { 'file': projectZip, 'name': `${req.body.name}.zip`, cleanTempDir }, 600);
+            res.status(HttpStatus.OK).send({ id });
+        } catch (ex) {
+            res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(result(HttpStatus.INTERNAL_SERVER_ERROR, ex));
+        }
     });
 });
 
@@ -140,58 +139,59 @@ app.post('/launch', (req, res) => {
         return;
     }
     // Create temp dir
-    tmp.dir({'unsafeCleanup': true}, (err, tempDir, cleanTempDir) => {
+    tmp.dir({'unsafeCleanup': true}, async (err, tempDir, cleanTempDir) => {
         // Generate contents
         const projectDir = `${tempDir}/project`;
         fs.mkdirSync(projectDir);
         const projectZip = `${tempDir}/project.zip`;
         const out = fs.createWriteStream(projectZip);
-        deploy.apply(resources({}), projectDir, req.body.name, req.body.runtime, req.body.capabilities)
-            .then(() => {
-                zipFolder(out, projectDir, req.body.name);
-                out.on('finish', () => {
-                    // Prepare to post
-                    const ins = fs.createReadStream(projectZip);
-                    const formData = {
-                        'projectName': req.body.projectName,
-                        'gitRepository': req.body.gitRepository,
-                        'file': ins
-                    };
-                    if (req.body.gitOrganization) {
-                        formData['gitOrganization'] = req.body.gitOrganization;
+        try {
+            await deploy.apply(resources({}), projectDir, req.body.name, req.body.runtime, req.body.capabilities);
+            zipFolder(out, projectDir, req.body.name);
+            out.on('finish', () => {
+                // Prepare to post
+                const ins = fs.createReadStream(projectZip);
+                const formData = {
+                    'projectName': req.body.projectName,
+                    'gitRepository': req.body.gitRepository,
+                    'file': ins
+                };
+                if (req.body.gitOrganization) {
+                    formData['gitOrganization'] = req.body.gitOrganization;
+                }
+                const auth = {
+                    'bearer': req.get('Authorization').slice(7)
+                };
+                const headers = {};
+                if (req.body.clusterId) {
+                    headers['X-OpenShift-Cluster'] = req.body.clusterId;
+                }
+                const backendUrl = process.env.LAUNCHER_BACKEND_URL || 'http://localhost:8080/api';
+                const options = {
+                    'url': backendUrl + '/launcher/upload',
+                    formData,
+                    auth,
+                    headers
+                };
+                request.post(options, (err2, res2, body) => {
+                    console.info(`Pushed project "${req.body.name}" to ${backendUrl} - ${res2.statusCode}`);
+                    let json = null;
+                    try {
+                        json = JSON.parse(body);
+                    } catch (e) { /* ignore parse errors */
                     }
-                    const auth = {
-                        'bearer': req.get('Authorization').slice(7)
-                    };
-                    const headers = {};
-                    if (req.body.clusterId) {
-                        headers['X-OpenShift-Cluster'] = req.body.clusterId;
+                    if (!err2 && res2.statusCode === HttpStatus.OK) {
+                        res.status(HttpStatus.OK).send(result(HttpStatus.OK, json || body));
+                    } else {
+                        res.status(res2.statusCode).send(result(res2.statusCode, json || err2 || res2.statusMessage));
+                        console.error(json || err2 || res2.statusMessage);
                     }
-                    const backendUrl = process.env.LAUNCHER_BACKEND_URL || 'http://localhost:8080/api';
-                    const options = {
-                        'url': backendUrl + '/launcher/upload',
-                        formData,
-                        auth,
-                        headers
-                    };
-                    request.post(options, (err2, res2, body) => {
-                        console.info(`Pushed project "${req.body.name}" to ${backendUrl} - ${res2.statusCode}`);
-                        let json = null;
-                        try {
-                            json = JSON.parse(body);
-                        } catch (e) { /* ignore parse errors */
-                        }
-                        if (!err2 && res2.statusCode === HttpStatus.OK) {
-                            res.status(HttpStatus.OK).send(result(HttpStatus.OK, json || body));
-                        } else {
-                            res.status(res2.statusCode).send(result(res2.statusCode, json || err2 || res2.statusMessage));
-                            console.error(json || err2 || res2.statusMessage);
-                        }
-                        cleanTempDir();
-                    });
+                    cleanTempDir();
                 });
-            })
-            .catch(promErr => res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(result(HttpStatus.INTERNAL_SERVER_ERROR, promErr)));
+            });
+        } catch (ex) {
+            res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(result(HttpStatus.INTERNAL_SERVER_ERROR, ex));
+        }
     });
 });
 

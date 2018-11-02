@@ -6,7 +6,7 @@ import { transformFiles } from 'core/template';
 import { cases } from 'core/template/transformers';
 import { setDeploymentEnv } from 'core/resources';
 
-export function apply(applyGenerator, resources, targetDir, props: any = {}) {
+export async function apply(applyGenerator, resources, targetDir, props: any = {}) {
     const pprops = {
         'application': props.application,
         'groupId': props.groupId,
@@ -29,12 +29,12 @@ export function apply(applyGenerator, resources, targetDir, props: any = {}) {
     };
     // First copy the files from the base Vert.x platform module
     // and then copy our own over that
-    return applyGenerator('platform-vertx', resources, targetDir, pprops)
-        .then(() => setDeploymentEnv(resources, env))
-        .then(() => copy(join(__dirname, 'files'), targetDir))
-        .then(() => mergePoms(join(targetDir, 'pom.xml'), join(__dirname, 'merge', `pom.${props.databaseType}.xml`)))
-        .then(() => transformFiles(join(targetDir, 'src/**/*.java'), cases(props)))
-        .then(() => resources);
+    await applyGenerator('platform-vertx', resources, targetDir, pprops);
+    setDeploymentEnv(resources, env);
+    await copy(join(__dirname, 'files'), targetDir);
+    await mergePoms(join(targetDir, 'pom.xml'), join(__dirname, 'merge', `pom.${props.databaseType}.xml`));
+    await transformFiles(join(targetDir, 'src/**/*.java'), cases(props));
+    return resources;
     // TODO Don't just blindly copy all files, we need to _patch_ some of
     // them instead (eg. pom.xml and arquillian.xml and Java code)
 }

@@ -369,37 +369,38 @@ function setAppLabel(res: Resources, label: string|object): Resources {
 
 // Returns a list of resources that when applied will create
 // an instance of the given image or template.
-export function newApp(appName: string, appLabel: string|object, imageName: string, sourceUri?: string, env = {}): Promise<Resources> {
-    return readTemplate(imageName, appName, null, sourceUri)
-        .then(json => resources(json))
-        .then((appRes) => setAppLabel(appRes, appLabel))
-        .then((appRes) => setDeploymentEnv(appRes, env));
+export async function newApp(appName: string,
+                             appLabel: string|object,
+                             imageName: string,
+                             sourceUri?: string, env = {}): Promise<Resources> {
+    const json = await readTemplate(imageName, appName, null, sourceUri);
+    const appRes = resources(json);
+    setAppLabel(appRes, appLabel);
+    return setDeploymentEnv(appRes, env);
 }
 
 // Helper function that creates a database using the given 'dbImageName'
 // and the given environment variables from 'env' and 'secretEnv' (the
 // latter being taken from a previously created Secret indicated by
 // 'secretName').
-export function newDatabaseUsingSecret(res: Resources, appName: string, dbImageName: string, env): Promise<Resources> {
+export async function newDatabaseUsingSecret(res: Resources, appName: string, dbImageName: string, env): Promise<Resources> {
     const dbName = appName + '-database';
     if (!res.service(dbName)) {
         // Create the database resource definitions
-        return newApp(dbName, appName, dbImageName, null, env)
-            .then((appRes) => {
-                const resNew = res.add(appRes);
-                // console.log(`Database ${dbServiceName} added`);
-                return resNew;
-            });
+        const appRes = await newApp(dbName, appName, dbImageName, null, env);
+        const resNew = res.add(appRes);
+        // console.log(`Database ${dbServiceName} added`);
+        return resNew;
     } else {
         // console.log(`Database ${dbServiceName} already exists`);
-        return Promise.resolve(res);
+        return res;
     }
 }
 
-export function newRoute(res: Resources,
-                         appName: string,
-                         appLabel: string|object,
-                         serviceName: string, port: number = -1): Promise<Resources> {
+export async function newRoute(res: Resources,
+                               appName: string,
+                               appLabel: string|object,
+                               serviceName: string, port: number = -1): Promise<Resources> {
     let portName;
     if (port === -1) {
         portName = res.service(serviceName)['spec'].ports[0].name;
@@ -424,5 +425,5 @@ export function newRoute(res: Resources,
             }
         }
     });
-    return Promise.resolve(res);
+    return res;
 }

@@ -8,14 +8,14 @@ function runtimeByType(type) {
     }
 }
 
-export function apply(applyGenerator, resources, targetDir, props) {
+export async function apply(applyGenerator, resources, targetDir, props) {
     const rtprops = {
         'application': props.application,
         'groupId': props.groupId,
         'artifactId': props.artifactId,
         'version': props.version
     };
-    return applyGenerator(runtimeByType(props.runtime), resources, targetDir, rtprops);
+    return await applyGenerator(runtimeByType(props.runtime), resources, targetDir, rtprops);
 }
 
 export function info() {

@@ -50,40 +50,41 @@ function templateFileName(img: string) {
 
 export function generate() {
     const images = require('./images.json');
-    images.forEach(({image, isBuilder}) => {
-        const srcUri = isBuilder ? dummyGitUrl : null;
-        return newApp(dummyName, dummyLabel, image, srcUri, {})
-            .then((res) => {
-                res.toTemplate();
-                if (isBuilder) {
-                    // Turn the resources into a template and add parameters
-                    res
-                        .addParam(sourceRepoUrlParam)
-                        .addParam(githubWebhookSecretParam);
-                    // Make sure incremental builds are enabled
-                    const bc = res.buildConfig(dummyName);
-                    _.set(bc, 'spec.strategy.sourceStrategy.incremental', true);
-                    // Set the Git repo URL to use the template parameter
-                    _.set(bc, 'spec.source.git.uri', '${SOURCE_REPOSITORY_URL}');
-                    // Set the GitHub webhook trigger to use the template parameter
-                    _.set(bc, 'spec.triggers', buildTriggers);
-                }
-                // Write the resources to a file
-                const name = templateFileName(image);
-                return ensureFile(name)
-                    .then(() => writeFile(name, JSON.stringify(res.json, null, 2)))
-                    .then(() => console.log('Created image', image));
-            })
-            .catch(err => console.error(`Couldn't generate template for image ${image}: ${err}`));
+    images.forEach(async ({image, isBuilder}) => {
+        try {
+            const srcUri = isBuilder ? dummyGitUrl : null;
+            const res = await newApp(dummyName, dummyLabel, image, srcUri, {});
+            res.toTemplate();
+            if (isBuilder) {
+                // Turn the resources into a template and add parameters
+                res
+                    .addParam(sourceRepoUrlParam)
+                    .addParam(githubWebhookSecretParam);
+                // Make sure incremental builds are enabled
+                const bc = res.buildConfig(dummyName);
+                _.set(bc, 'spec.strategy.sourceStrategy.incremental', true);
+                // Set the Git repo URL to use the template parameter
+                _.set(bc, 'spec.source.git.uri', '${SOURCE_REPOSITORY_URL}');
+                // Set the GitHub webhook trigger to use the template parameter
+                _.set(bc, 'spec.triggers', buildTriggers);
+            }
+            // Write the resources to a file
+            const name = templateFileName(image);
+            await ensureFile(name);
+            await writeFile(name, JSON.stringify(res.json, null, 2));
+            console.log('Created image', image);
+        } catch (ex) {
+            console.error(`Couldn't generate template for image ${image}: ${ex}`);
+        }
     });
 }
 
-export function readTemplate(img: string, appName: string, appLabel?: string, gitUrl?: string): Promise<object> {
+export async function readTemplate(img: string, appName: string, appLabel?: string, gitUrl?: string): Promise<object> {
     const name = templateFileName(img);
-    return readFile(name, 'utf8')
-        .then(text => text
-            .replace(dummyNameRe, appName)
-            .replace(dummyLabelRe, appLabel || dummyLabel)
-            .replace(dummyGitUrl, gitUrl || dummyGitUrl))
-        .then(text => JSON.parse(text));
+    const text = await readFile(name, 'utf8');
+    const newText = text
+        .replace(dummyNameRe, appName)
+        .replace(dummyLabelRe, appLabel || dummyLabel)
+        .replace(dummyGitUrl, gitUrl || dummyGitUrl);
+    return JSON.parse(newText);
 }
