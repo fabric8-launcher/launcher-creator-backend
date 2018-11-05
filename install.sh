@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ARTIFACT_VERSION=7
+ARTIFACT_VERSION=8
 
 ARTIFACT_URL="https://oss.sonatype.org/content/repositories/releases/io/fabric8/maven-model-helper/${ARTIFACT_VERSION}/maven-model-helper-${ARTIFACT_VERSION}-uber.jar"
 TARGET_DIR="lib/core/maven"
