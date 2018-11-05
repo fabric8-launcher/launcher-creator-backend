@@ -1,4 +1,6 @@
 
+export const id = 'database-secret';
+
 export async function apply(applyGenerator, resources, targetDir, props: any = {}) {
     // Create Secret holding Database connection/authentication information
     if (!resources.secret(props.secretName)) {

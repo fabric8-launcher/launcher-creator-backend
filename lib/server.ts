@@ -32,13 +32,13 @@ app.get('/', (req, res) => {
 app.use('/openapi', express.static('./openapi.yaml'));
 
 app.get('/capabilities', (req, res) => {
-    catalog.listCapabilities()
+    catalog.listCapabilityInfos()
         .then(caps => res.status(HttpStatus.OK).send(caps))
         .catch(err => res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(result(HttpStatus.INTERNAL_SERVER_ERROR, err)));
 });
 
 app.get('/generators', (req, res) => {
-    catalog.listGenerators()
+    catalog.listGeneratorInfos()
         .then(caps => res.status(HttpStatus.OK).send(caps))
         .catch(err => res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(result(HttpStatus.INTERNAL_SERVER_ERROR, err)));
 });

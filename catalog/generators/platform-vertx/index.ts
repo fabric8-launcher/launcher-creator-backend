@@ -5,6 +5,11 @@ import { newApp, newRoute } from 'core/resources';
 import { transformFiles } from 'core/template';
 import { cases } from 'core/template/transformers';
 
+import * as WelcomeApp from 'generators/welcome-app';
+import * as MavenSetup from 'generators/maven-setup';
+
+export const id = 'platform-vertx';
+
 export async function apply(applyGenerator, resources, targetDir, props: any = {}) {
     const serviceName = props.application + '-vertx';
     const tprops = {
@@ -13,8 +18,8 @@ export async function apply(applyGenerator, resources, targetDir, props: any = {
     };
     await copy(join(__dirname, 'files'), targetDir);
     await transformFiles(join(targetDir, 'gap'), cases(tprops));
-    await applyGenerator('welcome-app', resources, targetDir, props);
-    await applyGenerator('maven-setup', resources, targetDir, props);
+    await applyGenerator(WelcomeApp, resources, targetDir, props);
+    await applyGenerator(MavenSetup, resources, targetDir, props);
     const res = await newApp(
             serviceName,
             props.application,

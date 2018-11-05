@@ -3,6 +3,10 @@ import { copy } from 'fs-extra';
 import { join } from 'path';
 import { mergePoms } from 'core/maven';
 
+import * as PlatformVertx from 'generators/platform-vertx';
+
+export const id = 'rest-vertx';
+
 export async function apply(applyGenerator, resources, targetDir, props: any = {}) {
     // First copy the files from the base Vert.x platform module
     // and then copy our own over that
@@ -12,7 +16,7 @@ export async function apply(applyGenerator, resources, targetDir, props: any = {
         'artifactId': props.artifactId,
         'version': props.version,
     };
-    await applyGenerator('platform-vertx', resources, targetDir, pprops);
+    await applyGenerator(PlatformVertx, resources, targetDir, pprops);
     await copy(join(__dirname, 'files'), targetDir);
     await mergePoms(join(targetDir, 'pom.xml'), join(__dirname, 'merge', 'pom.xml'));
     return resources;

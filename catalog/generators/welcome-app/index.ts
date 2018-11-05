@@ -14,6 +14,8 @@ const buildTriggers = [{
     'imageChange': {}
 }];
 
+export const id = 'welcome-app';
+
 export async function apply(applyGenerator, resources, targetDir, props: any = {}) {
     const fileName = join(targetDir, '.openshiftio', 'service.welcome.yaml');
     const serviceName = props.application + '-welcome';

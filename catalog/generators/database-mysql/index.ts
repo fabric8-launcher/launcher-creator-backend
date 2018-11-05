@@ -1,6 +1,8 @@
 
 import { newDatabaseUsingSecret } from 'core/resources';
 
+export const id = 'database-mysql';
+
 export async function apply(applyGenerator, resources, targetDir, props: any = {}) {
     return await newDatabaseUsingSecret(resources, props.application, 'mysql', {
         'MYSQL_ROOT_PASSWORD': 'verysecretrootpassword',

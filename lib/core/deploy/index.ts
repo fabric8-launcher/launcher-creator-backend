@@ -129,18 +129,17 @@ export function apply(res, targetDir, appName, runtime, capabilities) {
     // The function makes sure that any particular Generator only gets applied
     // once for each call to `deploy/apply()`.
     const applyGenerator = (generator, resources2, targetDir2, props2) => {
-        if (!appliedModules[generator]) {
-            const module = getGeneratorModule(generator);
-            validate(module.info(), props2);
-            appliedModuleProps[generator] = {...props2};
-            return appliedModules[generator] = module.apply(applyGenerator, resources2, targetDir2, props2);
+        if (!appliedModules[generator.id]) {
+            validate(generator.info(), props2);
+            appliedModuleProps[generator.id] = {...props2};
+            return appliedModules[generator.id] = generator.apply(applyGenerator, resources2, targetDir2, props2);
         } else {
-            if (!isEqual(appliedModuleProps[generator], props2)) {
-                const j1 = JSON.stringify(appliedModuleProps[generator]);
+            if (!isEqual(appliedModuleProps[generator.id], props2)) {
+                const j1 = JSON.stringify(appliedModuleProps[generator.id]);
                 const j2 = JSON.stringify(props2);
-                console.warn(`Duplicate generator: ${generator} with different properties! ${j1} vs ${j2}`);
+                console.warn(`Duplicate generator: ${generator.id} with different properties! ${j1} vs ${j2}`);
             }
-            return appliedModules[generator];
+            return appliedModules[generator.id];
         }
     };
 

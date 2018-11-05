@@ -1,10 +1,15 @@
 
+import * as DatabaseSecret from 'generators/database-secret';
+import * as DatabasePostgresql from 'generators/database-postgresql';
+import * as DatabaseMysql from 'generators/database-mysql';
+import * as DatabaseCrudVertx from 'generators/database-crud-vertx';
+
 // Returns the corresponding database generator depending on the given database type
 function databaseByType(type) {
     if (type === 'postgresql') {
-        return 'database-postgresql';
+        return DatabasePostgresql;
     } else if (type === 'mysql') {
-        return 'database-mysql';
+        return DatabaseMysql;
     } else {
         throw new Error(`Unsupported database type: ${type}`);
     }
@@ -13,11 +18,13 @@ function databaseByType(type) {
 // Returns the corresponding runtime generator depending on the given runtime type
 function runtimeByType(type) {
     if (type === 'vertx') {
-        return 'database-crud-vertx';
+        return DatabaseCrudVertx;
     } else {
         throw new Error(`Unsupported runtime type: ${type}`);
     }
 }
+
+export const id = 'database';
 
 export async function apply(applyGenerator, resources, targetDir, props) {
     const dbprops = {
@@ -34,7 +41,7 @@ export async function apply(applyGenerator, resources, targetDir, props) {
         'databaseType': props.databaseType,
         'secretName': props.application + '-database-bind',
     };
-    await applyGenerator('database-secret', resources, targetDir, dbprops);
+    await applyGenerator(DatabaseSecret, resources, targetDir, dbprops);
     await applyGenerator(databaseByType(props.databaseType), resources, targetDir, dbprops);
     return await applyGenerator(runtimeByType(props.runtime), resources, targetDir, rtprops);
 }

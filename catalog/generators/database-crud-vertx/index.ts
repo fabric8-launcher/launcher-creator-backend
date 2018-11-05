@@ -6,6 +6,10 @@ import { transformFiles } from 'core/template';
 import { cases } from 'core/template/transformers';
 import { setDeploymentEnv } from 'core/resources';
 
+import * as PlatformVertx from 'generators/platform-vertx';
+
+export const id = 'database-crud-vertx';
+
 export async function apply(applyGenerator, resources, targetDir, props: any = {}) {
     const pprops = {
         'application': props.application,
@@ -29,7 +33,7 @@ export async function apply(applyGenerator, resources, targetDir, props: any = {
     };
     // First copy the files from the base Vert.x platform module
     // and then copy our own over that
-    await applyGenerator('platform-vertx', resources, targetDir, pprops);
+    await applyGenerator(PlatformVertx, resources, targetDir, pprops);
     setDeploymentEnv(resources, env);
     await copy(join(__dirname, 'files'), targetDir);
     await mergePoms(join(targetDir, 'pom.xml'), join(__dirname, 'merge', `pom.${props.databaseType}.xml`));

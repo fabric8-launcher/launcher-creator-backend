@@ -1,6 +1,6 @@
 
 import { printUsage } from 'core/info';
-import { listCapabilities, getCapabilityModule } from 'core/catalog';
+import { listCapabilityInfos, getCapabilityModule } from 'core/catalog';
 import { resources } from 'core/resources';
 import { apply } from '.';
 
@@ -8,7 +8,7 @@ const args = process.argv.slice(2);
 
 if (args.length === 1 && args[0] === '--list') {
     process.stdout.write('Available capabilities:\n');
-    listCapabilities().then(caps => caps.forEach(c => process.stdout.write(`    ${c.module.padEnd(15)} - ${c.description}\n`)));
+    listCapabilityInfos().then(caps => caps.forEach(c => process.stdout.write(`    ${c.module.padEnd(15)} - ${c.description}\n`)));
 } else if (args.length === 2 && args[1] === '--help') {
     const CAP = args[0];
     console.log(`yarn run -s apply <project_dir> <app_name> ${CAP} [<json_props>] ...`);

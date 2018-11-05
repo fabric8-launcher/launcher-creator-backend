@@ -2,6 +2,8 @@
 import { join } from 'path';
 import { updateGav } from 'core/maven';
 
+export const id = 'maven-setup';
+
 export async function apply(applyGenerator, resources, targetDir, props: any = {}) {
     return await updateGav(join(targetDir, 'pom.xml'), props.groupId, props.artifactId, props.version);
 }

@@ -1,6 +1,8 @@
 
 import { newDatabaseUsingSecret } from 'core/resources';
 
+export const id = 'database-postgresql';
+
 export async function apply(applyGenerator, resources, targetDir, props: any = {}) {
     return await newDatabaseUsingSecret(resources, props.application, 'postgresql', {
         'POSTGRESQL_DATABASE': {'secret': props.secretName, 'key': 'database'},
