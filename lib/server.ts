@@ -25,11 +25,11 @@ app.use(bodyParser.urlencoded({'extended': true}));
 app.use(cors());
 
 app.get('/', (req, res) => {
-    const url = req.protocol + '://' + req.get('host') + req.originalUrl + 'swagger.yaml';
+    const url = req.protocol + '://' + req.get('host') + req.originalUrl + 'openapi';
     res.redirect(`${req.protocol}://editor.swagger.io/?url=${url}`);
 });
 
-app.use('/swagger.yaml', express.static('./swagger.yaml'));
+app.use('/openapi', express.static('./openapi.yaml'));
 
 app.get('/capabilities', (req, res) => {
     catalog.listCapabilities()
