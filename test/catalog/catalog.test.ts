@@ -11,7 +11,7 @@ test('catalog list capabilities', (t) => {
 test('catalog get capability', (t) => {
     t.plan(1);
 
-    t.is(catalog.getCapabilityModule('database').info().type, 'capability');
+    t.is(catalog.info(catalog.getCapabilityModule('database')).type, 'capability');
 });
 
 test('catalog list generators', (t) => {
@@ -23,5 +23,5 @@ test('catalog list generators', (t) => {
 test('catalog get generator', (t) => {
     t.plan(1);
 
-    t.is(catalog.getGeneratorModule('platform-vertx').info().type, 'generator');
+    t.is(catalog.info(catalog.getGeneratorModule('platform-vertx')).type, 'generator');
 });

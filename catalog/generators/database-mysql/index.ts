@@ -1,17 +1,16 @@
 
 import { newDatabaseUsingSecret } from 'core/resources';
+import { BaseGenerator } from 'core/catalog';
 
-export const id = 'database-mysql';
+export default class DatabaseMysql extends BaseGenerator {
+    public static readonly sourceDir: string = __dirname;
 
-export async function apply(applyGenerator, resources, targetDir, props: any = {}) {
-    return await newDatabaseUsingSecret(resources, props.application, 'mysql', {
-        'MYSQL_ROOT_PASSWORD': 'verysecretrootpassword',
-        'MYSQL_DATABASE': { 'secret': props.secretName, 'key': 'database' },
-        'MYSQL_USER': { 'secret': props.secretName, 'key': 'user'},
-        'MYSQL_PASSWORD': { 'secret': props.secretName, 'key': 'password'}
-    });
-}
-
-export function info() {
-    return require('./info.json');
+    public async apply(resources, props: any = {}) {
+        return await newDatabaseUsingSecret(resources, props.application, 'mysql', {
+            'MYSQL_ROOT_PASSWORD': 'verysecretrootpassword',
+            'MYSQL_DATABASE': { 'secret': props.secretName, 'key': 'database' },
+            'MYSQL_USER': { 'secret': props.secretName, 'key': 'user'},
+            'MYSQL_PASSWORD': { 'secret': props.secretName, 'key': 'password'}
+        });
+    }
 }

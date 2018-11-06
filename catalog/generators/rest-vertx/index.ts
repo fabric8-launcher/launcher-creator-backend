@@ -1,29 +1,25 @@
 
-import { copy } from 'fs-extra';
-import { join } from 'path';
-import { mergePoms } from 'core/maven';
+import { BaseGenerator } from 'core/catalog';
 
-import * as PlatformVertx from 'generators/platform-vertx';
+import PlatformVertx from 'generators/platform-vertx';
 
-export const id = 'rest-vertx';
+export default class RestVertx extends BaseGenerator {
+    public static readonly sourceDir: string = __dirname;
 
-export async function apply(applyGenerator, resources, targetDir, props: any = {}) {
-    // First copy the files from the base Vert.x platform module
-    // and then copy our own over that
-    const pprops = {
-        'application': props.application,
-        'groupId': props.groupId,
-        'artifactId': props.artifactId,
-        'version': props.version,
-    };
-    await applyGenerator(PlatformVertx, resources, targetDir, pprops);
-    await copy(join(__dirname, 'files'), targetDir);
-    await mergePoms(join(targetDir, 'pom.xml'), join(__dirname, 'merge', 'pom.xml'));
-    return resources;
-    // TODO Don't just blindly copy all files, we need to _patch_ some of
-    // them instead (eg. pom.xml and arquillian.xml and Java code)
-}
-
-export function info() {
-    return require('./info.json');
+    public async apply(resources, props: any = {}) {
+        // First copy the files from the base Vert.x platform module
+        // and then copy our own over that
+        const pprops = {
+            'application': props.application,
+            'groupId': props.groupId,
+            'artifactId': props.artifactId,
+            'version': props.version,
+        };
+        await this.applyGenerator(PlatformVertx, resources, pprops);
+        await this.copy();
+        await this.mergePoms();
+        return resources;
+        // TODO Don't just blindly copy all files, we need to _patch_ some of
+        // them instead (eg. pom.xml and arquillian.xml and Java code)
+    }
 }

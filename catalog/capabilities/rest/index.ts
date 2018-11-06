@@ -1,5 +1,7 @@
 
-import * as RestVertx from 'generators/rest-vertx';
+import { BaseCapability } from 'core/catalog';
+
+import RestVertx from 'generators/rest-vertx';
 
 // Returns the corresponding runtime generator depending on the given runtime type
 function runtimeByType(type) {
@@ -10,18 +12,16 @@ function runtimeByType(type) {
     }
 }
 
-export const id = 'rest';
+export default class Rest extends BaseCapability {
+    public static readonly sourceDir: string = __dirname;
 
-export async function apply(applyGenerator, resources, targetDir, props) {
-    const rtprops = {
-        'application': props.application,
-        'groupId': props.groupId,
-        'artifactId': props.artifactId,
-        'version': props.version
-    };
-    return await applyGenerator(runtimeByType(props.runtime), resources, targetDir, rtprops);
-}
-
-export function info() {
-    return require('./info.json');
+    public async apply(resources, props) {
+        const rtprops = {
+            'application': props.application,
+            'groupId': props.groupId,
+            'artifactId': props.artifactId,
+            'version': props.version
+        };
+        return await this.applyGenerator(runtimeByType(props.runtime), resources, rtprops);
+    }
 }
