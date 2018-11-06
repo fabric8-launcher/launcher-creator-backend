@@ -1,13 +1,10 @@
 
-import { join } from 'path';
-import { updateGav } from 'core/maven';
+import { BaseGenerator } from 'core/catalog';
 
-export const id = 'maven-setup';
+export default class MavenSetup extends BaseGenerator {
+    public static readonly sourceDir: string = __dirname;
 
-export async function apply(applyGenerator, resources, targetDir, props: any = {}) {
-    return await updateGav(join(targetDir, 'pom.xml'), props.groupId, props.artifactId, props.version);
-}
-
-export function info() {
-    return require('./info.json');
+    public async apply(resources, props: any = {}) {
+        return await this.updateGav(props.groupId, props.artifactId, props.version);
+    }
 }

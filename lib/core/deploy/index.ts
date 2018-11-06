@@ -5,7 +5,7 @@ import { isEqual } from 'lodash';
 import YAML from 'yaml';
 
 import { validate } from 'core/info';
-import { getCapabilityModule, getGeneratorModule } from 'core/catalog';
+import { getCapabilityModule, info } from 'core/catalog';
 import { applyFromFile, startBuild, deleteApp } from 'core/oc';
 import { zipFolder } from 'core/utils';
 import { resources, Resources } from 'core/resources';
@@ -97,11 +97,12 @@ export async function writeResources(resourcesFile, res): Promise<any> {
 }
 
 async function applyCapability_(applyGenerator, res, targetDir, props) {
-    const module = getCapabilityModule(props.module);
+    const capConst = getCapabilityModule(props.module);
+    validate(info(capConst).props, props);
+    const cap = new capConst(applyGenerator, targetDir);
     const df = deploymentFileName(targetDir);
     const rf = resourcesFileName(targetDir);
-    validate(module.info().props, props);
-    const res2 = await module.apply(applyGenerator, res, targetDir, props);
+    const res2 = await cap.apply(res, props);
     await writeResources(rf, res2);
     const deployment = await readDeployment(df);
     const newDeployment = addCapability(deployment, props);
@@ -128,18 +129,19 @@ export function apply(res, targetDir, appName, runtime, capabilities) {
     // want to apply other Generators.
     // The function makes sure that any particular Generator only gets applied
     // once for each call to `deploy/apply()`.
-    const applyGenerator = (generator, resources2, targetDir2, props2) => {
-        if (!appliedModules[generator.id]) {
-            validate(generator.info().props, props2);
-            appliedModuleProps[generator.id] = {...props2};
-            return appliedModules[generator.id] = generator.apply(applyGenerator, resources2, targetDir2, props2);
+    const applyGenerator = (genConst, resources2, props2) => {
+        if (!appliedModules[genConst.name]) {
+            validate(info(genConst).props, props2);
+            appliedModuleProps[genConst.name] = {...props2};
+            const generator = new genConst(applyGenerator, targetDir);
+            return appliedModules[genConst.name] = generator.apply(resources2, props2);
         } else {
-            if (!isEqual(appliedModuleProps[generator.id], props2)) {
-                const j1 = JSON.stringify(appliedModuleProps[generator.id]);
+            if (!isEqual(appliedModuleProps[genConst.name], props2)) {
+                const j1 = JSON.stringify(appliedModuleProps[genConst.name]);
                 const j2 = JSON.stringify(props2);
-                console.warn(`Duplicate generator: ${generator.id} with different properties! ${j1} vs ${j2}`);
+                console.warn(`Duplicate generator: ${genConst.name} with different properties! ${j1} vs ${j2}`);
             }
-            return appliedModules[generator.id];
+            return appliedModules[genConst.name];
         }
     };
 
