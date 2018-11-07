@@ -3,8 +3,8 @@ import * as test from 'tape';
 import { writeFileSync, readFileSync } from 'fs-extra';
 import { join} from 'path';
 import { fileSync, dirSync } from 'tmp';
-import { transform, transformFiles } from '../../lib/core/template';
-import { pipe2 as pipe } from '../../lib/core/utils';
+import { transform, transformFiles } from 'core/template';
+import { pipe2 as pipe } from 'core/utils';
 
 const testContents =
     `0123456789

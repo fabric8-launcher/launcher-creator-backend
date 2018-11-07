@@ -10,73 +10,89 @@ class ValidationError extends Error {
     }
 }
 
-function validateRequired(name, def, props) {
+class DefinitionError extends Error {
+    private msg: string;
+
+    constructor(msg) {
+        super(msg);
+        this.msg = msg;
+    }
+}
+
+function validateRequired(id, def, props) {
     if (def.required === true) {
-        if (!props.hasOwnProperty(name)) {
+        if (!props.hasOwnProperty(id)) {
             if (def.default) {
-                props[name] = def.default;
+                props[id] = def.default;
             } else {
-                throw new ValidationError(`Missing property: '${name}'`);
+                throw new ValidationError(`Missing property: '${id}'`);
             }
         }
     }
 }
 
-function validateTypeEnum(name, def, props) {
-    const val = props[name];
+function validateTypeEnum(id, def, props) {
+    if (!def.values || !Array.isArray(def.values) || def.values.length === 0) {
+        throw new DefinitionError(`Missing enum values for property: '${id}'`);
+    }
+    const val = props[id];
     if (!def.values.some(v => v.id === val)) {
         const items = def.values.map(v => v.id);
         throw new ValidationError(
-            `Invalid enumeration value for property '${name}': '${val}', should be one of: ${items}`);
+            `Invalid enumeration value for property '${id}': '${val}', should be one of: ${items}`);
     }
 }
 
-function validateType(name, def, props) {
+function validateType(id, def, props) {
     if (def.type === 'enum') {
-        validateTypeEnum(name, def, props);
+        validateTypeEnum(id, def, props);
+    } else if (def.type === 'string' || !def.type) {
+        // Nothing to validate here
+    } else {
+        throw new DefinitionError(`Unknown type '${def.type}' for property: '${id}'`);
     }
 }
 
-function validateProperty(name, def, props) {
-    validateRequired(name, def, props);
-    validateType(name, def, props);
+function validateProperty(id, def, props) {
+    validateRequired(id, def, props);
+    validateType(id, def, props);
 }
 
-export function validate(info, props) {
-    if (info.props) {
-        Object.entries(info.props).forEach(([name, def]) => validateProperty(name, def, props));
+export function validate(defs, props) {
+    if (defs) {
+        defs.forEach(def => validateProperty(def.id, def, props));
     }
 }
 
-function printRequired(name, def) {
+function printRequired(id, def) {
     if (def.required === false) {
         process.stdout.write(`(optional) `);
     }
 }
 
-function printEnumType(name, def) {
+function printEnumType(id, def) {
     process.stdout.write(def.description || def.name);
     process.stdout.write(`. Should be one of: ${def.values.map(v => v.id)}`);
 }
 
-function printType(name, def) {
+function printType(id, def) {
     if (def.type === 'enum') {
-        printEnumType(name, def);
+        printEnumType(id, def);
     } else {
         process.stdout.write(def.description || def.name);
     }
 }
 
-function printProperty(name, def, namePad) {
-    process.stdout.write(`        ${name.padEnd(namePad)} - `);
-    printRequired(name, def);
-    printType(name, def);
+function printProperty(id, def, namePad) {
+    process.stdout.write(`        ${id.padEnd(namePad)} - `);
+    printRequired(id, def);
+    printType(id, def);
     process.stdout.write(`\n`);
 }
 
-export function printUsage(info) {
-    if (info.props) {
-        const maxLen = Math.max(13, Math.min(20, _.max(Object.entries(info.props).map(([name, def]) => name.length))));
-        Object.entries(info.props).forEach(([name, def]) => printProperty(name, def, maxLen));
+export function printUsage(defs) {
+    if (defs) {
+        const maxLen = Math.max(13, Math.min(20, _.max(defs.map(def => def.id.length))));
+        defs.forEach(def => printProperty(def.id, def, maxLen));
     }
 }

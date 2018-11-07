@@ -1,6 +1,6 @@
 
 import * as test from 'tape';
-import * as catalog from '../../lib/core/catalog';
+import * as catalog from 'core/catalog';
 
 test('catalog list capabilities', (t) => {
     t.plan(1);

@@ -16,7 +16,7 @@ if (args.length === 1 && args[0] === '--list') {
     console.log(`    app_name        - The name of the application.`);
     console.log(`    ${CAP.padEnd(15)} - The name of the Capability to apply.`);
     console.log(`    json_props      - These will be passed to the Capability:`);
-    printUsage(getCapabilityModule(CAP).info());
+    printUsage(getCapabilityModule(CAP).info().props);
     process.exit(0);
 } else if (args.length < 4) {
     console.error(`Missing arguments`);

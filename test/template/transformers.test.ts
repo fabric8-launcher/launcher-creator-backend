@@ -2,8 +2,8 @@
 import * as test from 'tape';
 import { writeFileSync, readFileSync } from 'fs-extra';
 import { fileSync } from 'tmp';
-import { transform } from '../../lib/core/template';
-import { cases } from '../../lib/core/template/transformers';
+import { transform } from 'core/template';
+import { cases } from 'core/template/transformers';
 
 const testContents = `
     function connect(host) {

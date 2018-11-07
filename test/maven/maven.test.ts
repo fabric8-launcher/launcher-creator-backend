@@ -2,7 +2,7 @@
 import * as test from 'tape';
 import { writeFileSync, readFileSync } from 'fs-extra';
 import { fileSync } from 'tmp';
-import { mergePoms, updateGav, updateParentGav } from '../../lib/core/maven';
+import { mergePoms, updateGav, updateParentGav } from 'core/maven';
 
 test('merge poms', (t) => {
     t.plan(1);

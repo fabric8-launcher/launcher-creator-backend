@@ -206,7 +206,20 @@ components:
           description:
             type: string
           props:
-            type: object
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: string
+                name:
+                  type: string
+                description:
+                  type: string
+                type:
+                  type: string
+                required:
+                  type: boolean
 
   securitySchemes:
     bearerAuth:            # arbitrary name for the security scheme

@@ -100,7 +100,7 @@ async function applyCapability_(applyGenerator, res, targetDir, props) {
     const module = getCapabilityModule(props.module);
     const df = deploymentFileName(targetDir);
     const rf = resourcesFileName(targetDir);
-    validate(module.info(), props);
+    validate(module.info().props, props);
     const res2 = await module.apply(applyGenerator, res, targetDir, props);
     await writeResources(rf, res2);
     const deployment = await readDeployment(df);
@@ -130,7 +130,7 @@ export function apply(res, targetDir, appName, runtime, capabilities) {
     // once for each call to `deploy/apply()`.
     const applyGenerator = (generator, resources2, targetDir2, props2) => {
         if (!appliedModules[generator.id]) {
-            validate(generator.info(), props2);
+            validate(generator.info().props, props2);
             appliedModuleProps[generator.id] = {...props2};
             return appliedModules[generator.id] = generator.apply(applyGenerator, resources2, targetDir2, props2);
         } else {
