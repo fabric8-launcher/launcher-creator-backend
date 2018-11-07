@@ -206,7 +206,7 @@ components:
           description:
             type: string
           props:
-            type: object
+            type: array
 
   securitySchemes:
     bearerAuth:            # arbitrary name for the security scheme
