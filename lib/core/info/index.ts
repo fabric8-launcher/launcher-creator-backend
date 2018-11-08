@@ -36,10 +36,9 @@ function validateTypeEnum(id, def, props) {
         throw new DefinitionError(`Missing enum values for property: '${id}'`);
     }
     const val = props[id];
-    if (!def.values.some(v => v.id === val)) {
-        const items = def.values.map(v => v.id);
+    if (!def.values.some(v => v === val)) {
         throw new ValidationError(
-            `Invalid enumeration value for property '${id}': '${val}', should be one of: ${items}`);
+            `Invalid enumeration value for property '${id}': '${val}', should be one of: ${def.values}`);
     }
 }
 
@@ -72,7 +71,7 @@ function printRequired(id, def) {
 
 function printEnumType(id, def) {
     process.stdout.write(def.description || def.name);
-    process.stdout.write(`. Should be one of: ${def.values.map(v => v.id)}`);
+    process.stdout.write(`. Should be one of: ${def.values}`);
 }
 
 function printType(id, def) {

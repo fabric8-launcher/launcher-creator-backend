@@ -10,14 +10,8 @@ const def = [
         'required': true,
         'type': 'enum',
         'values': [
-            {
-                'id': 'postgresql',
-                'name': 'PostgreSQL'
-            },
-            {
-                'id': 'mysql',
-                'name': 'mySQL'
-            }
+            'postgresql',
+            'mysql'
         ],
         'default': 'postgresql'
     },
@@ -28,22 +22,10 @@ const def = [
         'required': true,
         'type': 'enum',
         'values': [
-            {
-                'id': 'nodejs',
-                'name': 'Node.js'
-            },
-            {
-                'id': 'springboot',
-                'name': 'Spring Boot'
-            },
-            {
-                'id': 'thorntail',
-                'name': 'Thorntail'
-            },
-            {
-                'id': 'vertx',
-                'name': 'Vert.x'
-            }
+            'nodejs',
+            'springboot',
+            'thorntail',
+            'vertx'
         ]
     },
     {
