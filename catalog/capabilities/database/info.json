@@ -27,6 +27,7 @@
       "name": "Runtime Type",
       "description": "The type of runtime to use",
       "required": true,
+      "shared": true,
       "type": "enum",
       "values": [
         {
@@ -52,6 +53,7 @@
       "name": "Group Id",
       "description": "The Maven Group Id for the project",
       "required": true,
+      "shared": true,
       "type": "string",
       "default": "org.openshift.appgen"
     },
@@ -60,6 +62,7 @@
       "name": "Artifact Id",
       "description": "The Maven Artifact Id for the project",
       "required": true,
+      "shared": true,
       "type": "string",
       "default": "my-app"
     },
@@ -68,6 +71,7 @@
       "name": "Version",
       "description": "The Maven Version for the project",
       "required": true,
+      "shared": true,
       "type": "string",
       "default": "1.0"
     }
