@@ -43,9 +43,19 @@ app.get('/generators', (req, res) => {
         .catch(err => res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(result(HttpStatus.INTERNAL_SERVER_ERROR, err)));
 });
 
-app.get('/runtimes', (req, res) => {
-    catalog.listRuntimes()
+app.get('/enums', (req, res) => {
+    catalog.listEnums()
         .then(list => res.status(HttpStatus.OK).send(list))
+        .catch(err => res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(result(HttpStatus.INTERNAL_SERVER_ERROR, err)));
+});
+
+app.get('/enums/:id', (req, res) => {
+    catalog.listEnums()
+        .then(list => {
+            const id = req.params.id;
+            const enumdef = list[id] || [];
+            res.status(HttpStatus.OK).send(enumdef);
+        })
         .catch(err => res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(result(HttpStatus.INTERNAL_SERVER_ERROR, err)));
 });
 

@@ -20,12 +20,12 @@ security:
   - write
 
 paths:
-  /runtimes:
+  /enums:
     get:
-      summary: Returns the available Runtimes
+      summary: Returns all available enumeration definitions
       security: []
       description: >-
-        This endpoint returns all known Runtimes
+        This endpoint returns all known enumerations
       tags:
       - catalog
       responses:
@@ -34,7 +34,30 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Runtime'
+                $ref: '#/components/schemas/Enumerations'
+        '404':
+          description: Not Found
+  /enums/{id}:
+    get:
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      summary: Returns the selected enumeration definition
+      security: []
+      description: >-
+        This endpoint returns a given enumeration
+      tags:
+      - catalog
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Enumeration'
         '404':
           description: Not Found
   /capabilities:
@@ -180,7 +203,7 @@ paths:
 
 components:
   schemas:
-    Runtime:
+    Enumeration:
       type: object
       properties:
         id:
@@ -193,6 +216,11 @@ components:
           type: string
         metadata:
           type: object
+
+    Enumerations:
+      type: array
+      items:
+        $ref: '#/components/schemas/Enumeration'
 
     Capability:
       type: array

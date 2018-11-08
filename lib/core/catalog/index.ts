@@ -105,6 +105,6 @@ export async function listGeneratorInfos() {
         .map(([f, g]) => ({'module': f, ...info(g)}));
 }
 
-export function listRuntimes(generator?: any) {
-    return Promise.resolve(require('./runtimes.json'));
+export function listEnums(generator?: any) {
+    return Promise.resolve(require('./enums.json'));
 }
