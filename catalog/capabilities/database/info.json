@@ -24,9 +24,6 @@
       "shared": true,
       "type": "enum",
       "values": [
-        "nodejs",
-        "springboot",
-        "thorntail",
         "vertx"
       ]
     },
