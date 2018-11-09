@@ -63,10 +63,10 @@ function uniqueName(deployment, appName, prefix) {
 function addCapability(deployment, capability) {
     const cap = { ...capability };
     delete cap.application;
-    delete cap.runtime;
+    delete cap.shared;
     let app = deployment.applications.find(item => item.application === capability.application);
     if (!app) {
-        app = {'application': capability.application, 'runtime': capability.runtime, 'capabilities': []};
+        app = {'application': capability.application, 'shared': capability.shared, 'capabilities': []};
         deployment.applications = [...deployment.applications, app];
     }
     app.capabilities = [ ...app.capabilities, cap ];
@@ -119,7 +119,7 @@ async function applyCapability(applyGenerator, res, targetDir, appName, props) {
 }
 
 // Calls `applyCapability()` on all the given capabilities
-export function apply(res, targetDir, appName, runtime, capabilities) {
+export function apply(res, targetDir, appName, shared, capabilities) {
     const appliedModules = {};
     const appliedModuleProps = {};
 
@@ -147,7 +147,7 @@ export function apply(res, targetDir, appName, runtime, capabilities) {
 
     const p = Promise.resolve(true);
     return capabilities.reduce((acc, cur) => acc
-        .then(() => applyCapability(applyGenerator, res, targetDir, appName, { ...cur, 'runtime': runtime })), p);
+        .then(() => applyCapability(applyGenerator, res, targetDir, appName, { ...cur, ...shared })), p);
 }
 
 export function deploy(targetDir) {

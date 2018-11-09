@@ -35,7 +35,7 @@ if (args.length === 1 && args[0] === '--list') {
 } else {
     const TARGET_DIR = args[0];
     const APP_NAME = args[1];
-    const RUNTIME = args[2];
+    const SHARED = { 'runtime': args[2] };
 
     let CAPS = [];
     let i = 3;
@@ -52,7 +52,7 @@ if (args.length === 1 && args[0] === '--list') {
         }
     }
 
-    apply(resources({}), TARGET_DIR, APP_NAME, RUNTIME, CAPS)
+    apply(resources({}), TARGET_DIR, APP_NAME, SHARED, CAPS)
         .then(() => {
             console.log(`Applied capability to "${TARGET_DIR}"`);
             console.log('Go into that folder and type "./gap deploy" while logged into OpenShift to create the application');
