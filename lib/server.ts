@@ -94,7 +94,7 @@ app.post('/zip', (req, res) => {
         res.status(HttpStatus.BAD_REQUEST).send(result(HttpStatus.BAD_REQUEST, new Error('Missing application name')));
         return;
     }
-    if (!req.body.runtime) {
+    if (!req.body.shared || !req.body.shared.runtime) {
         res.status(HttpStatus.BAD_REQUEST).send(result(HttpStatus.BAD_REQUEST, new Error('Missing application runtime')));
         return;
     }
@@ -110,7 +110,7 @@ app.post('/zip', (req, res) => {
         const projectZip = `${tempDir}/project.zip`;
         const out = fs.createWriteStream(projectZip);
         try {
-            await deploy.apply(resources({}), projectDir, req.body.name, req.body.runtime, req.body.capabilities);
+            await deploy.apply(resources({}), projectDir, req.body.name, req.body.shared, req.body.capabilities);
             await zipFolder(out, projectDir, req.body.name);
             const id = shortid.generate();
             zipCache.set(id, { 'file': projectZip, 'name': `${req.body.name}.zip`, cleanTempDir }, 600);
@@ -132,7 +132,7 @@ app.post('/launch', (req, res) => {
         res.status(HttpStatus.BAD_REQUEST).send(result(HttpStatus.BAD_REQUEST, new Error('Missing application name')));
         return;
     }
-    if (!req.body.runtime) {
+    if (!req.body.shared || !req.body.shared.runtime) {
         res.status(HttpStatus.BAD_REQUEST).send(result(HttpStatus.BAD_REQUEST, new Error('Missing application runtime')));
         return;
     }
@@ -156,7 +156,7 @@ app.post('/launch', (req, res) => {
         const projectZip = `${tempDir}/project.zip`;
         const out = fs.createWriteStream(projectZip);
         try {
-            await deploy.apply(resources({}), projectDir, req.body.name, req.body.runtime, req.body.capabilities);
+            await deploy.apply(resources({}), projectDir, req.body.name, req.body.shared, req.body.capabilities);
             zipFolder(out, projectDir, req.body.name);
             out.on('finish', () => {
                 // Prepare to post
