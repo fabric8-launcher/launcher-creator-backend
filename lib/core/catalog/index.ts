@@ -5,6 +5,8 @@ import { join } from 'path';
 import { Resources } from 'core/resources';
 import { transformFiles } from 'core/template';
 import { mergePoms, updateGav } from 'core/maven';
+import { walk } from 'core/utils';
+import { accessSync } from "fs";
 
 interface CatalogItem {
     readonly sourceDir: string;
@@ -33,6 +35,20 @@ abstract class BaseCatalogItem implements CatalogItem {
         const from2 = join(this.sourceDir, from);
         const to2 = !!to ? join(this.targetDir, to) : this.targetDir;
         return copy(from2, to2);
+    }
+
+    protected filesCopied(from: string = 'files', to?: string): Promise<boolean> {
+        const from2 = join(this.sourceDir, from);
+        const to2 = !!to ? join(this.targetDir, to) : this.targetDir;
+        return new Promise<boolean>((resolve, reject) => {
+            resolve(walk(from2, f => {
+                try {
+                    accessSync(join(to2, f.path));
+                } catch (ex) {
+                    return false;
+                }
+            }));
+        });
     }
 
     protected transform(pattern: string | string[], transformLine: (line: string) => string): Promise<number> {

@@ -120,29 +120,14 @@ async function applyCapability(applyGenerator, res, targetDir, appName, props) {
 
 // Calls `applyCapability()` on all the given capabilities
 export function apply(res, targetDir, appName, shared, capabilities) {
-    const appliedModules = {};
-    const appliedModuleProps = {};
-
     // The following function gets passed to all Capability `apply()` methods
     // which they then should use whenever they need to apply a Generator
     // to the target project. The same holds true for Generators when they
     // want to apply other Generators.
-    // The function makes sure that any particular Generator only gets applied
-    // once for each call to `deploy/apply()`.
     const applyGenerator = (genConst, resources2, props2) => {
-        if (!appliedModules[genConst.name]) {
-            validate(info(genConst).props, props2);
-            appliedModuleProps[genConst.name] = {...props2};
-            const generator = new genConst(applyGenerator, targetDir);
-            return appliedModules[genConst.name] = generator.apply(resources2, props2);
-        } else {
-            if (!isEqual(appliedModuleProps[genConst.name], props2)) {
-                const j1 = JSON.stringify(appliedModuleProps[genConst.name]);
-                const j2 = JSON.stringify(props2);
-                console.warn(`Duplicate generator: ${genConst.name} with different properties! ${j1} vs ${j2}`);
-            }
-            return appliedModules[genConst.name];
-        }
+        validate(info(genConst).props, props2);
+        const generator = new genConst(applyGenerator, targetDir);
+        return generator.apply(resources2, props2);
     };
 
     const p = Promise.resolve(true);

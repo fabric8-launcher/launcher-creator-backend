@@ -1,5 +1,5 @@
 
-import { newApp, newRoute } from 'core/resources';
+import { newApp, newRoute, setDeploymentEnv } from 'core/resources';
 import { cases } from 'core/template/transformers';
 import { BaseGenerator } from 'core/catalog';
 
@@ -10,22 +10,22 @@ export default class PlatformVertx extends BaseGenerator {
     public static readonly sourceDir: string = __dirname;
 
     public async apply(resources, props: any = {}) {
-        const serviceName = props.application + '-vertx';
-        const tprops = {
-            ...props,
-            'serviceName': serviceName
-        };
-        await this.copy();
-        await this.transform('gap', cases(tprops));
-        await this.applyGenerator(WelcomeApp, resources, props);
-        await this.applyGenerator(MavenSetup, resources, props);
-        const res = await newApp(
-            serviceName,
-            props.application,
-            'registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift',
-            null,
-            props.env || {});
-        resources.add(res);
-        return await newRoute(resources, props.application + '-route', props.application, serviceName);
+        // Check if the service already exists, so we don't create it twice
+        if (!resources.service(props.serviceName)) {
+            await this.copy();
+            await this.transform('gap', cases(props));
+            await this.applyGenerator(WelcomeApp, resources, props);
+            await this.applyGenerator(MavenSetup, resources, props);
+            const res = await newApp(
+                props.serviceName,
+                props.application,
+                'registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift',
+                null,
+                props.env || {});
+            resources.add(res);
+            return await newRoute(resources, props.application + '-route', props.application, props.serviceName);
+        } else {
+            return setDeploymentEnv(resources, props.env, props.serviceName);
+        }
     }
 }

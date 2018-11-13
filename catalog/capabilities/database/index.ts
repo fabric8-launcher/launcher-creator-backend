@@ -30,14 +30,18 @@ export default class Database extends BaseCapability {
     public static readonly sourceDir: string = __dirname;
 
     public async apply(resources, props) {
+        const dbServiceName = props.application + '-database';
         const dbprops = {
             'application': props.application,
+            'serviceName': dbServiceName,
             'databaseUri': props.application + '-database',
             'databaseName': 'my_data',
             'secretName': props.application + '-database-bind',
         };
+        const rtServiceName = props.application + '-service';
         const rtprops = {
             'application': props.application,
+            'serviceName': rtServiceName,
             'groupId': props.groupId,
             'artifactId': props.artifactId,
             'version': props.version,

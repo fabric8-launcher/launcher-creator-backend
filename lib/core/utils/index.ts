@@ -1,6 +1,7 @@
 
 import * as path from 'path';
 import * as Archiver from 'archiver';
+import { readdir, statSync, Stats } from 'fs-extra';
 
 function log(res, ...args) {
     console.log(...args);
@@ -41,3 +42,38 @@ export const pipe = (...funcs) => value =>
 // Function composition like 'pipe()' with short-circuit if the value becomes null/undefined
 export const pipe2 = (...funcs) => value =>
     funcs.reduce((acc, func) => (acc !== null && acc !== undefined) ? func(acc) : acc, value);
+
+interface FileInfo {
+    name: string;
+    path: string;
+    fullPath: string;
+    stat: Stats;
+}
+
+async function _walk(start: string, dir: string, callback: (info: FileInfo) => any): Promise<boolean> {
+    const full = !dir ? start : path.join(start, dir);
+    const files = await readdir(full);
+    const infos: FileInfo[] = files
+        .map(f => ({
+            'name': f,
+            'path': !dir ? f : path.join(dir, f),
+            'fullPath': path.join(full, f),
+            'stat': statSync(path.join(full, f))
+        } as FileInfo));
+    for (const i of infos) {
+        let res;
+        if (i.stat.isDirectory()) {
+            res = await _walk(start, i.path, callback);
+        } else {
+            res = callback(i);
+        }
+        if (res === false) {
+            return false;
+        }
+    }
+    return true;
+}
+
+export function walk(start: string, callback: (info: FileInfo) => void): Promise<boolean> {
+    return _walk(start, null, callback);
+}

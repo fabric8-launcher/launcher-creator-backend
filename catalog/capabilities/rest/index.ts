@@ -16,8 +16,10 @@ export default class Rest extends BaseCapability {
     public static readonly sourceDir: string = __dirname;
 
     public async apply(resources, props) {
+        const rtServiceName = props.application + '-service';
         const rtprops = {
             'application': props.application,
+            'serviceName': rtServiceName,
             'groupId': props.groupId,
             'artifactId': props.artifactId,
             'version': props.version

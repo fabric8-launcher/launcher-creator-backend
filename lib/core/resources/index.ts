@@ -345,7 +345,7 @@ function convertObjectToEnvWithRefs(env) {
 // are either simple strings or they can be objects themselves in which
 // case they are references to keys in a ConfigMap or a Secret.
 export function setDeploymentEnv(res: Resources, env, dcName?: any): Resources {
-    if (res.deploymentConfigs.length > 0) {
+    if (!!env && res.deploymentConfigs.length > 0) {
         const dc = (dcName) ? res.deploymentConfig(dcName) : res.deploymentConfigs[0];
         const dcc = _.get(dc, 'spec.template.spec.containers[0]');
         if (dcc) {
@@ -383,11 +383,14 @@ export async function newApp(appName: string,
 // and the given environment variables from 'env' and 'secretEnv' (the
 // latter being taken from a previously created Secret indicated by
 // 'secretName').
-export async function newDatabaseUsingSecret(res: Resources, appName: string, dbImageName: string, env): Promise<Resources> {
-    const dbName = appName + '-database';
-    if (!res.service(dbName)) {
+export async function newDatabaseUsingSecret(res: Resources,
+                                             appName: string,
+                                             appLabel: string,
+                                             dbImageName: string,
+                                             env): Promise<Resources> {
+    if (!res.service(appName)) {
         // Create the database resource definitions
-        const appRes = await newApp(dbName, appName, dbImageName, null, env);
+        const appRes = await newApp(appName, appLabel, dbImageName, null, env);
         const resNew = res.add(appRes);
         // console.log(`Database ${dbServiceName} added`);
         return resNew;

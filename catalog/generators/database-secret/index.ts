@@ -5,8 +5,9 @@ export default class DatabaseSecret extends BaseGenerator {
     public static readonly sourceDir: string = __dirname;
 
     public async apply(resources, props: any = {}) {
-        // Create Secret holding Database connection/authentication information
+        // Check if the service already exists, so we don't create it twice
         if (!resources.secret(props.secretName)) {
+            // Create Secret holding Database connection/authentication information
             const secret = {
                 'kind': 'Secret',
                 'apiVersion': 'v1',
