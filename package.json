@@ -49,7 +49,7 @@
     "@types/shortid": "^0.0.29",
     "@types/tape": "^4.2.32",
     "@types/tmp": "^0.0.33",
-    "eslint": "^5.5.0",
+    "eslint": "^5.9.0",
     "tap-spec": "^5.0.0",
     "tape": "^4.9.1",
     "ts-node": "^7.0.1",
