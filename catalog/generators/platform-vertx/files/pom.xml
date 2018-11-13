@@ -36,7 +36,7 @@
     <vertx.version>3.5.4</vertx.version>
     <slf4j.version>1.7.25</slf4j.version>
     <vertx-maven-plugin.version>1.0.17</vertx-maven-plugin.version>
-    <vertx.verticle>io.openshift.booster.HttpApplication</vertx.verticle>
+    <vertx.verticle>io.openshift.booster.MainApplication</vertx.verticle>
   </properties>
 
   <dependencyManagement>
@@ -64,7 +64,10 @@
       <groupId>io.vertx</groupId>
       <artifactId>vertx-health-check</artifactId>
     </dependency>
-
+    <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-rx-java</artifactId>
+    </dependency>
     <!-- Logging -->
     <dependency>
       <groupId>org.slf4j</groupId>
