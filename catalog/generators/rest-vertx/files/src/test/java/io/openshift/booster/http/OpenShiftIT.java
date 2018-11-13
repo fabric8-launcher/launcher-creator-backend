@@ -1,4 +1,4 @@
-package io.openshift.booster;
+package io.openshift.booster.http;
 
 import com.jayway.restassured.RestAssured;
 import java.net.MalformedURLException;
@@ -11,10 +11,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static com.jayway.restassured.RestAssured.get;
-import static io.openshift.booster.HttpApplication.template;
+import static io.openshift.booster.http.HttpApplication.TEMPLATE;
 import static org.hamcrest.core.IsEqual.equalTo;
 
 @RunWith(Arquillian.class)
+@org.junit.Ignore
 public class OpenShiftIT {
 
     private final String applicationName = System.getProperty("app.name", "http-vertx");
@@ -37,7 +38,7 @@ public class OpenShiftIT {
 
     @Test
     public void testThatWeServeAsExpected() throws MalformedURLException {
-        get("/api/greeting").then().body("content", equalTo(String.format(template, "World")));
-        get("/api/greeting?name=vert.x").then().body("content", equalTo(String.format(template, "vert.x")));
+        get("/api/greeting").then().body("content", equalTo(String.format(TEMPLATE, "World")));
+        get("/api/greeting?name=vert.x").then().body("content", equalTo(String.format(TEMPLATE, "vert.x")));
     }
 }

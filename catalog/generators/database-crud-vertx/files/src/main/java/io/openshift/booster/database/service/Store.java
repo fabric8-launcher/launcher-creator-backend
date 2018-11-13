@@ -1,4 +1,4 @@
-package io.openshift.booster.service;
+package io.openshift.booster.database.service;
 
 import io.vertx.core.json.JsonObject;
 import rx.Completable;

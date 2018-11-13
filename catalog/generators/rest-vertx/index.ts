@@ -2,6 +2,7 @@
 import { BaseGenerator } from 'core/catalog';
 
 import PlatformVertx from 'generators/platform-vertx';
+import {insertAfter} from "core/template/transformers/insert";
 
 export default class RestVertx extends BaseGenerator {
     public static readonly sourceDir: string = __dirname;
@@ -21,10 +22,13 @@ export default class RestVertx extends BaseGenerator {
             await this.applyGenerator(PlatformVertx, resources, pprops, extra);
             await this.copy();
             await this.mergePoms();
+            await this.transform('src/main/java/io/openshift/booster/MainApplication.java',
+                insertAfter('//TODO: Add Router Consumers', '      new io.openshift.booster.http.HttpApplication(vertx),'));
+
             // TODO Don't just blindly copy all files, we need to _patch_ some of
             // them instead (eg. pom.xml and arquillian.xml and Java code)
         }
-        extra['sourceMapping'] = { 'greetingEndpoint': 'src/main/java/io/openshift/booster/HttpApplication.java' };
+        extra['sourceMapping'] = { 'greetingEndpoint': 'src/main/java/io/openshift/booster/http/HttpApplication.java' };
         return resources;
     }
 }

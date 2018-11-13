@@ -1,33 +1,44 @@
-package io.openshift.booster;
+package io.openshift.booster.database;
 
-import io.openshift.booster.service.Store;
-import io.openshift.booster.service.impl.JdbcProductStore;
+import java.util.NoSuchElementException;
+
+import io.openshift.booster.RouterConsumer;
+import io.openshift.booster.database.service.Store;
+import io.openshift.booster.database.service.impl.JdbcProductStore;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
-import io.vertx.rxjava.core.AbstractVerticle;
-import io.vertx.rxjava.core.http.HttpServer;
+import io.vertx.rxjava.core.Vertx;
 import io.vertx.rxjava.core.http.HttpServerResponse;
 import io.vertx.rxjava.ext.jdbc.JDBCClient;
 import io.vertx.rxjava.ext.web.Router;
 import io.vertx.rxjava.ext.web.RoutingContext;
-import io.vertx.rxjava.ext.web.handler.BodyHandler;
-import io.vertx.rxjava.ext.web.handler.StaticHandler;
-import rx.Single;
+import rx.Completable;
 
-import java.util.NoSuchElementException;
+import static io.openshift.booster.database.Errors.error;
 
-import static io.openshift.booster.Errors.error;
-
-public class CrudApplication extends AbstractVerticle {
+public class CrudApplication extends RouterConsumer {
 
   private Store store;
 
+  public CrudApplication(Vertx vertx) {
+    super(vertx);
+  }
+
   @Override
-  public void start() {
-    // Create a router object.
-    Router router = Router.router(vertx);
-    // enable parsing of request bodies
-    router.route().handler(BodyHandler.create());
+  public Completable start() {
+    // Create a JDBC client
+    JDBCClient jdbc = JDBCClient.createShared(vertx, new JsonObject()
+      .put("url", "jdbc:postgresql://" + getEnv("DB_HOST", "localhost") + ":5432/my_data")
+      .put("driver_class", "org.postgresql.Driver")
+      .put("user", getEnv("DB_USERNAME", "user"))
+      .put("password", getEnv("DB_PASSWORD", "password"))
+    );
+    this.store = new JdbcProductStore(jdbc);
+    return DBInitHelper.initDatabase(vertx, jdbc);
+  }
+
+  @Override
+  public void accept(Router router) {
     // perform validation of the :id parameter
     router.route("/api/fruits/:id").handler(this::validateId);
     // implement a basic REST CRUD mapping
@@ -36,41 +47,6 @@ public class CrudApplication extends AbstractVerticle {
     router.get("/api/fruits/:id").handler(this::getOne);
     router.put("/api/fruits/:id").handler(this::updateOne);
     router.delete("/api/fruits/:id").handler(this::deleteOne);
-
-    // health check
-    router.get("/health").handler(rc -> rc.response().end("OK"));
-    // web interface
-    router.get().handler(StaticHandler.create());
-
-
-    // Create a JDBC client
-    JDBCClient jdbc = JDBCClient.createShared(vertx, new JsonObject()
-      //{{if .databaseType==postgresql}}
-      .put("url", "jdbc:postgresql://" + getEnv("MY_DATABASE_SERVICE_HOST", "localhost") + ":5432/my_data")
-      .put("driver_class", "org.postgresql.Driver")
-      //{{else if .databaseType==mysql}}
-      //.put("url", "jdbc:mysql://" + getEnv("MY_DATABASE_SERVICE_HOST", "localhost") + ":3306/my_data")
-      //.put("driver_class", "com.mysql.jdbc.Driver")
-      //{{end}}
-      .put("user", getEnv("DB_USERNAME", "user"))
-      .put("password", getEnv("DB_PASSWORD", "password"))
-    );
-
-    DBInitHelper.initDatabase(vertx, jdbc)
-      .andThen(initHttpServer(router, jdbc))
-      .subscribe(
-        (http) -> System.out.println("Server ready on port " + http.actualPort()),
-        Throwable::printStackTrace
-      );
-  }
-
-  private Single<HttpServer> initHttpServer(Router router, JDBCClient client) {
-    store = new JdbcProductStore(client);
-    // Create the HTTP server and pass the "accept" method to the request handler.
-    return vertx
-      .createHttpServer()
-      .requestHandler(router::accept)
-      .rxListen(8080);
   }
 
   private void validateId(RoutingContext ctx) {
