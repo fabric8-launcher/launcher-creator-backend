@@ -27,7 +27,7 @@
     "archiver": "^3.0.0",
     "body-parser": "^1.18.3",
     "child-process-promise": "^2.2.1",
-    "cors": "^2.8.4",
+    "cors": "^2.8.5",
     "express": "^4.16.4",
     "fast-glob": "^2.2.2",
     "fs-extra": "^7.0.0",
