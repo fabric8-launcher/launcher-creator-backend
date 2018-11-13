@@ -35,7 +35,7 @@
     "lodash": "^4.17.11",
     "node-cache": "^4.2.0",
     "request": "^2.88.0",
-    "shortid": "^2.2.13",
+    "shortid": "^2.2.14",
     "stream-to-string": "^1.1.0",
     "tmp": "^0.0.33",
     "yaml": "^1.0.1"
