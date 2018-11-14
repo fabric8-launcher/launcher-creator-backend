@@ -24,6 +24,7 @@ export default class RestVertx extends BaseGenerator {
             // TODO Don't just blindly copy all files, we need to _patch_ some of
             // them instead (eg. pom.xml and arquillian.xml and Java code)
         }
+        extra['sourceMapping'] = { 'greetingEndpoint': 'src/main/java/io/openshift/booster/HttpApplication.java' };
         return resources;
     }
 }
