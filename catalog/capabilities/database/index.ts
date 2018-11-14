@@ -5,6 +5,7 @@ import DatabaseSecret from 'generators/database-secret';
 import DatabasePostgresql from 'generators/database-postgresql';
 import DatabaseMysql from 'generators/database-mysql';
 import DatabaseCrudVertx from 'generators/database-crud-vertx';
+import DatabaseCrudNodejs from 'generators/database-crud-nodejs';
 
 // Returns the corresponding database generator depending on the given database type
 function databaseByType(type) {
@@ -21,6 +22,8 @@ function databaseByType(type) {
 function runtimeByType(type) {
     if (type === 'vertx') {
         return DatabaseCrudVertx;
+    } else if (type === 'nodejs') {
+        return DatabaseCrudNodejs;
     } else {
         throw new Error(`Unsupported runtime type: ${type}`);
     }

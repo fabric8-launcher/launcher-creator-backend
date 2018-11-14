@@ -1,6 +1,6 @@
 
 import { newApp, newRoute, setDeploymentEnv } from 'core/resources';
-import { cases } from 'core/template/transformers';
+import { cases } from 'core/template/transformers/cases';
 import { BaseGenerator } from 'core/catalog';
 
 import WelcomeApp from 'generators/welcome-app';

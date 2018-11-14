@@ -2,8 +2,12 @@
 import { BaseGenerator } from 'core/catalog';
 
 import PlatformNodejs from 'generators/platform-nodejs';
+import { insertAfter } from 'core/template/transformers/insert';
 
-export default class RestVertx extends BaseGenerator {
+import * as path from 'path';
+import { readFile } from 'fs-extra';
+
+export default class RestNodejs extends BaseGenerator {
     public static readonly sourceDir: string = __dirname;
 
     public async apply(resources, props: any = {}) {
@@ -18,6 +22,10 @@ export default class RestVertx extends BaseGenerator {
             };
 
             await this.applyGenerator(PlatformNodejs, resources, pprops);
+            const mergeFile = path.resolve(RestNodejs.sourceDir, 'merge/app.merge.js');
+            await this.transform('app.js',
+                insertAfter('//TODO: Add routes', await readFile(mergeFile, 'utf8')));
+
             await this.copy();
         }
         return resources;
