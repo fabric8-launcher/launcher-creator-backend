@@ -23,10 +23,8 @@ export default class RestVertx extends BaseGenerator {
             await this.copy();
             await this.mergePoms();
             await this.transform('src/main/java/io/openshift/booster/MainApplication.java',
-                blocks('return new RouterConsumer[]{', '}', insertAtEnd('      new io.openshift.booster.http.HttpApplication(vertx)')));
-
-            // TODO Don't just blindly copy all files, we need to _patch_ some of
-            // them instead (eg. pom.xml and arquillian.xml and Java code)
+                blocks('return new RouterConsumer[]{', '}',
+                    insertAtEnd('      new io.openshift.booster.http.HttpApplication(vertx)')));
         }
         extra['sourceMapping'] = { 'greetingEndpoint': 'src/main/java/io/openshift/booster/http/HttpApplication.java' };
         return resources;

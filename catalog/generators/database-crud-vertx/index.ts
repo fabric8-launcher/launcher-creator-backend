@@ -40,10 +40,8 @@ export default class DatabaseCrudVertx extends BaseGenerator {
             await this.mergePoms(`merge/pom.${props.databaseType}.xml`);
             await this.transform('src/**/*.java', cases(props));
             await this.transform('src/main/java/io/openshift/booster/MainApplication.java',
-                blocks('return new RouterConsumer[]{', '}', insertAtEnd('      new io.openshift.booster.database.CrudApplication(vertx),')));
-
-            // TODO Don't just blindly copy all files, we need to _patch_ some of
-            // them instead (eg. pom.xml and arquillian.xml and Java code)
+                blocks('return new RouterConsumer[]{', '}',
+                    insertAtEnd('      new io.openshift.booster.database.CrudApplication(vertx),')));
         }
         extra['sourceMapping'] = { 'dbEndpoint': 'src/main/java/io/openshift/booster/database/CrudApplication.java' };
         return resources;
