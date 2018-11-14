@@ -51,8 +51,6 @@ public class MainApplication extends AbstractVerticle {
 
   private RouterConsumer[] getRouterConsumers() {
     return new RouterConsumer[]{
-      //TODO: Add Router Consumers
-      null
     };
   }
 }

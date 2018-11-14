@@ -1,10 +1,10 @@
 
 import { cases } from 'core/template/transformers/cases';
-import { Resources, setDeploymentEnv } from 'core/resources';
+import { Resources } from 'core/resources';
 import { BaseGenerator } from 'core/catalog';
 
 import PlatformVertx from 'generators/platform-vertx';
-import {insertAfter} from "core/template/transformers/insert";
+import {blocks, insertAtEnd} from "core/template/transformers/blocks";
 
 export default class DatabaseCrudVertx extends BaseGenerator {
     public static readonly sourceDir: string = __dirname;
@@ -40,7 +40,7 @@ export default class DatabaseCrudVertx extends BaseGenerator {
             await this.mergePoms(`merge/pom.${props.databaseType}.xml`);
             await this.transform('src/**/*.java', cases(props));
             await this.transform('src/main/java/io/openshift/booster/MainApplication.java',
-                insertAfter('//TODO: Add Router Consumers', '      new io.openshift.booster.database.CrudApplication(vertx),'));
+                blocks('return new RouterConsumer[]{', '}', insertAtEnd('      new io.openshift.booster.database.CrudApplication(vertx),')));
 
             // TODO Don't just blindly copy all files, we need to _patch_ some of
             // them instead (eg. pom.xml and arquillian.xml and Java code)
