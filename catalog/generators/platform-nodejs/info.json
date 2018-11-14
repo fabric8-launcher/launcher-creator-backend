@@ -1,0 +1,5 @@
+{
+  "type": "generator",
+  "name": "platform nodejs",
+  "description": "nodejs based application."
+}
