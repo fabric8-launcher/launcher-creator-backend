@@ -23,8 +23,8 @@ public class MainApplication extends AbstractVerticle {
         return r.start();
       })
       .toCompletable()
-      .doOnCompleted(() -> future.complete())
-      .doOnError(throwable -> future.fail(throwable))
+      .doOnCompleted(future::complete)
+      .doOnError(future::fail)
       .subscribe(() ->
                    vertx.createHttpServer()
                      .requestHandler(router::accept)
