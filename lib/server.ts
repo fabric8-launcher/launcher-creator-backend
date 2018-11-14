@@ -29,6 +29,10 @@ app.get('/', (req, res) => {
     res.redirect(`${req.protocol}://editor.swagger.io/?url=${url}`);
 });
 
+app.use('/health', (req,res) => {
+    res.status(HttpStatus.OK).send("OK");
+});
+
 app.use('/openapi', express.static('./openapi.yaml'));
 
 app.get('/capabilities', (req, res) => {
