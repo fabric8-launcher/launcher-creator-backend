@@ -1,5 +1,5 @@
 
-import { cases } from 'core/template/transformers';
+import { cases } from 'core/template/transformers/cases';
 import { Resources, setDeploymentEnv } from 'core/resources';
 import { BaseGenerator } from 'core/catalog';
 
