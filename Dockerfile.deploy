@@ -6,11 +6,9 @@ LABEL author "Fabric8 Launcher Team <fabric8-launcher@googlegroups.com>"
 
 ENV LANG=en_US.utf8
 
-WORKDIR /opt/app-root
-
-COPY node_modules /opt/app-root/node_modules/
-COPY dist /opt/app-root/dist/
-COPY *.json /opt/app-root/
-COPY *.yaml /opt/app-root/
+COPY node_modules /opt/app-root/src/node_modules/
+COPY dist /opt/app-root/src/dist/
+COPY package.json /opt/app-root/src/
+COPY openapi.yaml /opt/app-root/src/
 
 CMD ${STI_SCRIPTS_PATH}/run
