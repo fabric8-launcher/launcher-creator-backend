@@ -8,7 +8,7 @@ import PlatformVertx from 'generators/platform-vertx';
 export default class DatabaseCrudVertx extends BaseGenerator {
     public static readonly sourceDir: string = __dirname;
 
-    public async apply(resources: Resources, props?: any): Promise<Resources> {
+    public async apply(resources: Resources, props?: any, extra?: any): Promise<Resources> {
         // Check if the generator was already applied, so we don't do it twice
         if (!await this.filesCopied()) {
             const pprops = {
@@ -34,7 +34,7 @@ export default class DatabaseCrudVertx extends BaseGenerator {
             };
             // First copy the files from the base Vert.x platform module
             // and then copy our own over that
-            await this.applyGenerator(PlatformVertx, resources, pprops);
+            await this.applyGenerator(PlatformVertx, resources, pprops, extra);
             await this.copy();
             await this.mergePoms(`merge/pom.${props.databaseType}.xml`);
             await this.transform('src/**/*.java', cases(props));

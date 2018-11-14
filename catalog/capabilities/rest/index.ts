@@ -15,7 +15,7 @@ function runtimeByType(type) {
 export default class Rest extends BaseCapability {
     public static readonly sourceDir: string = __dirname;
 
-    public async apply(resources, props) {
+    public async apply(resources, props, extra) {
         const rtServiceName = props.application + '-service';
         const rtprops = {
             'application': props.application,
@@ -24,6 +24,6 @@ export default class Rest extends BaseCapability {
             'artifactId': props.artifactId,
             'version': props.version
         };
-        return await this.applyGenerator(runtimeByType(props.runtime), resources, rtprops);
+        return await this.applyGenerator(runtimeByType(props.runtime), resources, rtprops, extra);
     }
 }

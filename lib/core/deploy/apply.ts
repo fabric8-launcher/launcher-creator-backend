@@ -1,8 +1,7 @@
 
 import { printUsage } from 'core/info';
 import { listCapabilityInfos, getCapabilityModule, info } from 'core/catalog';
-import { resources } from 'core/resources';
-import { apply } from '.';
+import { resourcesFileName, readOrCreateResources, apply } from '.';
 
 const args = process.argv.slice(2);
 
@@ -52,12 +51,15 @@ if (args.length === 1 && args[0] === '--list') {
         }
     }
 
-    apply(resources({}), TARGET_DIR, APP_NAME, SHARED, CAPS)
-        .then(() => {
-            console.log(`Applied capability to "${TARGET_DIR}"`);
-            console.log('Go into that folder and type "./gap deploy" while logged into OpenShift to create the application');
-            console.log('in the currently active project. Afterwards type "./gap push" at any time to push the current');
-            console.log('application code to the project.');
-        })
-        .catch((err) => console.error(`Application Error: ${err}`));
+    readOrCreateResources(resourcesFileName(TARGET_DIR))
+        .then((res) => {
+            apply(res, TARGET_DIR, APP_NAME, SHARED, CAPS)
+                .then(() => {
+                    console.log(`Applied capability to "${TARGET_DIR}"`);
+                    console.log('Go into that folder and type "./gap deploy" while logged into OpenShift to create the application');
+                    console.log('in the currently active project. Afterwards type "./gap push" at any time to push the current');
+                    console.log('application code to the project.');
+                })
+                .catch((err) => console.error(`Application Error: ${err}`));
+        });
 }

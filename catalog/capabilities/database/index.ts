@@ -29,7 +29,7 @@ function runtimeByType(type) {
 export default class Database extends BaseCapability {
     public static readonly sourceDir: string = __dirname;
 
-    public async apply(resources, props) {
+    public async apply(resources, props, extra) {
         const dbServiceName = props.application + '-database';
         const dbprops = {
             'application': props.application,
@@ -48,8 +48,8 @@ export default class Database extends BaseCapability {
             'databaseType': props.databaseType,
             'secretName': props.application + '-database-bind',
         };
-        await this.applyGenerator(DatabaseSecret, resources, dbprops);
-        await this.applyGenerator(databaseByType(props.databaseType), resources, dbprops);
-        return await this.applyGenerator(runtimeByType(props.runtime), resources, rtprops);
+        await this.applyGenerator(DatabaseSecret, resources, dbprops, extra);
+        await this.applyGenerator(databaseByType(props.databaseType), resources, dbprops, extra);
+        return await this.applyGenerator(runtimeByType(props.runtime), resources, rtprops, extra);
     }
 }

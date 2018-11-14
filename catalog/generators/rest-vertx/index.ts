@@ -6,7 +6,7 @@ import PlatformVertx from 'generators/platform-vertx';
 export default class RestVertx extends BaseGenerator {
     public static readonly sourceDir: string = __dirname;
 
-    public async apply(resources, props: any = {}) {
+    public async apply(resources, props: any = {}, extra: any = {}) {
         // Check if the generator was already applied, so we don't do it twice
         if (!await this.filesCopied()) {
             // First copy the files from the base Vert.x platform module
@@ -18,7 +18,7 @@ export default class RestVertx extends BaseGenerator {
                 'artifactId': props.artifactId,
                 'version': props.version,
             };
-            await this.applyGenerator(PlatformVertx, resources, pprops);
+            await this.applyGenerator(PlatformVertx, resources, pprops, extra);
             await this.copy();
             await this.mergePoms();
             // TODO Don't just blindly copy all files, we need to _patch_ some of

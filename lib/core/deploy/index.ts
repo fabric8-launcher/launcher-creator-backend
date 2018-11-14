@@ -7,16 +7,16 @@ import YAML from 'yaml';
 import { validate } from 'core/info';
 import { getCapabilityModule, info } from 'core/catalog';
 import { applyFromFile, startBuild, deleteApp } from 'core/oc';
-import { zipFolder } from 'core/utils';
+import { filterObject, zipFolder } from 'core/utils';
 import { resources, Resources } from 'core/resources';
 
 // Returns the name of the deployment file in the given directory
-function deploymentFileName(targetDir) {
+export function deploymentFileName(targetDir) {
     return join(targetDir, 'deployment.json');
 }
 
 // Returns the name of the resources file in the given directory
-function resourcesFileName(targetDir) {
+export function resourcesFileName(targetDir) {
     return join(targetDir, '.openshiftio', 'application.yaml');
 }
 
@@ -66,7 +66,11 @@ function addCapability(deployment, capability) {
     delete cap.shared;
     let app = deployment.applications.find(item => item.application === capability.application);
     if (!app) {
-        app = {'application': capability.application, 'shared': capability.shared, 'capabilities': []};
+        app = {
+            'application': capability.application,
+            'shared': capability.shared,
+            'capabilities': []
+        };
         deployment.applications = [...deployment.applications, app];
     }
     app.capabilities = [ ...app.capabilities, cap ];
@@ -81,6 +85,16 @@ export async function readResources(resourcesFile): Promise<Resources> {
     } catch (ex) {
         console.error(`Failed to read resources file ${resourcesFile}: ${ex}`);
         throw ex;
+    }
+}
+
+// Returns a promise that will resolve to a list of resources read
+// from the given file if it exists or to an empty Resources object
+export async function readOrCreateResources(resourcesFile): Promise<Resources> {
+    if (pathExistsSync(resourcesFile)) {
+        return readResources(resourcesFile);
+    } else {
+        return Promise.resolve(resources());
     }
 }
 
@@ -102,12 +116,31 @@ async function applyCapability_(applyGenerator, res, targetDir, props) {
     const cap = new capConst(applyGenerator, targetDir);
     const df = deploymentFileName(targetDir);
     const rf = resourcesFileName(targetDir);
-    const res2 = await cap.apply(res, props);
+    const extra = {};
+    const res2 = await cap.apply(res, props, extra);
     await writeResources(rf, res2);
     const deployment = await readDeployment(df);
-    const newDeployment = addCapability(deployment, props);
+    const newDeployment = addCapability(deployment, capInfo(info(capConst).props, props, extra));
     await writeDeployment(df, deployment);
     return newDeployment;
+}
+
+function capInfo(propDefs, props, extra) {
+    const props2 = filterObject(props, (key, value) => !getPropDef(propDefs, key).shared);
+    const shared = filterObject(props, (key, value) => getPropDef(propDefs, key).shared);
+    delete props2.module;
+    delete props2.application;
+    return {
+        'module': props.module,
+        'application': props.application,
+        'props': props2,
+        'shared': shared,
+        'extra': extra
+    };
+}
+
+function getPropDef(propDefs, propId) {
+    return propDefs.find(pd => pd.id === propId) || {};
 }
 
 // Calls `apply()` on the given capability (which allows it to copy, generate
@@ -124,10 +157,10 @@ export function apply(res, targetDir, appName, shared, capabilities) {
     // which they then should use whenever they need to apply a Generator
     // to the target project. The same holds true for Generators when they
     // want to apply other Generators.
-    const applyGenerator = (genConst, resources2, props2) => {
+    const applyGenerator = (genConst, resources2, props2, extra2) => {
         validate(info(genConst).props, props2);
         const generator = new genConst(applyGenerator, targetDir);
-        return generator.apply(resources2, props2);
+        return generator.apply(resources2, props2, extra2);
     };
 
     const p = Promise.resolve(true);

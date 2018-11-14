@@ -9,13 +9,13 @@ import MavenSetup from 'generators/maven-setup';
 export default class PlatformVertx extends BaseGenerator {
     public static readonly sourceDir: string = __dirname;
 
-    public async apply(resources, props: any = {}) {
+    public async apply(resources, props: any = {}, extra: any = {}) {
         // Check if the service already exists, so we don't create it twice
         if (!resources.service(props.serviceName)) {
             await this.copy();
             await this.transform('gap', cases(props));
-            await this.applyGenerator(WelcomeApp, resources, props);
-            await this.applyGenerator(MavenSetup, resources, props);
+            await this.applyGenerator(WelcomeApp, resources, props, extra);
+            await this.applyGenerator(MavenSetup, resources, props, extra);
             const res = await newApp(
                 props.serviceName,
                 props.application,

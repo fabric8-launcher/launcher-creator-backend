@@ -1,19 +1,18 @@
 
-import { readdir, statSync, copy } from 'fs-extra';
+import { readdir, statSync, accessSync, copy } from 'fs-extra';
 import { join } from 'path';
 
 import { Resources } from 'core/resources';
 import { transformFiles } from 'core/template';
 import { mergePoms, updateGav } from 'core/maven';
 import { walk } from 'core/utils';
-import { accessSync } from "fs";
 
 interface CatalogItem {
     readonly sourceDir: string;
-    apply(resources: Resources, props?: any): Promise<Resources>;
+    apply(resources: Resources, props?: any, extra?: any): Promise<Resources>;
 }
 
-type applyFunc = (genConst: any, resources: Resources, props?: any) => Resources;
+type applyFunc = (genConst: any, resources: Resources, props?: any, extra?: any) => Resources;
 
 abstract class BaseCatalogItem implements CatalogItem {
     private readonly _sourceDir;
@@ -29,7 +28,7 @@ abstract class BaseCatalogItem implements CatalogItem {
         return this._sourceDir;
     }
 
-    public abstract async apply(resources: Resources, props?: any): Promise<Resources>;
+    public abstract async apply(resources: Resources, props?: any, extra?: any): Promise<Resources>;
 
     protected copy(from: string = 'files', to?: string): Promise<void> {
         const from2 = join(this.sourceDir, from);
@@ -63,7 +62,7 @@ abstract class BaseCatalogItem implements CatalogItem {
     }
 
     protected updateGav(groupId, artifactId, version, pomFile = 'pom.xml') {
-        return updateGav(join(this.targetDir, 'pom.xml'), groupId, artifactId, version);
+        return updateGav(join(this.targetDir, pomFile), groupId, artifactId, version);
     }
 
     protected mergePoms(sourcePom = 'merge/pom.xml', targetPom = 'pom.xml') {
