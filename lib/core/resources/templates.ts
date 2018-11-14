@@ -4,6 +4,7 @@ import { join } from 'path';
 import * as _ from 'lodash';
 
 import { newApp } from 'core/oc';
+import { resources, Resources } from 'core/resources';
 
 const dummyName = 'placeholder-app-name-730040e0c873453f877c10cd07912d1f';
 const dummyLabel = 'placeholder-app-label-d46881878f594a2dadfd963843452aab';
@@ -79,12 +80,12 @@ export function generate() {
     });
 }
 
-export async function readTemplate(img: string, appName: string, appLabel?: string, gitUrl?: string): Promise<object> {
+export async function readTemplate(img: string, appName: string, appLabel?: string, gitUrl?: string): Promise<Resources> {
     const name = templateFileName(img);
     const text = await readFile(name, 'utf8');
     const newText = text
         .replace(dummyNameRe, appName)
         .replace(dummyLabelRe, appLabel || dummyLabel)
         .replace(dummyGitUrl, gitUrl || dummyGitUrl);
-    return JSON.parse(newText);
+    return resources(JSON.parse(newText));
 }

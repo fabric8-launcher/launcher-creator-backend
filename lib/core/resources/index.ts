@@ -373,8 +373,7 @@ export async function newApp(appName: string,
                              appLabel: string|object,
                              imageName: string,
                              sourceUri?: string, env = {}): Promise<Resources> {
-    const json = await readTemplate(imageName, appName, null, sourceUri);
-    const appRes = resources(json);
+    const appRes = await readTemplate(imageName, appName, null, sourceUri);
     setAppLabel(appRes, appLabel);
     return setDeploymentEnv(appRes, env);
 }
