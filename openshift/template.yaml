@@ -92,12 +92,6 @@ objects:
                 name: launcher
                 key: launcher.backend.url
                 optional: true
-          - name: LAUNCHER_SENTRY_DSN
-            valueFrom:
-              configMapKeyRef:
-                name: launcher
-                key: launcher.frontend.sentry.dsn
-                optional: true
           resources: {}
           terminationMessagePath: /dev/termination-log
           readinessProbe:
