@@ -25,7 +25,7 @@
 // //{{end}}
 // }
 //
-export function cases(props: object, lineComment: string = '//'): (line: string) => string {
+export function cases(props: object, lineComment: string = '//'): (line: string) => string|string[] {
     let inIf = false;
     let skipElse = false;
     let skipBlock = false;

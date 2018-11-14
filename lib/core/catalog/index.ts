@@ -50,7 +50,7 @@ abstract class BaseCatalogItem implements CatalogItem {
         });
     }
 
-    protected transform(pattern: string | string[], transformLine: (line: string) => string): Promise<number> {
+    protected transform(pattern: string | string[], transformLine: (line: string) => string|string[]): Promise<number> {
         let pattern2;
         if (typeof pattern === 'string') {
             pattern2 = join(this.targetDir, pattern);
