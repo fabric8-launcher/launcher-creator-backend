@@ -24,7 +24,8 @@
       "shared": true,
       "type": "enum",
       "values": [
-        "vertx"
+        "vertx",
+        "nodejs"
       ]
     },
     {
@@ -52,7 +53,7 @@
       "required": true,
       "shared": true,
       "type": "string",
-      "default": "1.0"
+      "default": "1.0.0"
     }
   ]
 }

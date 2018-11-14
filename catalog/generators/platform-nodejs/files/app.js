@@ -33,16 +33,7 @@ app.use('/licenses', express.static(path.join(__dirname, 'licenses')));
 
 let isOnline = true;
 
-//
-app.use('/api/greeting', (request, response) => {
-  if (!isOnline) {
-    response.status(503);
-    return response.send('Not online');
-  }
-
-  const name = request.query ? request.query.name : undefined;
-  return response.send({content: `Hello, ${name || 'World!'}`});
-});
+//TODO: Add routes
 
 app.use('/api/stop', (request, response) => {
   isOnline = false;
