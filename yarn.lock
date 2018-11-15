@@ -3010,10 +3010,10 @@ yallist@^2.1.2:
   resolved "https://registry.yarnpkg.com/yallist/-/yallist-2.1.2.tgz#1c11f9218f076089a47dd512f93c6699a6a81d52"
   integrity sha1-HBH5IY8HYImkfdUS+TxmmaaoHVI=
 
-yaml@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/yaml/-/yaml-1.0.1.tgz#3a8b01e4dda66445904ee743a95951d67a47a0c5"
-  integrity sha512-ysU56qumPH0tEML2hiFVAo+rCnG/0+oO2Ye3fN4c40GBN7kX1fYhDqSoX7OohimcI/Xkkr1DdaUlg5+afinRqA==
+yaml@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/yaml/-/yaml-1.0.2.tgz#77941a457090e17b8ca65b53322e68a050e090d4"
+  integrity sha512-vPmXtExk6AV7F5l2N5jW4LhbhZZPPN+xOK8x/+EgSXsXoawuo19Iqa+9nYMwrltsi6nl0rMKiROA/SAfG2OgUw==
 
 yn@^2.0.0:
   version "2.0.0"
