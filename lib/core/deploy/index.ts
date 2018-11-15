@@ -118,11 +118,29 @@ async function applyCapability_(generator, res, targetDir, props) {
     const rf = resourcesFileName(targetDir);
     const extra = {};
     const res2 = await cap.apply(res, props, extra);
-    await writeResources(rf, res2);
     const deployment = await readDeployment(df);
-    const newDeployment = addCapability(deployment, capInfo(info(capConst).props, props, extra));
+    addCapability(deployment, capInfo(info(capConst).props, props, extra));
     await writeDeployment(df, deployment);
-    return newDeployment;
+    const res3 = await postApply(generator, res2, targetDir, deployment);
+    await writeResources(rf, res2);
+    return deployment;
+}
+
+async function postApply(generator, res, targetDir, deployment) {
+    const app = deployment.applications[0];
+    for (const ci of app.capabilities) {
+        let capConst = null;
+        try {
+            capConst = getCapabilityModule(ci.module);
+        } catch (ex) {
+            console.log(`Capability ${ci.module} wasn't found for post-apply, skipping.`);
+        }
+        if (capConst) {
+            const cap = new capConst(generator, targetDir);
+            res = await cap.postApply(res, { ...app.shared, ...ci.props }, deployment);
+        }
+    }
+    return res;
 }
 
 function capInfo(propDefs, props, extra) {
@@ -163,7 +181,7 @@ export function apply(res, targetDir, appName, shared, capabilities) {
         gen.apply = (res2: Resources, props?: any, extra?: any) => {
             validate(info(genConst).props, props);
             return oldApply.call(gen, res2, props, extra);
-        }
+        };
         return gen;
     };
 

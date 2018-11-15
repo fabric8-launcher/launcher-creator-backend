@@ -73,6 +73,7 @@ export function info(itemConst) {
 }
 
 interface Capability extends CatalogItem {
+    postApply(resources: Resources, props?: any, deployment?: any): Promise<Resources>;
 }
 
 interface Generator extends CatalogItem {
@@ -82,6 +83,9 @@ export abstract class BaseGenerator extends BaseCatalogItem implements Generator
 }
 
 export abstract class BaseCapability extends BaseCatalogItem implements Capability {
+    public async postApply(resources: Resources, props?: any, deployment?: any): Promise<Resources> {
+        return resources;
+    }
 }
 
 export function getCapabilityModule(capability) {
