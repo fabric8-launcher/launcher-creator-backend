@@ -12,12 +12,10 @@ interface CatalogItem {
     apply(resources: Resources, props?: any, extra?: any): Promise<Resources>;
 }
 
-type applyFunc = (genConst: any, resources: Resources, props?: any, extra?: any) => Resources;
-
 abstract class BaseCatalogItem implements CatalogItem {
     private readonly _sourceDir;
 
-    constructor(public readonly applyGenerator: applyFunc, public readonly targetDir) {
+    constructor(public readonly generator: (genConst) => Generator, public readonly targetDir) {
         this._sourceDir = this.constructor['sourceDir'];
         if (!this._sourceDir) {
             throw new Error(`Class ${this.constructor.name} is missing static field "sourceDir"!`);

@@ -110,10 +110,10 @@ export async function writeResources(resourcesFile, res): Promise<any> {
     }
 }
 
-async function applyCapability_(applyGenerator, res, targetDir, props) {
+async function applyCapability_(generator, res, targetDir, props) {
     const capConst = getCapabilityModule(props.module);
     validate(info(capConst).props, props);
-    const cap = new capConst(applyGenerator, targetDir);
+    const cap = new capConst(generator, targetDir);
     const df = deploymentFileName(targetDir);
     const rf = resourcesFileName(targetDir);
     const extra = {};
@@ -146,9 +146,9 @@ function getPropDef(propDefs, propId) {
 // Calls `apply()` on the given capability (which allows it to copy, generate
 // and change files in the user's project) and adds information about the
 // capability to the `deployment.json` in the project's root.
-async function applyCapability(applyGenerator, res, targetDir, appName, props) {
+async function applyCapability(generator, res, targetDir, appName, props) {
     props.application = appName;
-    return await applyCapability_(applyGenerator, res, targetDir, props);
+    return await applyCapability_(generator, res, targetDir, props);
 }
 
 // Calls `applyCapability()` on all the given capabilities
@@ -157,15 +157,14 @@ export function apply(res, targetDir, appName, shared, capabilities) {
     // which they then should use whenever they need to apply a Generator
     // to the target project. The same holds true for Generators when they
     // want to apply other Generators.
-    const applyGenerator = (genConst, resources2, props2, extra2) => {
-        validate(info(genConst).props, props2);
-        const generator = new genConst(applyGenerator, targetDir);
-        return generator.apply(resources2, props2, extra2);
+    const generator = (genConst) => {
+        // validate(info(genConst).props, props2);
+        return new genConst(generator, targetDir);
     };
 
     const p = Promise.resolve(true);
     return capabilities.reduce((acc, cur) => acc
-        .then(() => applyCapability(applyGenerator, res, targetDir, appName, { ...cur, ...shared })), p);
+        .then(() => applyCapability(generator, res, targetDir, appName, { ...cur, ...shared })), p);
 }
 
 export function deploy(targetDir) {

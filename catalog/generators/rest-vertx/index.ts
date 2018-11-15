@@ -1,8 +1,8 @@
 
 import { BaseGenerator } from 'core/catalog';
+import { blocks, insertAtEnd } from 'core/template/transformers/blocks';
 
 import PlatformVertx from 'generators/platform-vertx';
-import {blocks, insertAtEnd} from "core/template/transformers/blocks";
 
 export default class RestVertx extends BaseGenerator {
     public static readonly sourceDir: string = __dirname;
@@ -19,7 +19,7 @@ export default class RestVertx extends BaseGenerator {
                 'artifactId': props.artifactId,
                 'version': props.version,
             };
-            await this.applyGenerator(PlatformVertx, resources, pprops, extra);
+            await this.generator(PlatformVertx).apply(resources, pprops, extra);
             await this.copy();
             await this.mergePoms();
             await this.transform('src/main/java/io/openshift/booster/MainApplication.java',

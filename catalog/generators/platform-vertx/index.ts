@@ -14,8 +14,8 @@ export default class PlatformVertx extends BaseGenerator {
         if (!resources.service(props.serviceName)) {
             await this.copy();
             await this.transform('gap', cases(props));
-            await this.applyGenerator(WelcomeApp, resources, props, extra);
-            await this.applyGenerator(MavenSetup, resources, props, extra);
+            await this.generator(WelcomeApp).apply(resources, props, extra);
+            await this.generator(MavenSetup).apply(resources, props, extra);
             const res = await newApp(
                 props.serviceName,
                 props.application,

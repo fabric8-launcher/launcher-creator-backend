@@ -35,7 +35,7 @@ export default class DatabaseCrudVertx extends BaseGenerator {
             };
             // First copy the files from the base Vert.x platform module
             // and then copy our own over that
-            await this.applyGenerator(PlatformVertx, resources, pprops, extra);
+            await this.generator(PlatformVertx).apply(resources, pprops, extra);
             await this.copy();
             await this.mergePoms(`merge/pom.${props.databaseType}.xml`);
             await this.transform('src/**/*.java', cases(props));

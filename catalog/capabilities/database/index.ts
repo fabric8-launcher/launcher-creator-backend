@@ -48,8 +48,8 @@ export default class Database extends BaseCapability {
             'databaseType': props.databaseType,
             'secretName': props.application + '-database-bind',
         };
-        await this.applyGenerator(DatabaseSecret, resources, dbprops, extra);
-        await this.applyGenerator(databaseByType(props.databaseType), resources, dbprops, extra);
-        return await this.applyGenerator(runtimeByType(props.runtime), resources, rtprops, extra);
+        await this.generator(DatabaseSecret).apply(resources, dbprops, extra);
+        await this.generator(databaseByType(props.databaseType)).apply(resources, dbprops, extra);
+        return await this.generator(runtimeByType(props.runtime)).apply(resources, rtprops, extra);
     }
 }

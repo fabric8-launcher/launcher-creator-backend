@@ -24,6 +24,6 @@ export default class Rest extends BaseCapability {
             'artifactId': props.artifactId,
             'version': props.version
         };
-        return await this.applyGenerator(runtimeByType(props.runtime), resources, rtprops, extra);
+        return await this.generator(runtimeByType(props.runtime)).apply(resources, rtprops, extra);
     }
 }
