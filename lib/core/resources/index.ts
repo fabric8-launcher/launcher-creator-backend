@@ -110,6 +110,11 @@ export class Resources {
         return this.res.parameters || [];
     }
 
+    // Finds a parameter by name
+    public parameter(name) {
+        return this.parameters.find(p => p.name === name);
+    }
+
     // Turns the current resources into a List
     public toList() {
         if (this.res.kind && this.res.kind.toLowerCase() !== 'list') {
