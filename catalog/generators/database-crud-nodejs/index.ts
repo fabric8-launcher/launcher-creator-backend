@@ -7,6 +7,7 @@ import {insertAfter} from 'core/template/transformers/insert';
 
 import * as path from 'path';
 import { readFile } from 'fs-extra';
+import { cases } from 'core/template/transformers/cases';
 
 export default class DatabaseCrudNodejs extends BaseGenerator {
     public static readonly sourceDir: string = __dirname;
@@ -39,6 +40,8 @@ export default class DatabaseCrudNodejs extends BaseGenerator {
             // and then copy our own over that
             await this.applyGenerator(PlatformNodejs, resources, pprops, extra);
             await this.copy();
+            await this.mergePackageJson();
+            await this.transform('lib/**/*.js', cases(props));
             const mergeFile = path.resolve(DatabaseCrudNodejs.sourceDir, 'merge/app.merge.js');
             await this.transform('app.js',
                 insertAfter('//TODO: Add routes', await readFile(mergeFile, 'utf8')));

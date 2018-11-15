@@ -1,15 +1,37 @@
 'use strict';
-const {Pool} = require('pg');
 
-// TODO - make dynaimc with env vars
-const serviceHost = process.env.MY_DATABASE_SERVICE_HOST || 'localhost';
-const user = process.env.DB_USERNAME || 'user';
-const password = process.env.DB_PASSWORD || 'password';
-const connectionString = `postgresql://${user}:${password}@${serviceHost}:5432/my_data`;
-
-const pool = new Pool({
-  connectionString
+//{{if .databaseType==mysql}}
+const mysql = require('mysql');
+const pool = mysql.createConnection({
+  host     : process.env.DB_HOST || 'localhost',
+  user     : process.env.DB_USERNAME || 'user',
+  password : process.env.DB_PASSWORD || 'password',
+  database : 'my_data',
+  multipleStatements: true
 });
+
+pool.connect(function(err) {
+  if (err) {
+    console.error('error connecting: ' + err.stack);
+    return;
+  }
+
+  console.log('connected as id ' + pool.threadId);
+});
+
+//{{else if .databaseType==postgresql}}
+// const {Pool} = require('pg');
+
+// const serviceHost = process.env.DB_HOST || 'localhost';
+// const user = process.env.DB_USERNAME || 'user';
+// const password = process.env.DB_PASSWORD || 'password';
+// const connectionString = `postgresql://${user}:${password}@${serviceHost}:5432/my_data`;
+
+// const pool = new Pool({
+//   connectionString
+// });
+
+//{{end}}
 
 // -- Create the products table if not present
 const initScript = `CREATE TABLE IF NOT EXISTS products (
@@ -26,9 +48,33 @@ INSERT INTO products (name, stock) values ('Pear', 10);`;
 
 module.exports = {
   query: (text, params) => {
-    return pool.query(text, params);
+    //{{if .databaseType==mysql}}
+    return new Promise(function(resolve, reject) {
+      pool.query(text, params, function(error, results) {
+        if (!error) {
+          resolve({rows: results});
+        } else {
+          reject(error);
+        }
+      });
+    });
+    //{{else if .databaseType==postgresql}}
+    // return pool.query(text, params);
+    //{{end}}
   },
   init: () => {
-    return pool.query(initScript);
+    //{{if .databaseType==mysql}}
+    return new Promise(function(resolve, reject) {
+      pool.query(initScript, function(error) {
+        if (!error) {
+          resolve();
+        } else {
+          reject(error);
+        }
+      });
+    });
+    //{{else if .databaseType==postgresql}}
+    // return pool.query(initScript);
+    //{{end}}
   }
 };

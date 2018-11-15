@@ -3,7 +3,11 @@
 const db = require('../db');
 
 function find (id) {
-  return db.query('SELECT * FROM products WHERE id = $1', [id]);
+  //{{if .databaseType==mysql}}
+  return db.query('SELECT * FROM products WHERE id = ?', [id]);
+  //{{else if .databaseType==postgresql}}
+  //return db.query('SELECT * FROM products WHERE id = $1', [id]);
+  //{{end}}
 }
 
 function findAll () {
@@ -11,15 +15,27 @@ function findAll () {
 }
 
 function create (name, stock) {
-  return db.query('INSERT INTO products (name, stock) VALUES ($1, $2) RETURNING *', [name, stock]);
+  //{{if .databaseType==mysql}}
+  return db.query('INSERT INTO products (name, stock) VALUES (?, ?)', [name, stock]);
+  //{{else if .databaseType==postgresql}}
+  //return db.query('INSERT INTO products (name, stock) VALUES ($1, $2) RETURNING *', [name, stock]);
+  //{{end}}
 }
 
 function update (options = {}) {
-  return db.query('UPDATE products SET name = $1, stock = $2 WHERE id = $3', [options.name, options.stock, options.id]);
+  //{{if .databaseType==mysql}}
+  return db.query('UPDATE products SET name = ?, stock = ? WHERE id = ?', [options.name, options.stock, options.id]);
+  //{{else if .databaseType==postgresql}}
+  //return db.query('UPDATE products SET name = $1, stock = $2 WHERE id = $3', [options.name, options.stock, options.id]);
+  //{{end}}
 }
 
 function remove (id) {
-  return db.query('DELETE FROM products WHERE id = $1', [id]);
+  //{{if .databaseType==mysql}}
+  return db.query('DELETE FROM products WHERE id = ?', [id]);
+  //{{else if .databaseType==postgresql}}
+  //  return db.query('DELETE FROM products WHERE id = $1', [id]);
+  //{{end}}
 }
 
 module.exports = {
