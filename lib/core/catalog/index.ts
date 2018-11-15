@@ -6,6 +6,7 @@ import { Resources } from 'core/resources';
 import { transformFiles } from 'core/template';
 import { mergePoms, updateGav } from 'core/maven';
 import { walk } from 'core/utils';
+import { mergePackageJson } from 'core/nodejs';
 
 interface CatalogItem {
     readonly sourceDir: string;
@@ -67,6 +68,10 @@ abstract class BaseCatalogItem implements CatalogItem {
 
     protected mergePoms(sourcePom = 'merge/pom.xml', targetPom = 'pom.xml') {
         return mergePoms(join(this.targetDir, targetPom), join(this.sourceDir, sourcePom));
+    }
+
+    protected mergePackageJson(source = 'merge/package.json', target = 'package.json') {
+        return mergePackageJson(join(this.targetDir, target), join(this.sourceDir, source));
     }
 }
 
