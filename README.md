@@ -2,9 +2,9 @@
 
 [![Build Status](https://semaphoreci.com/api/v1/fabric8-launcher/launcher-creator-backend/branches/master/badge.svg)](https://semaphoreci.com/fabric8-launcher/launcher-creator-backend)
 
-This is a PoC for the _engine_ that could be used by the Launcher Cloud App Generator (or whatever its name will be) to perform
-the actual code generation. Right now it only has command line tools to make it work, but this could easily be made part
-of a REST service of some kind that would return a ZIP file.
+This is a MVP for the _engine_ that could be used by the Launcher Creator (or whatever its name will be) to perform
+the actual code generation. Right now it has command line tools that can generate code locally and a REST service that
+can either return a ZIP file or pass the generated code to the Launcher Backend for publishing on GitHub and OpenShift.
 
 The fundamental design idea for this engine is the concept of _Capabilities_ and _Generators_. Things are described in more detail
 below but basically it comes down to _Generators_ creating the very simple and basic pieces of a project and _Capabilites_
@@ -104,21 +104,6 @@ supporting non-code files, consider splitting those out into a different module.
 
 So make _Generators_ simple, move the complexity to the _Capabilities_.
 
-Each Generator exposes the following public API:
-
-### apply( applyGenerator, resources, targetDir, props )
-
-When called this method allows the Generator to make changes to the user's project pointed at by `targetDir`
-and to the OpenShift/K8s Resources list that get passed in as `resources`. Files can be copyied and/or generated.
-It's also possible to update already pre-existing files (for example add new dependencies a Maven POM file).
-When the _Generator_ also needs new Resources to be created in the user's OpenShift project it can add them
-to the list that gets passed in and in the end that will be sent to OpenShift.
-The `props` is an object with properties required by the Generator. These properties are passed on by the Capabilities.
-
-### info( )
-
-Returns the contents of the local `info.json` file as an object.
-
 ## Capabilities
 
 Capabilities are modules that bundle one or more generators to add a set of features to a user's project that
@@ -131,19 +116,6 @@ choice of database (mySQL, PostgreSQL, etc) and code language and framework (Nod
 could be options that the user can pass to the _Capability_. In that aspect a _Capability_ can be as complex as
 you want it to be.
 
-Each Capability exposes the following public API:
-
-### apply( applyGenerator, resources, targetDir, props )
-
-When called the Capability takes a list of all the Generators it will use, prepares the properties that it will
-pass on to each of them and calls their `apply()` function one by one. The end result will be that the user's
-project will have all the necessary files and a Resource list with all the necessary builds, deployments, services,
-routes, config maps and secrets the user's project needs to run on OpenShift.
-
-### info( )
-
-Returns the contents of the local `info.json` file as an object.
-
 ## Development
 
 To make sure that any changes you make are properly propagated to all modules you might have to run the folowing
@@ -152,6 +124,9 @@ command:
 ```
 $ yarn install --force
 ```
+
+For information on how to develop your own _Generators_ and _Capabilities_ see the
+[Contributing](https://github.com/fabric8-launcher/launcher-creator-backend/wiki/Contributing) page in the Wiki.
 
 ## Deploy on OpenShift
 
