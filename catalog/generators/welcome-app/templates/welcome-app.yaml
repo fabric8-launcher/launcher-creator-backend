@@ -1,0 +1,236 @@
+apiVersion: v1
+kind: Template
+parameters:
+- name: APP_NAME
+  description: The name for the application
+  displayName: Application Name
+  required: true
+- name: WELCOME_APP_CONFIG
+  description: The configuration for the welcome app
+  displayName: Welcome App Configuration
+  required: true
+- name: BACKEND_SERVICE_NAME
+  description: The backend service name for the welcome app
+  displayName: Backend service name
+  required: true
+- name: SOURCE_REPOSITORY_URL
+  description: The source URL for the application
+  displayName: Source URL
+  value: https://github.com/fabric8-launcher/launcher-creator-welcome-app
+  required: true
+- name: SOURCE_REPOSITORY_REF
+  description: The branch name for the application
+  displayName: Source Branch
+  value: master
+  required: true
+- name: SOURCE_REPOSITORY_DIR
+  description: The location within the source repo of the application
+  displayName: Source Directory
+  value: .
+  required: true
+- name: OUTPUT_DIR
+  description: The location of the compiled static files from your web apps builder
+  displayName: Output Directory
+  value: build
+  required: false
+objects:
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    name: welcome-app-build-output
+    labels:
+      app: ${APP_NAME}
+      apptype: welcome
+  spec: {}
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    name: welcome-app-on-server-output
+    labels:
+      app: ${APP_NAME}
+      apptype: welcome
+  spec: {}
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    name: webapp-builder
+    labels:
+      app: ${APP_NAME}
+      apptype: welcome
+  spec:
+    tags:
+    - name: latest
+      from:
+        kind: DockerImage
+        name: nodeshift/centos7-s2i-web-app:latest
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    name: server-image
+    labels:
+      app: ${APP_NAME}
+      apptype: welcome
+  spec:
+    tags:
+    - name: latest
+      from:
+        kind: DockerImage
+        name: 'centos/nginx-112-centos7:latest'
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    name: welcome-app-build
+    labels:
+      app: ${APP_NAME}
+      apptype: welcome
+  spec:
+    output:
+      to:
+        kind: ImageStreamTag
+        name: welcome-app-build-output:latest
+    postCommit: {}
+    resources: {}
+    source:
+      git:
+        uri: ${SOURCE_REPOSITORY_URL}
+        ref: ${SOURCE_REPOSITORY_REF}
+      contextDir: ${SOURCE_REPOSITORY_DIR}
+      type: Git
+    strategy:
+      type: Source
+      sourceStrategy:
+        env:
+        - name: OUTPUT_DIR
+          value: ${OUTPUT_DIR}
+        - name: REACT_APP_WELCOME_APP_CONFIG
+          value: ${WELCOME_APP_CONFIG}
+        - name: BACKEND_SERVICE_NAME
+          value: ${BACKEND_SERVICE_NAME}
+        from:
+          kind: ImageStreamTag
+          name: webapp-builder:latest
+        incremental: false
+  status:
+    lastVersion: 0
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    name: welcome-app-on-server-build
+    labels:
+      app: ${APP_NAME}
+      apptype: welcome
+  spec:
+    output:
+      to:
+        kind: ImageStreamTag
+        name: welcome-app-on-server-output:latest
+    postCommit: {}
+    resources: {}
+    source:
+      type: Image
+      images:
+      - from:
+          kind: ImageStreamTag
+          name: welcome-app-build-output:latest
+        paths:
+        - destinationDir: .
+          sourcePath: /opt/app-root/output/.
+    strategy:
+      type: Source
+      sourceStrategy:
+        from:
+          kind: ImageStreamTag
+          name: server-image:latest
+        incremental: true
+    triggers:
+    - type: ConfigChange
+    - type: ImageChange
+      imageChange: {}
+    - type: ImageChange
+      imageChange:
+        from:
+          kind: ImageStreamTag
+          name: welcome-app-build-output:latest
+  status:
+    lastVersion: 0
+- kind: DeploymentConfig
+  apiVersion: v1
+  metadata:
+    name: welcome-app-deployment
+    labels:
+      app: ${APP_NAME}
+      apptype: welcome
+  spec:
+    strategy:
+      resources:
+        {}
+    triggers:
+    - type: ConfigChange
+    - type: ImageChange
+      imageChangeParams:
+        automatic: true
+        containerNames:
+        - welcome-app-on-server-output
+        from:
+          kind: ImageStreamTag
+          name: welcome-app-on-server-output:latest
+    replicas: 1
+    test: false
+    selector:
+      app: ${APP_NAME}
+      deploymentconfig: welcome-app-deployment
+    template:
+      metadata:
+        labels:
+          app: ${APP_NAME}
+          deploymentconfig: welcome-app-deployment
+      spec:
+        containers:
+        - name: welcome-app-on-server-output
+          image: welcome-app-on-server-output:latest
+          ports:
+          - containerPort: 8080
+            protocol: TCP
+          resources:
+            {}
+          env:
+            []
+  status:
+    latestVersion: 0
+    observedGeneration: 0
+    replicas: 0
+    updatedReplicas: 0
+    availableReplicas: 0
+    unavailableReplicas: 0
+- kind: Service
+  apiVersion: v1
+  metadata:
+    name: welcome-app-service
+    labels:
+      app: ${APP_NAME}
+      apptype: welcome
+  spec:
+    ports:
+    - name: 8080-tcp
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+    selector:
+      app: ${APP_NAME}
+      deploymentconfig: welcome-app-deployment
+  status:
+    loadBalancer:
+      {}
+- apiVersion: v1
+  kind: Route
+  metadata:
+    name: welcome-app-route
+    labels:
+      app: ${APP_NAME}
+      apptype: welcome
+  spec:
+    port:
+      targetPort: 8080-tcp
+    to:
+      kind: Service
+      name: welcome-app-service

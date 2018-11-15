@@ -110,20 +110,26 @@ export async function writeResources(resourcesFile, res): Promise<any> {
     }
 }
 
-async function applyCapability_(generator, res, targetDir, props) {
+async function applyCapability_(generator, res, targetDir, shared, props) {
     const capConst = getCapabilityModule(props.module);
-    validate(info(capConst).props, props);
+    const propDefs = info(capConst).props;
+    const allprops = { ...props, ...definedPropsOnly(propDefs, shared) };
+    validate(propDefs, allprops);
     const cap = new capConst(generator, targetDir);
     const df = deploymentFileName(targetDir);
     const rf = resourcesFileName(targetDir);
     const extra = {};
-    const res2 = await cap.apply(res, props, extra);
+    const res2 = await cap.apply(res, allprops, extra);
     const deployment = await readDeployment(df);
-    addCapability(deployment, capInfo(info(capConst).props, props, extra));
+    addCapability(deployment, capInfo(info(capConst).props, allprops, extra));
     await writeDeployment(df, deployment);
     const res3 = await postApply(generator, res2, targetDir, deployment);
     await writeResources(rf, res2);
     return deployment;
+}
+
+function definedPropsOnly(propDefs: any, props: object): object {
+    return filterObject(props, (key, value) => !!getPropDef(propDefs, key).id);
 }
 
 async function postApply(generator, res, targetDir, deployment) {
@@ -137,7 +143,8 @@ async function postApply(generator, res, targetDir, deployment) {
         }
         if (capConst) {
             const cap = new capConst(generator, targetDir);
-            res = await cap.postApply(res, { ...app.shared, ...ci.props }, deployment);
+            const props = { ...app.shared, ...ci.props, 'module': ci.module, 'application': app.application };
+            res = await cap.postApply(res, props, deployment);
         }
     }
     return res;
@@ -164,9 +171,9 @@ function getPropDef(propDefs, propId) {
 // Calls `apply()` on the given capability (which allows it to copy, generate
 // and change files in the user's project) and adds information about the
 // capability to the `deployment.json` in the project's root.
-async function applyCapability(generator, res, targetDir, appName, props) {
+async function applyCapability(generator, res, targetDir, appName, shared, props) {
     props.application = appName;
-    return await applyCapability_(generator, res, targetDir, props);
+    return await applyCapability_(generator, res, targetDir, shared, props);
 }
 
 // Calls `applyCapability()` on all the given capabilities
@@ -187,7 +194,7 @@ export function apply(res, targetDir, appName, shared, capabilities) {
 
     const p = Promise.resolve(true);
     return capabilities.reduce((acc, cur) => acc
-        .then(() => applyCapability(generator, res, targetDir, appName, { ...cur, ...shared })), p);
+        .then(() => applyCapability(generator, res, targetDir, appName, shared, cur)), p);
 }
 
 export function deploy(targetDir) {

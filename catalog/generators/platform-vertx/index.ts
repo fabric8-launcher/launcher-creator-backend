@@ -3,7 +3,6 @@ import { newApp, newRoute, setDeploymentEnv } from 'core/resources';
 import { cases } from 'core/template/transformers/cases';
 import { BaseGenerator } from 'core/catalog';
 
-import WelcomeApp from 'generators/welcome-app';
 import MavenSetup from 'generators/maven-setup';
 
 export default class PlatformVertx extends BaseGenerator {
@@ -14,7 +13,6 @@ export default class PlatformVertx extends BaseGenerator {
         if (!resources.service(props.serviceName)) {
             await this.copy();
             await this.transform('gap', cases(props));
-            await this.generator(WelcomeApp).apply(resources, props, extra);
             await this.generator(MavenSetup).apply(resources, props, extra);
             const res = await newApp(
                 props.serviceName,
