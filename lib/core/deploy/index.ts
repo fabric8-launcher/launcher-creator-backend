@@ -122,9 +122,9 @@ async function applyCapability_(generator, res, targetDir, shared, props) {
     const res2 = await cap.apply(res, allprops, extra);
     const deployment = await readDeployment(df);
     addCapability(deployment, capInfo(info(capConst).props, allprops, extra));
-    await writeDeployment(df, deployment);
     const res3 = await postApply(generator, res2, targetDir, deployment);
-    await writeResources(rf, res2);
+    await writeResources(rf, res3);
+    await writeDeployment(df, deployment);
     return deployment;
 }
 
