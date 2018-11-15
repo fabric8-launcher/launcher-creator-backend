@@ -158,8 +158,13 @@ export function apply(res, targetDir, appName, shared, capabilities) {
     // to the target project. The same holds true for Generators when they
     // want to apply other Generators.
     const generator = (genConst) => {
-        // validate(info(genConst).props, props2);
-        return new genConst(generator, targetDir);
+        const gen = new genConst(generator, targetDir);
+        const oldApply = gen.apply;
+        gen.apply = (res2: Resources, props?: any, extra?: any) => {
+            validate(info(genConst).props, props);
+            return oldApply.call(gen, res2, props, extra);
+        }
+        return gen;
     };
 
     const p = Promise.resolve(true);
