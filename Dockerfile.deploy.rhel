@@ -1,4 +1,5 @@
 #FROM registry.access.redhat.com/rhoar-nodejs/nodejs-10:latest
+# Check with SD Team how to support the Node.js RHOAR version here
 FROM nodeshift/centos7-s2i-nodejs:10.x
 
 MAINTAINER Fabric8 Launcher Team <fabric8-launcher@googlegroups.com>
