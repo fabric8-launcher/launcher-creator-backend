@@ -60,15 +60,19 @@ fi
 docker ps | grep -q ${BUILDER_CONT} && docker stop ${BUILDER_CONT}
 docker ps -a | grep -q ${BUILDER_CONT} && docker rm ${BUILDER_CONT}
 rm -rf ${TARGET_DIR}/
+rm -rf node_modules/
 
 #BUILD
 docker build -t ${BUILDER_IMAGE} -f Dockerfile.build .
 
 mkdir ${TARGET_DIR}/
-docker run --detach=true --name ${BUILDER_CONT} -t -v $(pwd)/${TARGET_DIR}:/${TARGET_DIR}:Z ${BUILDER_IMAGE} /bin/tail -f /dev/null #FIXME
+mkdir node_modules/
+
+docker run --detach=true --name ${BUILDER_CONT} -t -v $(pwd)/${TARGET_DIR}:/${TARGET_DIR}:Z -v $(pwd)/node_modules:/node_modules ${BUILDER_IMAGE} /bin/tail -f /dev/null #FIXME
 
 docker exec ${BUILDER_CONT} yarn install
 docker exec -u root ${BUILDER_CONT} cp -r ${TARGET_DIR}/ /
+docker exec -u root ${BUILDER_CONT} cp -r node_modules/ /
 
 #LOGIN
 docker_login "${DEVSHIFT_USERNAME}" "${DEVSHIFT_PASSWORD}" "${REGISTRY_URI}"
