@@ -23,7 +23,7 @@
       "kind": "ImageStream",
       "apiVersion": "v1",
       "metadata": {
-        "name": "centos7-s2i-web-app",
+        "name": "centos7-s2i-nodejs",
         "creationTimestamp": null,
         "labels": {
           "app": "placeholder-app-label-d46881878f594a2dadfd963843452aab"
@@ -38,7 +38,7 @@
             "name": "latest",
             "from": {
               "kind": "DockerImage",
-              "name": "bucharestgold/centos7-s2i-web-app"
+              "name": "nodeshift/centos7-s2i-nodejs"
             },
             "generation": null,
             "importPolicy": {},
@@ -108,7 +108,7 @@
           "sourceStrategy": {
             "from": {
               "kind": "ImageStreamTag",
-              "name": "centos7-s2i-web-app:latest"
+              "name": "centos7-s2i-nodejs:latest"
             },
             "incremental": true
           }

@@ -17,7 +17,7 @@ export default class PlatformVertx extends BaseGenerator {
             const res = await newApp(
                 props.serviceName,
                 props.application,
-                'bucharestgold/centos7-s2i-web-app',
+                'nodeshift/centos7-s2i-nodejs:10.x',
                 null,
                 props.env || {});
             resources.add(res);
