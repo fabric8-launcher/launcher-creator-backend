@@ -10,7 +10,11 @@
     "isBuilder": true
   },
   {
-    "image": "bucharestgold/centos7-s2i-web-app",
+    "image": "nodeshift/centos7-s2i-web-app",
+    "isBuilder": true
+  },
+  {
+    "image": "nodeshift/centos7-s2i-nodejs",
     "isBuilder": true
   }
 ]

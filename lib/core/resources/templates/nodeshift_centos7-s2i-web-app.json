@@ -23,39 +23,6 @@
       "kind": "ImageStream",
       "apiVersion": "v1",
       "metadata": {
-        "name": "centos7-s2i-web-app",
-        "creationTimestamp": null,
-        "labels": {
-          "app": "placeholder-app-label-d46881878f594a2dadfd963843452aab"
-        }
-      },
-      "spec": {
-        "lookupPolicy": {
-          "local": false
-        },
-        "tags": [
-          {
-            "name": "latest",
-            "from": {
-              "kind": "DockerImage",
-              "name": "bucharestgold/centos7-s2i-web-app"
-            },
-            "generation": null,
-            "importPolicy": {},
-            "referencePolicy": {
-              "type": ""
-            }
-          }
-        ]
-      },
-      "status": {
-        "dockerImageRepository": ""
-      }
-    },
-    {
-      "kind": "ImageStream",
-      "apiVersion": "v1",
-      "metadata": {
         "name": "placeholder-app-name-730040e0c873453f877c10cd07912d1f",
         "creationTimestamp": null,
         "labels": {

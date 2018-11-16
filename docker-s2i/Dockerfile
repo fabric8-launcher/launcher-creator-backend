@@ -1,4 +1,4 @@
-FROM bucharestgold/centos7-s2i-nodejs
+FROM nodeshift/centos7-s2i-nodejs
 
 USER root
 

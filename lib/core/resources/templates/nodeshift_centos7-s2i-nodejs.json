@@ -23,7 +23,7 @@
       "kind": "ImageStream",
       "apiVersion": "v1",
       "metadata": {
-        "name": "openjdk18-openshift",
+        "name": "centos7-s2i-nodejs",
         "creationTimestamp": null,
         "labels": {
           "app": "placeholder-app-label-d46881878f594a2dadfd963843452aab"
@@ -38,7 +38,7 @@
             "name": "latest",
             "from": {
               "kind": "DockerImage",
-              "name": "registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift"
+              "name": "nodeshift/centos7-s2i-nodejs"
             },
             "generation": null,
             "importPolicy": {},
@@ -108,7 +108,7 @@
           "sourceStrategy": {
             "from": {
               "kind": "ImageStreamTag",
-              "name": "openjdk18-openshift:latest"
+              "name": "centos7-s2i-nodejs:latest"
             },
             "incremental": true
           }
@@ -182,14 +182,6 @@
                   {
                     "containerPort": 8080,
                     "protocol": "TCP"
-                  },
-                  {
-                    "containerPort": 8443,
-                    "protocol": "TCP"
-                  },
-                  {
-                    "containerPort": 8778,
-                    "protocol": "TCP"
                   }
                 ],
                 "resources": {}
@@ -224,18 +216,6 @@
             "protocol": "TCP",
             "port": 8080,
             "targetPort": 8080
-          },
-          {
-            "name": "8443-tcp",
-            "protocol": "TCP",
-            "port": 8443,
-            "targetPort": 8443
-          },
-          {
-            "name": "8778-tcp",
-            "protocol": "TCP",
-            "port": 8778,
-            "targetPort": 8778
           }
         ],
         "selector": {
