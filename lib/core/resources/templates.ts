@@ -5,6 +5,7 @@ import * as _ from 'lodash';
 
 import { newApp } from 'core/oc';
 import { resources, Resources } from 'core/resources';
+import { filterObject } from 'core/utils';
 
 const dummyName = 'placeholder-app-name-730040e0c873453f877c10cd07912d1f';
 const dummyLabel = 'placeholder-app-label-d46881878f594a2dadfd963843452aab';
@@ -56,6 +57,16 @@ export function generate() {
             const srcUri = isBuilder ? dummyGitUrl : null;
             const res = await newApp(dummyName, dummyLabel, image, srcUri, {});
             res.toTemplate();
+            // Remove all openshift.io annotations
+            res.items.forEach(i => {
+                filterAnnotations(i.metadata);
+                if (!!i.spec && !!i.spec.template) {
+                    filterAnnotations(i.spec.template.metadata);
+                }
+                if (!!i.spec && !!i.spec.tags && Array.isArray(i.spec.tags)) {
+                    i.spec.tags.forEach(t => filterAnnotations(t));
+                }
+            });
             if (isBuilder) {
                 // Turn the resources into a template and add parameters
                 res
@@ -78,6 +89,17 @@ export function generate() {
             console.error(`Couldn't generate template for image ${image}: ${ex}`);
         }
     });
+}
+
+function filterAnnotations(container) {
+    if (!!container && !!container.annotations) {
+        const filteredAnnotations = filterObject(container.annotations, (key, value) => !key.startsWith('openshift.io/'));
+        if (Object.entries(filteredAnnotations).length === 0) {
+            delete container.annotations;
+        } else {
+            container.annotations = filteredAnnotations;
+        }
+    }
 }
 
 export async function readTemplate(img: string, appName: string, appLabel?: string, gitUrl?: string): Promise<Resources> {
