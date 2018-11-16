@@ -38,18 +38,15 @@ export default class DatabaseCrudNodejs extends BaseGenerator {
             };
             // First copy the files from the base Vert.x platform module
             // and then copy our own over that
-            await this.applyGenerator(PlatformNodejs, resources, pprops, extra);
+            await this.generator(PlatformNodejs).apply(resources, pprops, extra);
             await this.copy();
             await this.mergePackageJson();
             await this.transform('lib/**/*.js', cases(props));
             const mergeFile = path.resolve(DatabaseCrudNodejs.sourceDir, 'merge/app.merge.js');
             await this.transform('app.js',
                 insertAfter('//TODO: Add routes', await readFile(mergeFile, 'utf8')));
-
-            // TODO Don't just blindly copy all files, we need to _patch_ some of
-            // them instead (eg. pom.xml and arquillian.xml and Java code)
         }
-        extra['sourceMapping'] = { 'dbEndpoint': 'lib/db/index.js' };
+        extra['sourceMapping'] = { 'dbEndpoint': 'lib/routes/fruits.js' };
         return resources;
     }
 }

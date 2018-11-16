@@ -10,7 +10,7 @@ import { readFile } from 'fs-extra';
 export default class RestNodejs extends BaseGenerator {
     public static readonly sourceDir: string = __dirname;
 
-    public async apply(resources, props: any = {}) {
+    public async apply(resources, props: any = {}, extra: any = {}) {
         // Check if the generator was already applied, so we don't do it twice
         if (!await this.filesCopied()) {
             // First copy the files from the base nodejs platform module
@@ -21,13 +21,14 @@ export default class RestNodejs extends BaseGenerator {
                 'version': props.version,
             };
 
-            await this.applyGenerator(PlatformNodejs, resources, pprops);
+            await this.generator(PlatformNodejs).apply(resources, pprops, extra);
             const mergeFile = path.resolve(RestNodejs.sourceDir, 'merge/app.merge.js');
             await this.transform('app.js',
                 insertAfter('//TODO: Add routes', await readFile(mergeFile, 'utf8')));
 
             await this.copy();
         }
+        extra['sourceMapping'] = { 'greetingEndpoint': 'greeting.js' };
         return resources;
     }
 }
