@@ -110,6 +110,11 @@ objects:
           kind: ImageStreamTag
           name: webapp-builder:latest
         incremental: false
+    triggers:
+      - type: ConfigChange
+      - type: ImageChange
+        imageChange:
+          {}
   status:
     lastVersion: 0
 - apiVersion: v1
