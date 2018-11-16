@@ -17,7 +17,7 @@ export default class PlatformVertx extends BaseGenerator {
             const res = await newApp(
                 props.serviceName,
                 props.application,
-                'registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift',
+                'bucharestgold/centos7-s2i-web-app',
                 null,
                 props.env || {});
             resources.add(res);
