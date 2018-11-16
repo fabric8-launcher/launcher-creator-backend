@@ -1,4 +1,5 @@
-FROM registry.access.redhat.com/rhoar-nodejs/nodejs-10:latest
+#FROM registry.access.redhat.com/rhoar-nodejs/nodejs-10:latest
+FROM nodeshift/centos7-s2i-nodejs:10.x
 
 MAINTAINER Fabric8 Launcher Team <fabric8-launcher@googlegroups.com>
 
