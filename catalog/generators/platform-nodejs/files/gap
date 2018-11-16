@@ -38,10 +38,9 @@ case "$1" in
     *)
         echo "Usage: gap [deploy|push|delete] ..."
         echo "   deploy  - Deploys the application to OpenShift"
-        echo "   push    - Pushes code to the application. By default this will push the pe-compile"
-        echo "            binary if it exists, otherwise it will push the sources to be compiled on"
-        echo "            OpenShift. This can be overridden by using one of the following flags:"
-        echo "      -s, --source - Pushes the sources"
+        echo "   push    - Pushes code to the application. By default this will push the local sources"
+        echo "             to OpenShift. This can be overridden by using one of the following flags:"
+        echo "      -s, --source - Pushes the local sources"
         echo "      -g, --git    - Reverts to using the sources from Git"
         echo "   delete - Deletes the application from OpenShift"
     ;;
