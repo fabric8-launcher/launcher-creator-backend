@@ -23,9 +23,8 @@ export default class Rest extends BaseCapability {
         const rtprops = {
             'application': props.application,
             'serviceName': rtServiceName,
-            'groupId': props.groupId,
-            'artifactId': props.artifactId,
-            'version': props.version
+            'maven': props.maven,
+            'nodejs': props.nodejs
         };
         return await this.generator(runtimeByType(props.runtime)).apply(resources, rtprops, extra);
     }

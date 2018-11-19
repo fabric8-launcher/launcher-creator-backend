@@ -15,9 +15,7 @@ export default class RestVertx extends BaseGenerator {
             const pprops = {
                 'application': props.application,
                 'serviceName': props.serviceName,
-                'groupId': props.groupId,
-                'artifactId': props.artifactId,
-                'version': props.version,
+                'maven': props.maven,
             };
             await this.generator(PlatformVertx).apply(resources, pprops, extra);
             await this.copy();

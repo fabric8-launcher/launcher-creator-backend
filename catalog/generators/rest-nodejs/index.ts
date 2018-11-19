@@ -18,7 +18,7 @@ export default class RestNodejs extends BaseGenerator {
             const pprops = {
                 'application': props.application,
                 'serviceName': props.serviceName,
-                'version': props.version,
+                'nodejs': props.nodejs,
             };
 
             await this.generator(PlatformNodejs).apply(resources, pprops, extra);
