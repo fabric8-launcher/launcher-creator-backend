@@ -3,7 +3,7 @@
 set -x
 
 GENERATOR_DOCKER_HUB_USERNAME=openshiftioadmin
-REGISTRY_URI="push.registry.devshift.net"
+REGISTRY_URI="quay.io"
 REGISTRY_NS="fabric8"
 REGISTRY_IMAGE="launcher-creator-backend"
 DOCKER_HUB_URL=${REGISTRY_NS}/${REGISTRY_IMAGE}
@@ -14,10 +14,10 @@ DEPLOY_IMAGE="launcher-creator-backend-deploy"
 TARGET_DIR="dist"
 
 if [ "$TARGET" = "rhel" ]; then
-    REGISTRY_URL=${REGISTRY_URI}/osio-prod/${REGISTRY_NS}/${REGISTRY_IMAGE}
+    REGISTRY_URL=${REGISTRY_URI}/rhel-${REGISTRY_NS}-${REGISTRY_IMAGE}
     DOCKERFILE="Dockerfile.deploy.rhel"
 else
-    REGISTRY_URL=${REGISTRY_URI}/${REGISTRY_NS}/${REGISTRY_IMAGE}
+    REGISTRY_URL=${REGISTRY_URI}/${REGISTRY_NS}-${REGISTRY_IMAGE}
     DOCKERFILE="Dockerfile.deploy"
 fi
 
@@ -75,7 +75,7 @@ docker exec -u root ${BUILDER_CONT} cp -r ${TARGET_DIR}/ /
 docker exec -u root ${BUILDER_CONT} cp -r node_modules/ /
 
 #LOGIN
-docker_login "${DEVSHIFT_USERNAME}" "${DEVSHIFT_PASSWORD}" "${REGISTRY_URI}"
+docker_login "${QUAY_USERNAME}" "${QUAY_PASSWORD}" "${REGISTRY_URI}"
 
 #BUILD DEPLOY IMAGE
 docker build -t ${DEPLOY_IMAGE} -f "${DOCKERFILE}" .
