@@ -14,10 +14,10 @@ DEPLOY_IMAGE="launcher-creator-backend-deploy"
 TARGET_DIR="dist"
 
 if [ "$TARGET" = "rhel" ]; then
-    REGISTRY_URL=${REGISTRY_URI}/rhel-${REGISTRY_NS}-${REGISTRY_IMAGE}
+    REGISTRY_URL=${REGISTRY_URI}/openshiftio/rhel-${REGISTRY_NS}-${REGISTRY_IMAGE}
     DOCKERFILE="Dockerfile.deploy.rhel"
 else
-    REGISTRY_URL=${REGISTRY_URI}/${REGISTRY_NS}-${REGISTRY_IMAGE}
+    REGISTRY_URL=${REGISTRY_URI}/openshiftio/${REGISTRY_NS}-${REGISTRY_IMAGE}
     DOCKERFILE="Dockerfile.deploy"
 fi
 
