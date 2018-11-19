@@ -2,7 +2,7 @@
 
 APP_NAME={{.application}}
 SERVICE_NAME={{.serviceName}}
-JAR_NAME={{.artifactId}}-{{.version}}.jar
+JAR_NAME={{.maven.artifactId}}-{{.maven.version}}.jar
 
 SCRIPT_DIR=$(cd "$(dirname "$BASH_SOURCE")" ; pwd -P)
 

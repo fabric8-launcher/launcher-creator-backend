@@ -45,9 +45,8 @@ export default class Database extends BaseCapability {
         const rtprops = {
             'application': props.application,
             'serviceName': rtServiceName,
-            'groupId': props.groupId,
-            'artifactId': props.artifactId,
-            'version': props.version,
+            'maven': props.maven,
+            'nodejs': props.nodejs,
             'databaseType': props.databaseType,
             'secretName': props.application + '-database-bind',
         };

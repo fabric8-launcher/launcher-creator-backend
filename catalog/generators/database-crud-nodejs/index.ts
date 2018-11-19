@@ -18,9 +18,7 @@ export default class DatabaseCrudNodejs extends BaseGenerator {
             const pprops = {
                 'application': props.application,
                 'serviceName': props.serviceName,
-                'groupId': props.groupId,
-                'artifactId': props.artifactId,
-                'version': props.version,
+                'nodejs': props.nodejs,
                 'env': {
                     'DB_HOST': {
                         'secret': props.secretName,

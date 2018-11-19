@@ -1,6 +1,6 @@
 {
-  "name": "{{.application}}",
-  "version": "{{.version}}",
+  "name": "{{.nodejs.name}}",
+  "version": "{{.nodejs.version}}",
   "author": "you",
   "license": "Apache-2.0",
   "scripts": {
