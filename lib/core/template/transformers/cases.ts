@@ -1,4 +1,7 @@
 
+import * as _ from 'lodash';
+
+//
 // Transformer that can filter special if-structures from a file
 // determining whether to include or exclude those blocks of text
 // depending on certain conditions.
@@ -6,14 +9,22 @@
 // and a special token (by default "//$$" and then determines what
 // to do with the following lines. Possible options are:
 //
-// {{if keyName==value}}
+// {{if .keyName==value}}
 //   If the property "keyName" has the value "value" in the given property
 //   map then all following lines until the end of the block will be included
 //   otherwise they will be dropped. All lines will have the first line
 //   comments stripped. The block lasts until the next special token.
+// {{else if .keyName==value}}
+//   Just like in programming language the if will be tested if the previous
+//   if-structure evaluated to false. The block will be included in the
+//   output only when the if evaluates to true.
 // {{else}}
+//   Similarly an else-structure will be included in the output if all
+//   previous if-structures evaluated to false.
 // {{end}}
-//   Signals the end of a if-block
+//   Signals the end of an if-block
+// {{.keyName}}
+//   Is replaced with the value of the property with the given name
 //
 // Example:
 //
@@ -78,8 +89,8 @@ export function cases(props: object, lineComment: string = '//'): (line: string)
         }
 
         // Perform any variable replacements
-        const re = new RegExp('{{\s*\.([a-zA-Z0-9-]+)\s*}}', 'g');
-        line = line.replace(re, (match, key) => props[key]);
+        const re = new RegExp('{{\s*\.([a-zA-Z0-9-.]+)\s*}}', 'g');
+        line = line.replace(re, (match, key) => _.get(props, key));
 
         if (skipLine || (inIf && skipBlock)) {
             return null;
@@ -101,8 +112,8 @@ function testCondition(cond: string, props: object): boolean {
     const parts = cond.split('==');
     const key = parts[0].trim().slice(1);
     if (parts.length > 1) {
-        return props[key] === parts[1].trim();
+        return _.get(props, key) === parts[1].trim();
     } else {
-        return !!props[key];
+        return !!_.get(props, key);
     }
 }
