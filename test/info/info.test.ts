@@ -29,12 +29,28 @@ const def = [
         ]
     },
     {
-        'id': 'groupId',
-        'name': 'Group Id',
-        'description': 'The Maven Group Id for the project',
+        'id': 'maven',
+        'name': 'Maven Project Setting',
+        'description': 'The ids and version to use for the Maven project',
         'required': true,
-        'type': 'string',
-        'default': 'org.openshift.appgen'
+        'shared': true,
+        'enabledWhen': {
+            'propId': 'runtime',
+            'equals': [
+                'vertx'
+            ]
+        },
+        'type': 'object',
+        'props': [
+            {
+                'id': 'groupId',
+                'name': 'Group Id',
+                'description': 'The Maven Group Id for the project',
+                'required': true,
+                'type': 'string',
+                'default': 'org.openshift.appgen'
+            }
+        ]
     }
 ];
 
@@ -44,13 +60,15 @@ test('info validate all ok', (t) => {
     const props = {
         'databaseType': 'mysql',
         'runtime': 'vertx',
-        'groupId': 'xxx'
+        'maven': {
+            'groupId': 'xxx'
+        }
     };
 
     t.doesNotThrow(() => info.validate(def, props));
 });
 
-test('info validate using default', (t) => {
+test('info validate using default maven', (t) => {
     t.plan(3);
 
     const props = {
@@ -59,7 +77,19 @@ test('info validate using default', (t) => {
 
     t.doesNotThrow(() => info.validate(def, props));
     t.isEqual(props['databaseType'], 'postgresql');
-    t.isEqual(props['groupId'], 'org.openshift.appgen');
+    t.isEqual(props['maven']['groupId'], 'org.openshift.appgen');
+});
+
+test('info validate using default nodejs', (t) => {
+    t.plan(3);
+
+    const props = {
+        'runtime': 'nodejs'
+    };
+
+    t.doesNotThrow(() => info.validate(def, props));
+    t.isEqual(props['databaseType'], 'postgresql');
+    t.isEqual(props['maven'], undefined);
 });
 
 test('info validate invalid enum value', (t) => {
@@ -68,7 +98,9 @@ test('info validate invalid enum value', (t) => {
     const props = {
         'databaseType': 'WRONG',
         'runtime': 'vertx',
-        'groupId': 'xxx'
+        'maven': {
+            'groupId': 'xxx'
+        }
     };
 
     t.throws(() => info.validate(def, props), /Invalid enumeration value for property/);
@@ -79,7 +111,9 @@ test('info validate missing required', (t) => {
 
     const props = {
         'databaseType': 'mysql',
-        'groupId': 'xxx'
+        'maven': {
+            'groupId': 'xxx'
+        }
     };
 
     t.throws(() => info.validate(def, props), /Missing property/);

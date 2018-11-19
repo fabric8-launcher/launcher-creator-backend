@@ -21,9 +21,9 @@ class DefinitionError extends Error {
 
 function validateRequired(id, def, props) {
     if (def.required === true) {
-        if (!props.hasOwnProperty(id)) {
+        if (!_.has(props, id)) {
             if (def.default) {
-                props[id] = def.default;
+                _.set(props, id, def.default);
             } else {
                 throw new ValidationError(`Missing property: '${id}'`);
             }
@@ -35,7 +35,7 @@ function validateTypeEnum(id, def, props) {
     if (!def.values || !Array.isArray(def.values) || def.values.length === 0) {
         throw new DefinitionError(`Missing enum values for property: '${id}'`);
     }
-    const val = props[id];
+    const val = _.get(props, id);
     if (!def.values.some(v => v === val)) {
         throw new ValidationError(
             `Invalid enumeration value for property '${id}': '${val}', should be one of: ${def.values}`);
@@ -57,9 +57,36 @@ function validateProperty(id, def, props) {
     validateType(id, def, props);
 }
 
+export function validatePossibleObject(id, def, props) {
+    if (isEnabled(id, def, props)) {
+        if (def.type === 'object') {
+            def.props.forEach(def2 => validatePossibleObject(id + '.' + def2.id, def2, props));
+        } else {
+            validateProperty(id, def, props);
+        }
+    }
+}
+
+function isEnabled(id, def, props) {
+    if (def.hasOwnProperty('enabledWhen')) {
+        const fld = def.enabledWhen.propId;
+        if (!fld) {
+            throw new DefinitionError(`Missing 'enabledWhen.propId' for property: '${id}'`);
+        }
+        const eq = def.enabledWhen.equals;
+        if (!eq || !Array.isArray(eq) || eq.length === 0) {
+            throw new DefinitionError(`Missing 'enabledWhen.propId' for property: '${id}'`);
+        }
+        const value = _.get(props, fld);
+        return eq.includes(value);
+    } else {
+        return true;
+    }
+}
+
 export function validate(defs, props) {
     if (defs) {
-        defs.forEach(def => validateProperty(def.id, def, props));
+        defs.forEach(def => validatePossibleObject(def.id, def, props));
     }
 }
 
@@ -82,16 +109,24 @@ function printType(id, def) {
     }
 }
 
-function printProperty(id, def, namePad) {
-    process.stdout.write(`        ${id.padEnd(namePad)} - `);
+function printProperty(id, def, indent, namePad) {
+    process.stdout.write(`${' '.repeat(indent)}${id.padEnd(namePad)} - `);
     printRequired(id, def);
     printType(id, def);
     process.stdout.write(`\n`);
 }
 
+function printPossibleObject(id, def, indent, namePad) {
+    printProperty(id, def, indent, namePad);
+    if (def.type === 'object') {
+        const maxLen = Math.max(13, Math.min(20, _.max(def.props.map(def2 => def2.id.length))));
+        def.props.forEach(def2 => printPossibleObject(def2.id, def2, indent + 3, maxLen));
+    }
+}
+
 export function printUsage(defs) {
     if (defs) {
         const maxLen = Math.max(13, Math.min(20, _.max(defs.map(def => def.id.length))));
-        defs.forEach(def => printProperty(def.id, def, maxLen));
+        defs.forEach(def => printPossibleObject(def.id, def, 8, maxLen));
     }
 }
