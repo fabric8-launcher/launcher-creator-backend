@@ -1,6 +1,4 @@
-#FROM registry.access.redhat.com/rhoar-nodejs/nodejs-10:latest
-# Check with SD Team how to support the Node.js RHOAR version here
-FROM nodeshift/centos7-s2i-nodejs:10.x
+FROM quay.io/openshiftio/rhel-base-nodejs-10-java-1.8:latest
 
 MAINTAINER Fabric8 Launcher Team <fabric8-launcher@googlegroups.com>
 
@@ -10,9 +8,6 @@ LABEL author "Fabric8 Launcher Team <fabric8-launcher@googlegroups.com>"
 ENV LANG=en_US.utf8
 
 USER root
-
-#Install Java
-RUN yum install -y java-1.8.0-openjdk java-1.8.0-openjdk-devel
 
 #Install OC
 RUN curl -sSL https://github.com/openshift/origin/releases/download/v3.11.0/openshift-origin-client-tools-v3.11.0-0cbc58b-linux-64bit.tar.gz | tar xzC /usr/bin --strip-components 1
