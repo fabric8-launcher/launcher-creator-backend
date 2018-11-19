@@ -2,8 +2,7 @@
 
 [![Build Status](https://semaphoreci.com/api/v1/fabric8-launcher/launcher-creator-backend/branches/master/badge.svg)](https://semaphoreci.com/fabric8-launcher/launcher-creator-backend)
 
-This is a MVP for the _engine_ that could be used by the Launcher Creator (or whatever its name will be) to perform
-the actual code generation. Right now it has command line tools that can generate code locally and a REST service that
+This is the _engine_ to perform the actual code generation. It has command line tools that can generate code locally and a REST service that
 can either return a ZIP file or pass the generated code to the Launcher Backend for publishing on GitHub and OpenShift.
 
 The fundamental design idea for this engine is the concept of _Capabilities_ and _Generators_. Things are described in more detail
