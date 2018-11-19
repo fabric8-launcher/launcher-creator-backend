@@ -1,7 +1,9 @@
 openapi: 3.0.0
 servers:
-- url: http://api-creator-backend.devtools-dev.ext.devshift.net/
+- url: https://forge.api.prod-preview.openshift.io/creator/
   description: Development server
+- url: https://forge.api.openshift.io/creator/
+  description: Production server
 - url: http://localhost:8081
   description: Local Development
 - url: http://localhost:8080
