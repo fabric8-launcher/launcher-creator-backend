@@ -135,4 +135,3 @@ $ oc new-app \
      --name launcher-creator-backend \
      -e LAUNCHER_BACKEND_URL=https://forge.api.prod-preview.openshift.io/api
 ```
-
