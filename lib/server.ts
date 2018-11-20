@@ -26,8 +26,8 @@ app.use(bodyParser.urlencoded({'extended': true}));
 app.use(cors());
 
 router.get('/', (req, res) => {
-    const url = req.protocol + '://' + req.get('host') + req.originalUrl + 'openapi';
-    res.redirect(`${req.protocol}://editor.swagger.io/?url=${url}`);
+    const url = 'https://forge.api.openshift.io/creator/openapi';
+    res.redirect(`https://editor.swagger.io/?url=${url}`);
 });
 
 router.use('/health', (req,res) => {
