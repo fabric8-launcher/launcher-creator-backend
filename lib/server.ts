@@ -16,6 +16,7 @@ import { zipFolder } from 'core/utils';
 
 tmp.setGracefulCleanup();
 const app = express();
+const router = express.Router();
 
 const zipCache = new NodeCache({'checkperiod': 60});
 
@@ -24,36 +25,36 @@ app.use(bodyParser.urlencoded({'extended': true}));
 
 app.use(cors());
 
-app.get('/', (req, res) => {
+router.get('/', (req, res) => {
     const url = req.protocol + '://' + req.get('host') + req.originalUrl + 'openapi';
     res.redirect(`${req.protocol}://editor.swagger.io/?url=${url}`);
 });
 
-app.use('/health', (req,res) => {
+router.use('/health', (req,res) => {
     res.status(HttpStatus.OK).send("OK");
 });
 
-app.use('/openapi', express.static('./openapi.yaml'));
+router.use('/openapi', express.static('./openapi.yaml'));
 
-app.get('/capabilities', (req, res) => {
+router.get('/capabilities', (req, res) => {
     catalog.listCapabilityInfos()
         .then(caps => res.status(HttpStatus.OK).send(caps))
         .catch(err => res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(result(HttpStatus.INTERNAL_SERVER_ERROR, err)));
 });
 
-app.get('/generators', (req, res) => {
+router.get('/generators', (req, res) => {
     catalog.listGeneratorInfos()
         .then(caps => res.status(HttpStatus.OK).send(caps))
         .catch(err => res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(result(HttpStatus.INTERNAL_SERVER_ERROR, err)));
 });
 
-app.get('/enums', (req, res) => {
+router.get('/enums', (req, res) => {
     catalog.listEnums()
         .then(list => res.status(HttpStatus.OK).send(list))
         .catch(err => res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(result(HttpStatus.INTERNAL_SERVER_ERROR, err)));
 });
 
-app.get('/enums/:id', (req, res) => {
+router.get('/enums/:id', (req, res) => {
     catalog.listEnums()
         .then(list => {
             const id = req.params.id;
@@ -63,7 +64,7 @@ app.get('/enums/:id', (req, res) => {
         .catch(err => res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(result(HttpStatus.INTERNAL_SERVER_ERROR, err)));
 });
 
-app.get('/download', (req, res) => {
+router.get('/download', (req, res) => {
     // Make sure we have all the required inputs
     if (!req.query.id) {
         res.status(HttpStatus.BAD_REQUEST).send(result(HttpStatus.BAD_REQUEST, new Error('Missing download ID')));
@@ -92,7 +93,7 @@ zipCache.on('del', (key, value) => {
     console.info(`Cleaning zip cache key: ${key}`);
 });
 
-app.post('/zip', (req, res) => {
+router.post('/zip', (req, res) => {
     // Make sure we have all the required inputs
     if (!req.body.name) {
         res.status(HttpStatus.BAD_REQUEST).send(result(HttpStatus.BAD_REQUEST, new Error('Missing application name')));
@@ -125,7 +126,7 @@ app.post('/zip', (req, res) => {
     });
 });
 
-app.post('/launch', (req, res) => {
+router.post('/launch', (req, res) => {
     // Make sure we're autenticated
     if (!req.get('Authorization')) {
         res.status(401).send(result(HttpStatus.UNAUTHORIZED, 'Unauthorized'));
@@ -208,6 +209,9 @@ app.post('/launch', (req, res) => {
         }
     });
 });
+
+app.use("/", router);
+app.use("/creator", router);
 
 function result(statusCode, msg) {
     const res = {};
