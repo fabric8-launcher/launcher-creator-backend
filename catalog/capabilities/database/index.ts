@@ -1,5 +1,5 @@
 
-import { BaseCapability } from 'core/catalog';
+import { BaseCapability } from 'core/catalog/types';
 
 import DatabaseSecret from 'generators/database-secret';
 import DatabasePostgresql from 'generators/database-postgresql';

@@ -1,15 +1,20 @@
 
 import { cases } from 'core/template/transformers/cases';
 import { Resources } from 'core/resources';
-import { BaseGenerator } from 'core/catalog';
+import { BaseGenerator } from 'core/catalog/types';
+import { blocks, insertAtEnd } from 'core/template/transformers/blocks';
 
-import PlatformVertx from 'generators/platform-vertx';
-import {blocks, insertAtEnd} from "core/template/transformers/blocks";
+import PlatformVertx, { PlatformVertxProps } from 'generators/platform-vertx';
+import { DatabaseSecretRef } from 'generators/database-secret';
+
+export interface DatabaseCrudVertxProps extends PlatformVertxProps, DatabaseSecretRef {
+    databaseType: string;
+}
 
 export default class DatabaseCrudVertx extends BaseGenerator {
     public static readonly sourceDir: string = __dirname;
 
-    public async apply(resources: Resources, props?: any, extra?: any): Promise<Resources> {
+    public async apply(resources: Resources, props: DatabaseCrudVertxProps, extra?: object): Promise<Resources> {
         // Check if the generator was already applied, so we don't do it twice
         if (!await this.filesCopied()) {
             const pprops = {
@@ -30,7 +35,7 @@ export default class DatabaseCrudVertx extends BaseGenerator {
                         'key': 'password'
                     }
                 }
-            };
+            } as PlatformVertxProps;
             // First copy the files from the base Vert.x platform module
             // and then copy our own over that
             await this.generator(PlatformVertx).apply(resources, pprops, extra);

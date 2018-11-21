@@ -1,6 +1,12 @@
 
 import { newDatabaseUsingSecret } from 'core/resources';
-import { BaseGenerator } from 'core/catalog';
+import { BaseGenerator } from 'core/catalog/types';
+import { DatabaseSecretRef } from 'generators/database-secret';
+
+export interface DatabaseMysqlProps extends DatabaseSecretRef {
+    application: string;
+    serviceName: string;
+}
 
 export default class DatabasePostgresql extends BaseGenerator {
     public static readonly sourceDir: string = __dirname;

@@ -1,5 +1,5 @@
 
-import { BaseCapability } from 'core/catalog';
+import { BaseCapability } from 'core/catalog/types';
 
 import RestVertx from 'generators/rest-vertx';
 import RestNodejs from 'generators/rest-nodejs';

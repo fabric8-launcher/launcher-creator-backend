@@ -1,16 +1,19 @@
 
-import { BaseGenerator } from 'core/catalog';
-
-import PlatformNodejs from 'generators/platform-nodejs';
-import { insertAfter } from 'core/template/transformers/insert';
-
 import * as path from 'path';
 import { readFile } from 'fs-extra';
+
+import { BaseGenerator } from 'core/catalog/types';
+import { insertAfter } from 'core/template/transformers/insert';
+
+import PlatformNodejs, { PlatformNodejsProps } from 'generators/platform-nodejs';
+
+export interface RestVertxProps extends PlatformNodejsProps {
+}
 
 export default class RestNodejs extends BaseGenerator {
     public static readonly sourceDir: string = __dirname;
 
-    public async apply(resources, props: any = {}, extra: any = {}) {
+    public async apply(resources, props: RestVertxProps, extra: any = {}) {
         // Check if the generator was already applied, so we don't do it twice
         if (!await this.filesCopied()) {
             // First copy the files from the base nodejs platform module

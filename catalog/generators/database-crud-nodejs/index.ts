@@ -1,18 +1,23 @@
 
 import { Resources } from 'core/resources';
-import { BaseGenerator } from 'core/catalog';
+import { BaseGenerator } from 'core/catalog/types';
 
-import PlatformNodejs from 'generators/platform-nodejs';
-import {insertAfter} from 'core/template/transformers/insert';
+import PlatformNodejs, { PlatformNodejsProps } from 'generators/platform-nodejs';
+import { insertAfter } from 'core/template/transformers/insert';
 
 import * as path from 'path';
 import { readFile } from 'fs-extra';
 import { cases } from 'core/template/transformers/cases';
+import { DatabaseSecretRef } from 'generators/database-secret';
+
+export interface DatabaseCrudNodejsProps extends PlatformNodejsProps, DatabaseSecretRef {
+    databaseType: string;
+}
 
 export default class DatabaseCrudNodejs extends BaseGenerator {
     public static readonly sourceDir: string = __dirname;
 
-    public async apply(resources: Resources, props?: any, extra?: any): Promise<Resources> {
+    public async apply(resources: Resources, props: DatabaseCrudNodejsProps, extra?: object): Promise<Resources> {
         // Check if the generator was already applied, so we don't do it twice
         if (!await this.filesCopied()) {
             const pprops = {
@@ -33,7 +38,7 @@ export default class DatabaseCrudNodejs extends BaseGenerator {
                         'key': 'password'
                     }
                 }
-            };
+            } as PlatformNodejsProps;
             // First copy the files from the base Vert.x platform module
             // and then copy our own over that
             await this.generator(PlatformNodejs).apply(resources, pprops, extra);

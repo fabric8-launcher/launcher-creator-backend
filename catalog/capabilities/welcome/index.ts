@@ -1,5 +1,5 @@
 
-import { BaseCapability } from 'core/catalog';
+import { BaseCapability } from 'core/catalog/types';
 
 import WelcomeApp from 'generators/welcome-app';
 

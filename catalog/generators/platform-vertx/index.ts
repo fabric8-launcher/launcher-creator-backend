@@ -1,14 +1,18 @@
 
 import { newApp, newRoute, setDeploymentEnv } from 'core/resources';
 import { cases } from 'core/template/transformers/cases';
-import { BaseGenerator } from 'core/catalog';
+import { BaseGenerator, BaseGeneratorProps } from 'core/catalog/types';
 
-import MavenSetup from 'generators/maven-setup';
+import MavenSetup, { MavenSetupProps } from 'generators/maven-setup';
+
+export interface PlatformVertxProps extends BaseGeneratorProps, MavenSetupProps {
+    env?: object;
+}
 
 export default class PlatformVertx extends BaseGenerator {
     public static readonly sourceDir: string = __dirname;
 
-    public async apply(resources, props: any = {}, extra: any = {}) {
+    public async apply(resources, props: PlatformVertxProps, extra: any = {}) {
         // Check if the service already exists, so we don't create it twice
         if (!resources.service(props.serviceName)) {
             await this.copy();

@@ -185,7 +185,7 @@ export function apply(res, targetDir, appName, shared, capabilities) {
     const generator = (genConst) => {
         const gen = new genConst(generator, targetDir);
         const oldApply = gen.apply;
-        gen.apply = (res2: Resources, props?: any, extra?: any) => {
+        gen.apply = (res2: Resources, props?: object, extra?: object) => {
             validate(info(genConst).props, props);
             return oldApply.call(gen, res2, props, extra);
         };

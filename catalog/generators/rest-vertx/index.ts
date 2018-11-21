@@ -1,13 +1,16 @@
 
-import { BaseGenerator } from 'core/catalog';
+import { BaseGenerator } from 'core/catalog/types';
 import { blocks, insertAtEnd } from 'core/template/transformers/blocks';
 
-import PlatformVertx from 'generators/platform-vertx';
+import PlatformVertx, { PlatformVertxProps } from 'generators/platform-vertx';
+
+export interface RestVertxProps extends PlatformVertxProps {
+}
 
 export default class RestVertx extends BaseGenerator {
     public static readonly sourceDir: string = __dirname;
 
-    public async apply(resources, props: any = {}, extra: any = {}) {
+    public async apply(resources, props: RestVertxProps, extra: any = {}) {
         // Check if the generator was already applied, so we don't do it twice
         if (!await this.filesCopied()) {
             // First copy the files from the base Vert.x platform module
@@ -16,7 +19,7 @@ export default class RestVertx extends BaseGenerator {
                 'application': props.application,
                 'serviceName': props.serviceName,
                 'maven': props.maven,
-            };
+            } as PlatformVertxProps;
             await this.generator(PlatformVertx).apply(resources, pprops, extra);
             await this.copy();
             await this.mergePoms();

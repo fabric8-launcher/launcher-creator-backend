@@ -1,10 +1,20 @@
 
-import { BaseGenerator } from 'core/catalog';
+import { BaseGenerator } from 'core/catalog/types';
+
+export interface DatabaseSecretRef {
+    secretName: string;
+}
+
+export interface DatabaseSecretProps extends DatabaseSecretRef {
+    application: string;
+    databaseName: string;
+    databaseUri: string;
+}
 
 export default class DatabaseSecret extends BaseGenerator {
     public static readonly sourceDir: string = __dirname;
 
-    public async apply(resources, props: any = {}) {
+    public async apply(resources, props: DatabaseSecretProps) {
         // Check if the service already exists, so we don't create it twice
         if (!resources.secret(props.secretName)) {
             // Create Secret holding Database connection/authentication information
