@@ -1,12 +1,5 @@
-
-import { readdir, statSync, accessSync, copy } from 'fs-extra';
-import { join } from 'path';
-
-import { Resources } from 'core/resources';
-import { transformFiles } from 'core/template';
-import { mergePoms, updateGav } from 'core/maven';
-import { walk } from 'core/utils';
-import { mergePackageJson } from 'core/nodejs';
+import {readdir, statSync} from 'fs-extra';
+import {join} from 'path';
 
 export function info(itemConst) {
     return require(join(itemConst.sourceDir, 'info.json'));
