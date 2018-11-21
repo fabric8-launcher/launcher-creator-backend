@@ -19,7 +19,6 @@ USER 1001
 
 COPY dist/ /opt/app-root/src/dist/
 COPY node_modules/ /opt/app-root/src/node_modules/
-COPY catalog/ /opt/app-root/src/catalog/
 COPY package.json /opt/app-root/src/
 COPY openapi.yaml /opt/app-root/src/
 
