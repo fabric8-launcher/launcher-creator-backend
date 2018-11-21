@@ -59,14 +59,12 @@ fi
 #CLEAN
 docker ps | grep -q ${BUILDER_CONT} && docker stop ${BUILDER_CONT}
 docker ps -a | grep -q ${BUILDER_CONT} && docker rm ${BUILDER_CONT}
-rm -rf ${TARGET_DIR}/
-rm -rf node_modules/
+rm -rf ${TARGET_DIR}/ node_modules/
 
 #BUILD
 docker build -t ${BUILDER_IMAGE} -f Dockerfile.build .
 
-mkdir ${TARGET_DIR}/
-mkdir node_modules/
+mkdir ${TARGET_DIR}/ node_modules/
 
 docker run --detach=true --name ${BUILDER_CONT} -t -v $(pwd)/${TARGET_DIR}:/${TARGET_DIR}:Z -v $(pwd)/node_modules:/node_modules ${BUILDER_IMAGE} /bin/tail -f /dev/null #FIXME
 
