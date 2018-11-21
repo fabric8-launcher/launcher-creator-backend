@@ -5,10 +5,8 @@ import { join } from 'path';
 function catalogModuleFolder() {
     if (!!process.env['LAUNCHER_CREATOR_CATALOG']) {
         return process.env['LAUNCHER_CREATOR_CATALOG'];
-    } else if (pathExistsSync('./catalog')) {
+    } else if (pathExistsSync('./catalog') || pathExistsSync('./dist/catalog')) {
         return '../../../catalog';
-    } else if (pathExistsSync('./dist/catalog')) {
-        return '../../../dist/catalog';
     } else {
         throw new Error(`No Catalog found in ${process.cwd()}/catalog or ${process.cwd()}/dist/catalog`);
     }
