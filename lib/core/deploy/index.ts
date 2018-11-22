@@ -1,8 +1,7 @@
 
 import { pathExistsSync, readJson, ensureFile, readFile, writeFile, createWriteStream } from 'fs-extra';
 import { join } from 'path';
-import { isEqual } from 'lodash';
-import YAML from 'yaml';
+import * as yaml from 'js-yaml';
 
 import { validate } from 'core/info';
 import { getCapabilityModule, info } from 'core/catalog';
@@ -83,7 +82,7 @@ function addCapability(deployment, capability) {
 export async function readResources(resourcesFile): Promise<Resources> {
     try {
         const text = await readFile(resourcesFile, 'utf8');
-        return resources(YAML.parse(text));
+        return resources(yaml.safeLoad(text));
     } catch (ex) {
         console.error(`Failed to read resources file ${resourcesFile}: ${ex}`);
         throw ex;
@@ -105,7 +104,7 @@ export async function readOrCreateResources(resourcesFile): Promise<Resources> {
 export async function writeResources(resourcesFile, res): Promise<any> {
     try {
         await ensureFile(resourcesFile);
-        return await writeFile(resourcesFile, YAML.stringify(res.json));
+        return await writeFile(resourcesFile, yaml.safeDump(res.json));
     } catch (ex) {
         console.error(`Failed to write resources file ${resourcesFile}: ${ex}`);
         throw ex;
