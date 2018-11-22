@@ -11,5 +11,5 @@ if [[ ${npm_config_force} = "true" || ${npm_config_argv} = *"--force"* ]]; then
     FORCE=1
 fi
 
-[[ ! -f "${TARGET}" || ${FORCE} -eq 1 ]] && mkdir -p "${TARGET_DIR}" && wget "${ARTIFACT_URL}" -o "${TARGET}"
+[[ ! -f "${TARGET}" || ${FORCE} -eq 1 ]] && mkdir -p "${TARGET_DIR}" && curl -sSL "${ARTIFACT_URL}" -o "${TARGET}"
 exit 0
