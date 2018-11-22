@@ -39,8 +39,7 @@
     "request": "^2.88.0",
     "shortid": "^2.2.14",
     "stream-to-string": "^1.1.0",
-    "tmp": "^0.0.33",
-    "yaml": "^1.0.2"
+    "tmp": "^0.0.33"
   },
   "devDependencies": {
     "@types/cors": "^2.8.4",
