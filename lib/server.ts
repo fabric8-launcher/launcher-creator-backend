@@ -1,4 +1,3 @@
-
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
 import * as cors from 'cors';
@@ -11,14 +10,26 @@ import * as HttpStatus from 'http-status-codes';
 
 import * as catalog from 'core/catalog';
 import * as deploy from 'core/deploy';
-import { resources } from 'core/resources';
-import { zipFolder } from 'core/utils';
+import {resources} from 'core/resources';
+import {zipFolder} from 'core/utils';
+import * as Sentry from 'raven';
 
 tmp.setGracefulCleanup();
 const app = express();
 const router = express.Router();
 
+const sentryEnabled = !!process.env.SENTRY_DSN;
+
+console.log("Sentry Enabled:", sentryEnabled);
+
 const zipCache = new NodeCache({'checkperiod': 60});
+
+if (sentryEnabled) {
+    // Must configure Sentry before doing anything else with it
+    Sentry.config(process.env.SENTRY_DSN).install();
+    // The request handler must be the first middleware on the app
+    app.use(Sentry.requestHandler());
+}
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({'extended': true}));
@@ -229,6 +240,11 @@ function result(statusCode, msg) {
     }
     res['statusCode'] = statusCode;
     return res;
+}
+
+if (sentryEnabled) {
+    // The error handler must be before any other error middleware
+    app.use(Sentry.errorHandler());
 }
 
 const server = app.listen(parseInt(process.argv[2] || '8080', 10), onListening);
