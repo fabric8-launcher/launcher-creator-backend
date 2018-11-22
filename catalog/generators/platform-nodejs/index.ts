@@ -1,6 +1,7 @@
 
 import { newApp, newRoute, setDeploymentEnv } from 'core/resources';
 import { cases } from 'core/template/transformers/cases';
+import { enumItem } from 'core/catalog';
 import { BaseGenerator } from 'core/catalog/types';
 
 export interface NodejsCoords {
@@ -22,6 +23,8 @@ export default class PlatformVertx extends BaseGenerator {
     public async apply(resources, props: PlatformNodejsProps, extra: any = {}) {
         const rtImage = 'nodeshift/centos7-s2i-nodejs';
         extra.runtimeImage = rtImage;
+        extra.runtimeInfo = await enumItem('runtime', 'nodejs');
+
         // Check if the service already exists, so we don't create it twice
         if (!resources.service(props.serviceName)) {
             await this.copy();
