@@ -64,11 +64,13 @@ function addCapability(deployment, capability) {
     const cap = { ...capability };
     delete cap.application;
     delete cap.shared;
+    delete cap.sharedExtra;
     let app = deployment.applications.find(item => item.application === capability.application);
     if (!app) {
         app = {
             'application': capability.application,
             'shared': capability.shared,
+            'extra': capability.sharedExtra,
             'capabilities': []
         };
         deployment.applications = [...deployment.applications, app];
@@ -153,6 +155,9 @@ async function postApply(generator, res, targetDir, deployment) {
 function capInfo(propDefs, props, extra) {
     const props2 = filterObject(props, (key, value) => !getPropDef(propDefs, key).shared);
     const shared = filterObject(props, (key, value) => getPropDef(propDefs, key).shared);
+    const sharedExtra = extra.shared;
+    const extra2 = { ...extra };
+    delete extra2.shared;
     delete props2.module;
     delete props2.application;
     return {
@@ -160,7 +165,8 @@ function capInfo(propDefs, props, extra) {
         'application': props.application,
         'props': props2,
         'shared': shared,
-        'extra': extra
+        'sharedExtra': sharedExtra,
+        'extra': extra2
     };
 }
 
