@@ -14,6 +14,8 @@ export default class DatabaseMysql extends BaseGenerator {
     public async apply(resources, props: DatabaseMysqlProps, extra: any = {}) {
         const dbImage = 'mysql';
         extra.databaseImage = dbImage;
+        extra.databaseService = props.serviceName;
+
         return await newDatabaseUsingSecret(resources, props.serviceName, props.application, dbImage, {
             'MYSQL_ROOT_PASSWORD': 'verysecretrootpassword',
             'MYSQL_DATABASE': { 'secret': props.secretName, 'key': 'database' },

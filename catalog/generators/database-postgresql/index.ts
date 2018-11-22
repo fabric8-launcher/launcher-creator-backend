@@ -14,6 +14,8 @@ export default class DatabasePostgresql extends BaseGenerator {
     public async apply( resources, props: DatabasePostgresqlProps, extra: any = {}) {
         const dbImage = 'postgresql';
         extra.databaseImage = dbImage;
+        extra.databaseService = props.serviceName;
+
         return await newDatabaseUsingSecret(resources, props.serviceName, props.application, dbImage, {
             'POSTGRESQL_DATABASE': { 'secret': props.secretName, 'key': 'database' },
             'POSTGRESQL_USER': { 'secret': props.secretName, 'key': 'user' },
