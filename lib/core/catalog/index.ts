@@ -62,6 +62,23 @@ export async function listGeneratorInfos() {
         .map(([f, g]) => ({'module': f, ...info(g)}));
 }
 
-export function listEnums(generator?: any) {
+export interface Enums {
+    [key: string]: Enum[];
+}
+
+export interface Enum {
+    id: string;
+    name: string;
+    description?: string;
+    icon?: string;
+    metadata?: object;
+}
+
+export function listEnums(): Promise<Enums> {
     return Promise.resolve(require('./enums.json'));
+}
+
+export async function enumItem(enumId, itemId: string): Promise<Enum> {
+    const items: Enum[] = (await listEnums())[enumId] || [];
+    return items.find(e => e.id === itemId);
 }
