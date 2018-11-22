@@ -16,23 +16,14 @@ parameters:
 - name: SOURCE_REPOSITORY_URL
   description: The source URL for the application
   displayName: Source URL
-  value: https://github.com/fabric8-launcher/launcher-creator-welcome-app
-  required: true
-- name: SOURCE_REPOSITORY_REF
-  description: The branch name for the application
-  displayName: Source Branch
-  value: master
-  required: true
-- name: SOURCE_REPOSITORY_DIR
-  description: The location within the source repo of the application
-  displayName: Source Directory
-  value: .
-  required: true
 - name: OUTPUT_DIR
   description: The location of the compiled static files from your web apps builder
   displayName: Output Directory
   value: build
   required: false
+- name: OPENSHIFT_CONSOLE_URL
+  description: The OpenShift Console URL for the application
+  displayName: OpenShift Console URL
 objects:
 - apiVersion: v1
   kind: ImageStream
@@ -92,9 +83,9 @@ objects:
     resources: {}
     source:
       git:
-        uri: ${SOURCE_REPOSITORY_URL}
-        ref: ${SOURCE_REPOSITORY_REF}
-      contextDir: ${SOURCE_REPOSITORY_DIR}
+        uri: https://github.com/fabric8-launcher/launcher-creator-welcome-app
+        ref: master
+      contextDir: .
       type: Git
     strategy:
       type: Source
@@ -104,6 +95,10 @@ objects:
           value: ${OUTPUT_DIR}
         - name: REACT_APP_WELCOME_APP_CONFIG
           value: ${WELCOME_APP_CONFIG}
+        - name: REACT_APP_OPENSHIFT_CONSOLE_URL
+          value: ${OPENSHIFT_CONSOLE_URL}
+        - name: REACT_APP_SOURCE_REPOSITORY_URL
+          value: ${SOURCE_REPOSITORY_URL}
         - name: BACKEND_SERVICE_NAME
           value: ${BACKEND_SERVICE_NAME}
         from:

@@ -7,13 +7,18 @@ SCRIPT_DIR=$(cd "$(dirname "$BASH_SOURCE")" ; pwd -P)
 
 case "$1" in
     "deploy")
+        PARAMS=""
         REPO_URL=$(git config --get remote.origin.url || echo "")
         if [[ ! -z "${REPO_URL}" ]]; then
-            PARAMS=-p=SOURCE_REPOSITORY_URL=${REPO_URL}
+            PARAMS="$PARAMS -p=SOURCE_REPOSITORY_URL=${REPO_URL}"
         fi
-        oc process -f ${SCRIPT_DIR}/.openshiftio/application.yaml ${PARAMS} | oc apply -f -
+        CONSOLE_URL=$(oc status | head -n 1  | grep -Eo 'https?:.*')
+        if [[ ! -z "${CONSOLE_URL}" ]]; then
+            PARAMS="$PARAMS -p=OPENSHIFT_CONSOLE_URL=${CONSOLE_URL}"
+        fi
+        oc process -f ${SCRIPT_DIR}/.openshiftio/application.yaml --ignore-unknown-parameters ${PARAMS} | oc apply -f -
         if [[ -f ${SCRIPT_DIR}/.openshiftio/service.welcome.yaml ]]; then
-             oc process -f ${SCRIPT_DIR}/.openshiftio/service.welcome.yaml | oc apply -f -
+             oc process -f ${SCRIPT_DIR}/.openshiftio/service.welcome.yaml --ignore-unknown-parameters ${PARAMS} | oc apply -f -
         fi
         ;;
     "push")
