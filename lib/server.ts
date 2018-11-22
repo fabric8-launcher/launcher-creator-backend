@@ -47,35 +47,35 @@ router.use('/health', (req,res) => {
 
 router.use('/openapi', express.static('./openapi.yaml'));
 
-router.get('/capabilities', (req, res) => {
+router.get('/capabilities', (req, res, next) => {
     catalog.listCapabilityInfos()
         .then(caps => res.status(HttpStatus.OK).send(caps))
-        .catch(err => res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(result(HttpStatus.INTERNAL_SERVER_ERROR, err)));
+        .catch(next);
 });
 
-router.get('/generators', (req, res) => {
+router.get('/generators', (req, res, next) => {
     catalog.listGeneratorInfos()
         .then(caps => res.status(HttpStatus.OK).send(caps))
-        .catch(err => res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(result(HttpStatus.INTERNAL_SERVER_ERROR, err)));
+        .catch(next);
 });
 
-router.get('/enums', (req, res) => {
+router.get('/enums', (req, res, next) => {
     catalog.listEnums()
         .then(list => res.status(HttpStatus.OK).send(list))
-        .catch(err => res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(result(HttpStatus.INTERNAL_SERVER_ERROR, err)));
+        .catch(next);
 });
 
-router.get('/enums/:id', (req, res) => {
+router.get('/enums/:id', (req, res, next) => {
     catalog.listEnums()
         .then(list => {
             const id = req.params.id;
             const enumdef = list[id] || [];
             res.status(HttpStatus.OK).send(enumdef);
         })
-        .catch(err => res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(result(HttpStatus.INTERNAL_SERVER_ERROR, err)));
+        .catch(next);
 });
 
-router.get('/download', (req, res) => {
+router.get('/download', (req, res, next) => {
     // Make sure we have all the required inputs
     if (!req.query.id) {
         res.status(HttpStatus.BAD_REQUEST).send(result(HttpStatus.BAD_REQUEST, new Error('Missing download ID')));
@@ -104,7 +104,7 @@ zipCache.on('del', (key, value) => {
     console.info(`Cleaning zip cache key: ${key}`);
 });
 
-router.post('/zip', (req, res) => {
+router.post('/zip', (req, res, next) => {
     // Make sure we have all the required inputs
     if (!req.body.name) {
         res.status(HttpStatus.BAD_REQUEST).send(result(HttpStatus.BAD_REQUEST, new Error('Missing application name')));
@@ -132,12 +132,13 @@ router.post('/zip', (req, res) => {
             zipCache.set(id, { 'file': projectZip, 'name': `${req.body.name}.zip`, cleanTempDir }, 600);
             res.status(HttpStatus.OK).send({ id });
         } catch (ex) {
+            // TODO: Call catch(next)
             res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(result(HttpStatus.INTERNAL_SERVER_ERROR, ex));
         }
     });
 });
 
-router.post('/launch', (req, res) => {
+router.post('/launch', (req, res, next) => {
     // Make sure we're autenticated
     if (!req.get('Authorization')) {
         res.status(401).send(result(HttpStatus.UNAUTHORIZED, 'Unauthorized'));
@@ -216,6 +217,7 @@ router.post('/launch', (req, res) => {
                 });
             });
         } catch (ex) {
+            // TODO: Call next
             res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(result(HttpStatus.INTERNAL_SERVER_ERROR, ex));
         }
     });
@@ -224,7 +226,28 @@ router.post('/launch', (req, res) => {
 app.use("/", router);
 app.use("/creator", router);
 
-function result(statusCode, msg) {
+if (sentryEnabled) {
+    // The error handler must be before any other error middleware
+    app.use(Sentry.errorHandler());
+}
+
+// Default Error Handler
+app.use(function (ex, req, res, next) {
+    // handle error
+    if (ex) {
+        res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(result(HttpStatus.INTERNAL_SERVER_ERROR, ex, res.sentry));
+    }
+});
+
+const server = app.listen(parseInt(process.argv[2] || '8080', 10), onListening);
+
+function onListening(): void {
+    const address = server.address();
+    const bind = (typeof address === 'string') ? `pipe ${address}` : `port ${address.port}`;
+    console.log(`Listening on ${bind}`);
+}
+
+function result(statusCode, msg, sentryId?) {
     const res = {};
     if (msg instanceof Error) {
         res['message'] = msg.toString();
@@ -239,18 +262,8 @@ function result(statusCode, msg) {
         res['message'] = msg.toString();
     }
     res['statusCode'] = statusCode;
+    if (sentryId) {
+        res['sentryId'] = sentryId;
+    }
     return res;
-}
-
-if (sentryEnabled) {
-    // The error handler must be before any other error middleware
-    app.use(Sentry.errorHandler());
-}
-
-const server = app.listen(parseInt(process.argv[2] || '8080', 10), onListening);
-
-function onListening(): void {
-    const address = server.address();
-    const bind = (typeof address === 'string') ? `pipe ${address}` : `port ${address.port}`;
-    console.log(`Listening on ${bind}`);
 }
