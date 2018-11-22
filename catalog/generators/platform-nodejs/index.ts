@@ -20,6 +20,8 @@ export default class PlatformVertx extends BaseGenerator {
     public static readonly sourceDir: string = __dirname;
 
     public async apply(resources, props: PlatformNodejsProps, extra: any = {}) {
+        const rtImage = 'nodeshift/centos7-s2i-nodejs';
+        extra.runtimeImage = rtImage;
         // Check if the service already exists, so we don't create it twice
         if (!resources.service(props.serviceName)) {
             await this.copy();
@@ -27,7 +29,7 @@ export default class PlatformVertx extends BaseGenerator {
             const res = await newApp(
                 props.serviceName,
                 props.application,
-                'nodeshift/centos7-s2i-nodejs',
+                rtImage,
                 null,
                 props.env || {});
             resources.add(res);

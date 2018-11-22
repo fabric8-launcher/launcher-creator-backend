@@ -13,6 +13,8 @@ export default class PlatformVertx extends BaseGenerator {
     public static readonly sourceDir: string = __dirname;
 
     public async apply(resources, props: PlatformVertxProps, extra: any = {}) {
+        const rtImage = 'registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift';
+        extra.runtimeImage = rtImage;
         // Check if the service already exists, so we don't create it twice
         if (!resources.service(props.serviceName)) {
             await this.copy();
@@ -21,7 +23,7 @@ export default class PlatformVertx extends BaseGenerator {
             const res = await newApp(
                 props.serviceName,
                 props.application,
-                'registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift',
+                rtImage,
                 null,
                 props.env || {});
             resources.add(res);
