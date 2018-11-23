@@ -24,7 +24,7 @@ export default class PlatformVertx extends BaseGenerator {
     public async apply(resources, props: PlatformNodejsProps, extra: any = {}) {
         const rtImage = 'nodeshift/centos7-s2i-nodejs';
         _.set(extra, 'shared.runtimeImage', rtImage);
-        _.set(extra, 'shared.runtimeInfo', await enumItem('runtime', 'nodejs'));
+        _.set(extra, 'shared.runtimeInfo', enumItem('runtime', 'nodejs'));
         _.set(extra, 'shared.runtimeService', props.serviceName);
 
         // Check if the service already exists, so we don't create it twice

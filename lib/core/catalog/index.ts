@@ -74,11 +74,11 @@ export interface Enum {
     metadata?: object;
 }
 
-export function listEnums(): Promise<Enums> {
-    return Promise.resolve(require('./enums.json'));
+export function listEnums(): Enums {
+    return require('./enums.json') as Enums;
 }
 
-export async function enumItem(enumId, itemId: string): Promise<Enum> {
-    const items: Enum[] = (await listEnums())[enumId] || [];
+export function enumItem(enumId, itemId: string): Enum {
+    const items: Enum[] = listEnums()[enumId] || [];
     return items.find(e => e.id === itemId);
 }

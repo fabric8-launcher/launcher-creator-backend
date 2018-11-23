@@ -59,20 +59,14 @@ router.get('/generators', (req, res, next) => {
         .catch(next);
 });
 
-router.get('/enums', (req, res, next) => {
-    catalog.listEnums()
-        .then(list => res.status(HttpStatus.OK).send(list))
-        .catch(next);
+router.get('/enums', (req, res) => {
+    res.status(HttpStatus.OK).send(catalog.listEnums());
 });
 
-router.get('/enums/:id', (req, res, next) => {
-    catalog.listEnums()
-        .then(list => {
-            const id = req.params.id;
-            const enumdef = list[id] || [];
-            res.status(HttpStatus.OK).send(enumdef);
-        })
-        .catch(next);
+router.get('/enums/:id', (req, res) => {
+        const id = req.params.id;
+        const enumdef = catalog.listEnums()[id] || [];
+        res.status(HttpStatus.OK).send(enumdef);
 });
 
 router.get('/download', (req, res, next) => {
