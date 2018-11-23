@@ -193,9 +193,9 @@ router.post('/launch', (req, res, next) => {
                 if (req.body.clusterId) {
                     headers['X-OpenShift-Cluster'] = req.body.clusterId;
                 }
-                const backendUrl = process.env.LAUNCHER_BACKEND_URL || 'http://localhost:8080';
+                const backendUrl = process.env.LAUNCHER_BACKEND_URL || 'http://localhost:8080/api';
                 const options = {
-                    'url': backendUrl + '/api/launcher/upload',
+                    'url': backendUrl + '/launcher/upload',
                     formData,
                     auth,
                     headers
