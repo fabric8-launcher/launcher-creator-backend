@@ -140,30 +140,6 @@
       <properties>
         <test.to.exclude/>
       </properties>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>io.fabric8</groupId>
-            <artifactId>fabric8-maven-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>fmp</id>
-                <goals>
-                  <goal>resource</goal>
-                  <goal>build</goal>
-                </goals>
-                <configuration>
-                  <enricher>
-                    <excludes>
-                      <exclude>f8-maven-scm</exclude>
-                    </excludes>
-                  </enricher>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
     </profile>
     <profile>
       <id>openshift-it</id>
