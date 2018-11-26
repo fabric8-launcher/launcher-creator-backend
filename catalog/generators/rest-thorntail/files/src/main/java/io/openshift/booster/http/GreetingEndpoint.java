@@ -17,12 +17,14 @@
  */
 package io.openshift.booster.http;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 
 @Path("/")
+@ApplicationScoped
 public class GreetingEndpoint {
 
     private static final String template = "Hello, %s!";
