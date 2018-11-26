@@ -1,5 +1,5 @@
 {
   "type": "generator",
-  "name": "nodejs REST",
-  "description": "nodejs based REST application."
+  "name": "Node.js REST",
+  "description": "Node.js based REST application."
 }
