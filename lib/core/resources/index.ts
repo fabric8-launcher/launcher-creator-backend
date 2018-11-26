@@ -309,32 +309,37 @@ function mergeEnv(targetEnv, env) {
 // Converts an object with key/values to an array of DeploymentConfig environment definitions.
 // If the value of a key/value pair is a string a simple object with name/value properties will
 // be created. In the case that the value is an object it will be assumed to contain a reference
-// to a key in a ConfigMap or Secret. In each case the object must have a `key` property and
-// either a `secretKeyRef` with the name of a Secret or a `configMapKeyRef` with the name of
-// a ConfigMap
+// to a key in a ConfigMap or Secret or a reference to a field in the resources. In the case
+// of the ConfigMap or Secret the object must have a `key` property and either a `secretKeyRef`
+// with the name of a Secret or a `configMapKeyRef` with the name of a ConfigMap. In the case of
+// a `fieldRef` the object just needs to contain a single `field` property that holds the path
+// to the field.
 function convertObjectToEnvWithRefs(env) {
     return Object.entries(env).map(e => {
         const envKey = e[0];
         const envValue: any = e[1];
         if (typeof envValue === 'object') {
-            let from, name;
-            if (envValue.secret) {
-                from = 'secretKeyRef';
-                name = envValue.secret;
-            } else if (envValue.configMap) {
-                from = 'configMapKeyRef';
-                name = envValue.configMap;
-            } else {
-                throw new Error("Missing ENV value 'secret' or 'configMap' property");
-            }
             const envVar = {
                 'name': envKey,
                 'valueFrom': {}
             };
-            envVar.valueFrom[from] = {
-                'name': name,
-                'key': envValue.key
-            };
+            if (envValue.secret) {
+                envVar.valueFrom['secretKeyRef'] = {
+                    'name': envValue.secret,
+                    'key': envValue.key
+                };
+            } else if (envValue.configMap) {
+                envVar.valueFrom['configMapKeyRef'] = {
+                    'name': envValue.configMap,
+                    'key': envValue.key
+                };
+            } else if (envValue.field) {
+                envVar.valueFrom['fieldRef'] = {
+                    'fieldPath': envValue.field
+                };
+            } else {
+                throw new Error("Missing ENV value 'secret', 'configMap' or 'field' property");
+            }
             return envVar;
         } else {
             return {
