@@ -29,10 +29,10 @@ public class CrudApplication extends RouterConsumer {
     // Create a JDBC client
     JDBCClient jdbc = JDBCClient.createShared(vertx, new JsonObject()
       //{{if .databaseType==postgresql}}
-      .put("url", "jdbc:postgresql://" + getEnv("DB_HOST", "localhost") + ":5432/my_data")
+      .put("url", "jdbc:postgresql://" + getEnv("DB_HOST", "localhost") + "/my_data")
       .put("driver_class", "org.postgresql.Driver")
       //{{else if .databaseType==mysql}}
-      //.put("url", "jdbc:mysql://" + getEnv("DB_HOST", "localhost") + ":3306/my_data")
+      //.put("url", "jdbc:mysql://" + getEnv("DB_HOST", "localhost") + "/my_data")
       //.put("driver_class", "com.mysql.jdbc.Driver")
       //{{end}}
       .put("user", getEnv("DB_USERNAME", "user"))
