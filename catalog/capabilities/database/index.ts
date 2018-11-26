@@ -7,6 +7,7 @@ import DatabaseMysql from 'generators/database-mysql';
 import DatabaseCrudVertx from 'generators/database-crud-vertx';
 import DatabaseCrudSpringBoot from 'generators/database-crud-springboot';
 import DatabaseCrudNodejs from 'generators/database-crud-nodejs';
+import DatabaseCrudThorntail from "generators/database-crud-thorntail";
 
 // Returns the corresponding database generator depending on the given database type
 function databaseByType(type) {
@@ -27,6 +28,8 @@ function runtimeByType(type) {
         return DatabaseCrudSpringBoot;
     } else if (type === 'nodejs') {
         return DatabaseCrudNodejs;
+    } else if (type === 'thorntail') {
+        return DatabaseCrudThorntail;
     } else {
         throw new Error(`Unsupported runtime type: ${type}`);
     }

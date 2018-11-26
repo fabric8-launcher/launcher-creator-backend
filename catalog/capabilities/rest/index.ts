@@ -1,9 +1,9 @@
-
-import { BaseCapability } from 'core/catalog/types';
+import {BaseCapability} from 'core/catalog/types';
 
 import RestVertx from 'generators/rest-vertx';
 import RestSpring from 'generators/rest-springboot';
 import RestNodejs from 'generators/rest-nodejs';
+import RestThorntail from "generators/rest-thorntail";
 
 // Returns the corresponding runtime generator depending on the given runtime type
 function runtimeByType(type) {
@@ -13,6 +13,8 @@ function runtimeByType(type) {
         return RestNodejs;
     } else if (type === 'springboot') {
         return RestSpring;
+    } else if (type === 'thorntail') {
+        return RestThorntail;
     } else {
         throw new Error(`Unsupported runtime type: ${type}`);
     }
