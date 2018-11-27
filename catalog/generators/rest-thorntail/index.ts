@@ -1,5 +1,5 @@
 import {BaseGenerator} from 'core/catalog/types';
-import PlatformThorntail, {PlatformThorntailProps} from "generators/platform-thorntail";
+import PlatformThorntail, {PlatformThorntailProps} from 'generators/platform-thorntail';
 
 export interface RestThorntailProps extends PlatformThorntailProps {
 }

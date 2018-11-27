@@ -1,5 +1,4 @@
-
-import { BaseCapability } from 'core/catalog/types';
+import {BaseCapability} from 'core/catalog/types';
 
 import DatabaseSecret from 'generators/database-secret';
 import DatabasePostgresql from 'generators/database-postgresql';
@@ -7,7 +6,7 @@ import DatabaseMysql from 'generators/database-mysql';
 import DatabaseCrudVertx from 'generators/database-crud-vertx';
 import DatabaseCrudSpringBoot from 'generators/database-crud-springboot';
 import DatabaseCrudNodejs from 'generators/database-crud-nodejs';
-import DatabaseCrudThorntail from "generators/database-crud-thorntail";
+import DatabaseCrudThorntail from 'generators/database-crud-thorntail';
 
 // Returns the corresponding database generator depending on the given database type
 function databaseByType(type) {
