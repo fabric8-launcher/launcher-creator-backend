@@ -26,7 +26,8 @@
       "values": [
         "vertx",
         "nodejs",
-        "springboot"
+        "springboot",
+        "thorntail"
       ]
     },
     {
@@ -39,7 +40,8 @@
         "propId": "runtime",
         "equals": [
           "vertx",
-          "springboot"
+          "springboot",
+          "thorntail"
         ]
       },
       "type": "object",
