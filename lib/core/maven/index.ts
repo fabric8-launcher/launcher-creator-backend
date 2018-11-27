@@ -5,7 +5,7 @@ import { join } from 'path';
 const jar = join(__dirname, 'maven-model-helper.jar');
 
 export function mergePoms(targetPath, sourcePath) {
-    return spawn('java', ['-jar', jar, 'merge', targetPath, sourcePath])
+    return spawn('java', ['-DsourceDominant=true', '-jar', jar, 'merge', targetPath, sourcePath])
         .catch((error) => {
             console.error(`Spawn error: ${error}`);
             throw error;
