@@ -5,6 +5,7 @@ import DatabaseSecret from 'generators/database-secret';
 import DatabasePostgresql from 'generators/database-postgresql';
 import DatabaseMysql from 'generators/database-mysql';
 import DatabaseCrudVertx from 'generators/database-crud-vertx';
+import DatabaseCrudSpringBoot from 'generators/database-crud-springboot';
 import DatabaseCrudNodejs from 'generators/database-crud-nodejs';
 
 // Returns the corresponding database generator depending on the given database type
@@ -22,6 +23,8 @@ function databaseByType(type) {
 function runtimeByType(type) {
     if (type === 'vertx') {
         return DatabaseCrudVertx;
+    } else if (type === 'springboot') {
+        return DatabaseCrudSpringBoot;
     } else if (type === 'nodejs') {
         return DatabaseCrudNodejs;
     } else {

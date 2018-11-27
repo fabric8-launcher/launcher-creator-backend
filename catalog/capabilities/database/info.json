@@ -25,7 +25,8 @@
       "type": "enum",
       "values": [
         "vertx",
-        "nodejs"
+        "nodejs",
+        "springboot"
       ]
     },
     {
@@ -37,7 +38,8 @@
       "enabledWhen": {
         "propId": "runtime",
         "equals": [
-          "vertx"
+          "vertx",
+          "springboot"
         ]
       },
       "type": "object",
