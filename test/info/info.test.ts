@@ -1,6 +1,7 @@
 
 import * as test from 'tape';
 import * as info from 'core/info';
+import { Enums } from 'core/catalog';
 
 const def = [
     {
@@ -29,6 +30,22 @@ const def = [
         ]
     },
     {
+        'id': 'version',
+        'name': 'Runtime Version',
+        'description': 'The version of runtime to use',
+        'type': 'enum',
+        'enumRef': 'version.${runtime}'
+    },
+    {
+        'id': 'type',
+        'name': 'Some Type',
+        'description': 'The type to use',
+        'required': true,
+        'type': 'enum',
+        'enumRef': 'type',
+        'default': 'type1'
+    },
+    {
         'id': 'maven',
         'name': 'Maven Project Setting',
         'description': 'The ids and version to use for the Maven project',
@@ -54,28 +71,45 @@ const def = [
     }
 ];
 
+const enums: Enums = {
+    'type': [{
+        'id': 'type1',
+        'name': 'Type 1'
+    }],
+    'version.vertx': [{
+        'id': 'v1',
+        'name': 'Vert.x Version 1'
+    }],
+    'version.nodejs': [{
+        'id': 'ver1',
+        'name': 'Node Version 1'
+    }]
+};
+
 test('info validate all ok', (t) => {
     t.plan(1);
 
     const props = {
         'databaseType': 'mysql',
         'runtime': 'vertx',
+        'version': 'v1',
+        'type': 'type1',
         'maven': {
             'groupId': 'xxx'
         }
     };
 
-    t.doesNotThrow(() => info.validate(def, props));
+    t.doesNotThrow(() => info.validate(def, enums, props));
 });
 
 test('info validate using default maven', (t) => {
     t.plan(3);
 
     const props = {
-        'runtime': 'vertx'
+        'runtime': 'vertx',
     };
 
-    t.doesNotThrow(() => info.validate(def, props));
+    t.doesNotThrow(() => info.validate(def, enums, props));
     t.isEqual(props['databaseType'], 'postgresql');
     t.isEqual(props['maven']['groupId'], 'org.openshift.appgen');
 });
@@ -87,7 +121,7 @@ test('info validate using default nodejs', (t) => {
         'runtime': 'nodejs'
     };
 
-    t.doesNotThrow(() => info.validate(def, props));
+    t.doesNotThrow(() => info.validate(def, enums, props));
     t.isEqual(props['databaseType'], 'postgresql');
     t.isEqual(props['maven'], undefined);
 });
@@ -103,7 +137,7 @@ test('info validate invalid enum value', (t) => {
         }
     };
 
-    t.throws(() => info.validate(def, props), /Invalid enumeration value for property/);
+    t.throws(() => info.validate(def, enums, props), /Invalid enumeration value/);
 });
 
 test('info validate missing required', (t) => {
@@ -116,7 +150,7 @@ test('info validate missing required', (t) => {
         }
     };
 
-    t.throws(() => info.validate(def, props), /Missing property/);
+    t.throws(() => info.validate(def, enums, props), /Missing property/);
 });
 
 test('info validate definition wrong type', (t) => {
@@ -137,7 +171,7 @@ test('info validate definition wrong type', (t) => {
         'version': '2.0'
     };
 
-    t.throws(() => info.validate(wrongTypeDef, props), /Unknown type/);
+    t.throws(() => info.validate(wrongTypeDef, enums, props), /Unknown type/);
 });
 
 test('info validate definition missing enum values', (t) => {
@@ -183,7 +217,7 @@ test('info validate definition missing enum values', (t) => {
         'databaseType': 'dummy'
     };
 
-    t.throws(() => info.validate(wrongEnumDef1, props), /Missing enum values/);
-    t.throws(() => info.validate(wrongEnumDef2, props), /Missing enum values/);
-    t.throws(() => info.validate(wrongEnumDef3, props), /Missing enum values/);
+    t.throws(() => info.validate(wrongEnumDef1, enums, props), /Missing or invalid 'values'/);
+    t.throws(() => info.validate(wrongEnumDef2, enums, props), /Missing or invalid 'values'/);
+    t.throws(() => info.validate(wrongEnumDef3, enums, props), /Missing 'values' or 'enumRef'/);
 });
