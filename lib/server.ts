@@ -104,7 +104,7 @@ router.post('/zip', (req, res, next) => {
         res.status(HttpStatus.BAD_REQUEST).send(result(HttpStatus.BAD_REQUEST, new Error('Missing application name')));
         return;
     }
-    if (!req.body.shared || !req.body.shared.runtime) {
+    if (!req.body.shared || !req.body.shared.runtime || !req.body.shared.runtime.name || !req.body.shared.runtime.version) {
         res.status(HttpStatus.BAD_REQUEST).send(result(HttpStatus.BAD_REQUEST, new Error('Missing application runtime')));
         return;
     }
@@ -143,7 +143,7 @@ router.post('/launch', (req, res, next) => {
         res.status(HttpStatus.BAD_REQUEST).send(result(HttpStatus.BAD_REQUEST, new Error('Missing application name')));
         return;
     }
-    if (!req.body.shared || !req.body.shared.runtime) {
+    if (!req.body.shared || !req.body.shared.runtime || !req.body.shared.runtime.name || !req.body.shared.runtime.version) {
         res.status(HttpStatus.BAD_REQUEST).send(result(HttpStatus.BAD_REQUEST, new Error('Missing application runtime')));
         return;
     }

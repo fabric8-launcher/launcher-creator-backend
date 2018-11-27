@@ -1,4 +1,5 @@
-import {BaseCapability} from 'core/catalog/types';
+
+import { BaseCapability, Runtime } from 'core/catalog/types';
 
 import RestVertx from 'generators/rest-vertx';
 import RestSpring from 'generators/rest-springboot';
@@ -6,17 +7,17 @@ import RestNodejs from 'generators/rest-nodejs';
 import RestThorntail from 'generators/rest-thorntail';
 
 // Returns the corresponding runtime generator depending on the given runtime type
-function runtimeByType(type) {
-    if (type === 'vertx') {
+function runtimeByType(rt: Runtime) {
+    if (rt.name === 'vertx') {
         return RestVertx;
-    } else if (type === 'nodejs') {
+    } else if (rt.name === 'nodejs') {
         return RestNodejs;
-    } else if (type === 'springboot') {
+    } else if (rt.name === 'springboot') {
         return RestSpring;
-    } else if (type === 'thorntail') {
+    } else if (rt.name === 'thorntail') {
         return RestThorntail;
     } else {
-        throw new Error(`Unsupported runtime type: ${type}`);
+        throw new Error(`Unsupported runtime type: ${rt.name}`);
     }
 }
 
@@ -28,6 +29,7 @@ export default class Rest extends BaseCapability {
         const rtprops = {
             'application': props.application,
             'serviceName': rtServiceName,
+            'runtime': props.runtime,
             'maven': props.maven,
             'nodejs': props.nodejs
         };
