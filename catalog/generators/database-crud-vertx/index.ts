@@ -20,6 +20,7 @@ export default class DatabaseCrudVertx extends BaseGenerator {
             const pprops = {
                 'application': props.application,
                 'serviceName': props.serviceName,
+                'runtime': props.runtime,
                 'maven': props.maven,
                 'env': {
                     'DB_HOST': {

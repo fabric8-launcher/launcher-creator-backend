@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import { newApp, newRoute, setDeploymentEnv } from 'core/resources';
 import { cases } from 'core/template/transformers/cases';
 import { enumItem } from 'core/catalog';
-import { BaseGenerator } from 'core/catalog/types';
+import { BaseGenerator, Runtime } from 'core/catalog/types';
 
 export interface NodejsCoords {
     groupId: string;
@@ -14,6 +14,7 @@ export interface NodejsCoords {
 export interface PlatformNodejsProps {
     application: string;
     serviceName: string;
+    runtime: Runtime;
     nodejs: NodejsCoords;
     env?: object;
 }
@@ -24,7 +25,7 @@ export default class PlatformVertx extends BaseGenerator {
     public async apply(resources, props: PlatformNodejsProps, extra: any = {}) {
         const rtImage = 'nodeshift/centos7-s2i-nodejs';
         _.set(extra, 'shared.runtimeImage', rtImage);
-        _.set(extra, 'shared.runtimeInfo', enumItem('runtime', 'nodejs'));
+        _.set(extra, 'shared.runtimeInfo', enumItem('runtime.name', 'nodejs'));
         _.set(extra, 'shared.runtimeService', props.serviceName);
 
         // Check if the service already exists, so we don't create it twice

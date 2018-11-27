@@ -13,12 +13,27 @@ export interface DeploymentDescriptor {
     applications: [{
         application: string;
         shared?: object;
+        extra?: object;
         capabilities: [{
             module: string;
             props?: object;
             extra?: object;
         }];
     }];
+}
+
+export interface Runtime {
+    name: string;
+    version?: string;
+}
+
+export function toRuntime(arg: string) {
+    const parts = arg.split('/', 2);
+    const runtime: Runtime = { 'name': parts[0] };
+    if (parts.length > 1) {
+        runtime.version = parts[1];
+    }
+    return runtime;
 }
 
 interface CatalogItem {

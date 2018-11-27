@@ -4,7 +4,7 @@ import { join } from 'path';
 import * as yaml from 'js-yaml';
 
 import { validate } from 'core/info';
-import { getCapabilityModule, info } from 'core/catalog';
+import { getCapabilityModule, info, listEnums } from 'core/catalog';
 import { applyFromFile, startBuild, deleteApp } from 'core/oc';
 import { filterObject, zipFolder } from 'core/utils';
 import { resources, Resources } from 'core/resources';
@@ -115,7 +115,7 @@ async function applyCapability_(generator, res, targetDir, shared, props) {
     const capConst = getCapabilityModule(props.module);
     const propDefs = info(capConst).props;
     const allprops = { ...props, ...definedPropsOnly(propDefs, shared) };
-    validate(propDefs, allprops);
+    validate(propDefs, listEnums(), allprops);
     const cap = new capConst(generator, targetDir);
     const df = deploymentFileName(targetDir);
     const rf = resourcesFileName(targetDir);
@@ -191,7 +191,7 @@ export function apply(res, targetDir, appName, shared, capabilities) {
         const gen = new genConst(generator, targetDir);
         const oldApply = gen.apply;
         gen.apply = (res2: Resources, props?: object, extra?: object) => {
-            validate(info(genConst).props, props);
+            validate(info(genConst).props, listEnums(), props);
             return oldApply.call(gen, res2, props, extra);
         };
         return gen;

@@ -16,7 +16,7 @@ export default class PlatformThorntail extends BaseGenerator {
     public async apply(resources, props: PlatformThorntailProps, extra: any = {}) {
         const rtImage = 'registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift';
         _.set(extra, 'shared.runtimeImage', rtImage);
-        _.set(extra, 'shared.runtimeInfo', enumItem('runtime', 'thorntail'));
+        _.set(extra, 'shared.runtimeInfo', enumItem('runtime.name', 'thorntail'));
         _.set(extra, 'shared.runtimeService', props.serviceName);
 
         // Check if the service already exists, so we don't create it twice

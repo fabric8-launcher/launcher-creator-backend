@@ -1,4 +1,5 @@
-import {BaseCapability} from 'core/catalog/types';
+
+import { BaseCapability, Runtime } from 'core/catalog/types';
 
 import DatabaseSecret from 'generators/database-secret';
 import DatabasePostgresql from 'generators/database-postgresql';
@@ -20,17 +21,17 @@ function databaseByType(type) {
 }
 
 // Returns the corresponding runtime generator depending on the given runtime type
-function runtimeByType(type) {
-    if (type === 'vertx') {
+function runtimeByType(rt: Runtime) {
+    if (rt.name === 'vertx') {
         return DatabaseCrudVertx;
-    } else if (type === 'springboot') {
-        return DatabaseCrudSpringBoot;
-    } else if (type === 'nodejs') {
+    } else if (rt.name === 'nodejs') {
         return DatabaseCrudNodejs;
-    } else if (type === 'thorntail') {
+    } else if (rt.name === 'thorntail') {
         return DatabaseCrudThorntail;
+    } else if (rt.name === 'springboot') {
+        return DatabaseCrudSpringBoot;
     } else {
-        throw new Error(`Unsupported runtime type: ${type}`);
+        throw new Error(`Unsupported runtime type: ${rt.name}`);
     }
 }
 
@@ -50,6 +51,7 @@ export default class Database extends BaseCapability {
         const rtprops = {
             'application': props.application,
             'serviceName': rtServiceName,
+            'runtime': props.runtime,
             'maven': props.maven,
             'nodejs': props.nodejs,
             'databaseType': props.databaseType,
