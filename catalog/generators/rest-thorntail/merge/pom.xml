@@ -23,7 +23,7 @@
         <version.assertj>3.8.0</version.assertj>
         <version.awaitility>3.1.0</version.awaitility>
     </properties>
-
+    <packaging>war</packaging>
     <dependencies>
         <dependency>
             <groupId>io.thorntail</groupId>
