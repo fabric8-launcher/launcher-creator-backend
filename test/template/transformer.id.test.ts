@@ -9,7 +9,6 @@ const testContents = `The first line.
 The second line.
 The third line.`;
 
-
 test('transform id', (t) => {
     t.plan(1);
 

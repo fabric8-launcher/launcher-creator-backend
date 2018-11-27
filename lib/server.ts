@@ -20,7 +20,7 @@ const router = express.Router();
 
 const sentryEnabled = !!process.env.SENTRY_DSN;
 
-console.log("Sentry Enabled:", sentryEnabled);
+console.log('Sentry Enabled:', sentryEnabled);
 
 const zipCache = new NodeCache({'checkperiod': 60});
 
@@ -41,8 +41,8 @@ router.get('/', (req, res) => {
     res.redirect(`https://editor.swagger.io/?url=${url}`);
 });
 
-router.use('/health', (req,res) => {
-    res.status(HttpStatus.OK).send("OK");
+router.use('/health', (req, res) => {
+    res.status(HttpStatus.OK).send('OK');
 });
 
 router.use('/openapi', express.static('./openapi.yaml'));
@@ -217,8 +217,8 @@ router.post('/launch', (req, res, next) => {
     });
 });
 
-app.use("/", router);
-app.use("/creator", router);
+app.use('/', router);
+app.use('/creator', router);
 
 if (sentryEnabled) {
     // The error handler must be before any other error middleware
@@ -226,7 +226,7 @@ if (sentryEnabled) {
 }
 
 // Default Error Handler
-app.use(function (ex, req, res, next) {
+app.use((ex, req, res, next) => {
     // handle error
     if (ex) {
         res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(result(HttpStatus.INTERNAL_SERVER_ERROR, ex, res.sentry));
