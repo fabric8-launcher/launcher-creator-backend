@@ -88,8 +88,9 @@ abstract class BaseCatalogItem implements CatalogItem {
         return transformFiles(pattern2, transformLine);
     }
 
-    protected updateGav(groupId, artifactId, version, pomFile = 'pom.xml') {
-        return updateGav(join(this.targetDir, pomFile), groupId, artifactId, version);
+    protected updatePom(appName, groupId, artifactId, version, pomFile = 'pom.xml') {
+        return updateMetadata(join(this.targetDir, pomFile), appName, `Generated Application '${appName}'`)
+            .then(() => updateGav(join(this.targetDir, pomFile), groupId, artifactId, version));
     }
 
     protected mergePoms(sourcePom = 'merge/pom.xml', targetPom = 'pom.xml') {
