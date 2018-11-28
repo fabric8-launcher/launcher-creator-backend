@@ -13,6 +13,10 @@ parameters:
   description: The backend service name for the welcome app
   displayName: Backend service name
   required: true
+- name: SOURCE_REPOSITORY_PROVIDER
+  description: The source repository provider
+  displayName: Source Provider
+  value: GitHub
 - name: SOURCE_REPOSITORY_URL
   description: The source URL for the application
   displayName: Source URL
@@ -97,6 +101,8 @@ objects:
           value: ${WELCOME_APP_CONFIG}
         - name: REACT_APP_OPENSHIFT_CONSOLE_URL
           value: ${OPENSHIFT_CONSOLE_URL}
+        - name: REACT_APP_SOURCE_REPOSITORY_PROVIDER
+          value: ${SOURCE_REPOSITORY_PROVIDER}
         - name: REACT_APP_SOURCE_REPOSITORY_URL
           value: ${SOURCE_REPOSITORY_URL}
         - name: BACKEND_SERVICE_NAME
