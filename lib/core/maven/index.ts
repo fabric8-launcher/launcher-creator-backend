@@ -27,3 +27,11 @@ export function updateParentGav(targetPath, groupId, artifactId) {
             throw error;
         });
 }
+
+export function updateMetadata(targetPath, name, description) {
+    return spawn('java', ['-jar', jar, 'update-metadata', targetPath, name, description])
+        .catch((error) => {
+            console.error(`Spawn error: ${error}`);
+            throw error;
+        });
+}
