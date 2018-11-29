@@ -19,7 +19,7 @@ export interface PlatformNodejsProps {
     env?: object;
 }
 
-export default class PlatformVertx extends BaseGenerator {
+export default class PlatformNodejs extends BaseGenerator {
     public static readonly sourceDir: string = __dirname;
 
     public async apply(resources, props: PlatformNodejsProps, extra: any = {}) {
@@ -31,7 +31,8 @@ export default class PlatformVertx extends BaseGenerator {
         // Check if the service already exists, so we don't create it twice
         if (!resources.service(props.serviceName)) {
             await this.copy();
-            await this.transform(['package.json', 'gap'], cases(props));
+            await this.transform('gap', cases(props));
+            await this.transform('package.json', cases(props));
             const res = await newApp(
                 props.serviceName,
                 props.application,
