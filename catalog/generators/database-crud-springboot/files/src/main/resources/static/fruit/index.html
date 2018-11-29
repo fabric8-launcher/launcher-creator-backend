@@ -16,7 +16,7 @@
             -webkit-transition: .5s;
             transition: .5s;
             outline: 0;
-            font-family: 'Open Sans', serif;
+            font-family: 'Open Sans',serif;
         }
     </style>
     <!-- Load AngularJS -->
@@ -32,7 +32,8 @@
 
         $scope.form = {
           id: -1,
-          name: ""
+          name: "",
+          stock: 0
         };
 
         //Now load the data from server
@@ -48,11 +49,13 @@
             method = "POST";
             url = '/api/fruits';
             data.name = $scope.form.name;
+            data.stock = $scope.form.stock;
           } else {
             //If Id is present, it's edit operation - PUT operation
             method = "PUT";
             url = '/api/fruits/' + $scope.form.id;
             data.name = $scope.form.name;
+            data.stock = $scope.form.stock;
           }
 
           $http({
@@ -76,6 +79,7 @@
         //In case of edit fruits, populate form with fruit data
         $scope.edit = function (fruit) {
           $scope.form.name = fruit.name;
+          $scope.form.stock = parseInt(fruit.stock);
           $scope.form.id = fruit.id;
         };
 
@@ -104,6 +108,7 @@
         //Clear the form
         function _clearForm() {
           $scope.form.name = "";
+          $scope.form.stock = 0;
           $scope.form.id = -1;
         }
       });
@@ -119,21 +124,26 @@
     </p>
 
     <h3>Add/Edit a fruit</h3>
+
     <form ng-submit="update()">
         <div class="row">
             <div class="col-6"><input type="text" placeholder="Name" ng-model="form.name" size="60"/></div>
+            <div class="col-6"><input type="number" placeholder="Stock" ng-model="form.stock" size="60" min="0"/></div>
         </div>
         <input type="submit" value="Save"/>
     </form>
 
     <h3>Fruit List</h3>
+
     <div class="row">
         <div class="col-2">Name</div>
+    <div class="col-2">Stock</div>
     </div>
+
     <div class="row" ng-repeat="fruit in fruits">
         <div class="col-2">{{ fruit.name }}</div>
-        <div class="col-8"><a ng-click="edit( fruit )" class="btn">Edit</a> <a ng-click="remove( fruit )" class="btn">Remove</a>
-        </div>
+        <div class="col-2">{{ fruit.stock }}</div>
+        <div class="col-8"><a ng-click="edit( fruit )" class="btn">Edit</a> <a ng-click="remove( fruit )" class="btn">Remove</a></div>
     </div>
 </div>
 

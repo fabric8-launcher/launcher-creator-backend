@@ -1,3 +1,3 @@
-insert into fruit (name) values ('Cherry');
-insert into fruit (name) values ('Apple');
-insert into fruit (name) values ('Banana');
+insert into fruit (name, stock) values ('Cherry', 10);
+insert into fruit (name, stock) values ('Apple', 10);
+insert into fruit (name, stock) values ('Banana', 10);
