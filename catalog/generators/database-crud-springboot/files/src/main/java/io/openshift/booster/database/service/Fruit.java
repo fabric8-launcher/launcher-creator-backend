@@ -30,6 +30,8 @@ public class Fruit {
 
     private String name;
 
+    private Integer stock;
+
     public Fruit() {
     }
 
@@ -51,5 +53,13 @@ public class Fruit {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void setStock(Integer stock) {
+        this.stock = stock;
+    }
+
+    public Integer getStock() {
+        return stock;
     }
 }

@@ -52,6 +52,8 @@ public class Fruit implements Serializable {
     @Column(length = 40, unique = true)
     private String name;
 
+    private Integer stock;
+
     public Fruit() {
     }
 
@@ -73,6 +75,14 @@ public class Fruit implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void setStock(Integer stock) {
+        this.stock = stock;
+    }
+
+    public Integer getStock() {
+        return stock;
     }
 
     @Override
