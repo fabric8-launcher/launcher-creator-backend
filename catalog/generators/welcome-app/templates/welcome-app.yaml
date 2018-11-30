@@ -234,6 +234,8 @@ objects:
     labels:
       app: ${APP_NAME}
       apptype: welcome
+    annotations:
+      console.alpha.openshift.io/overview-app-route: 'true'
   spec:
     port:
       targetPort: 8080-tcp
