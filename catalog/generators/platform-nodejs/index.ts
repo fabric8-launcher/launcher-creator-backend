@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import { newApp, newRoute, setDeploymentEnv } from 'core/resources';
 import { cases } from 'core/template/transformers/cases';
 import { enumItem } from 'core/catalog';
-import { BaseGenerator, Runtime } from 'core/catalog/types';
+import { BaseGenerator, BaseGeneratorProps, Runtime } from 'core/catalog/types';
 
 export interface NodejsCoords {
     groupId: string;
@@ -11,9 +11,7 @@ export interface NodejsCoords {
     version: string;
 }
 
-export interface PlatformNodejsProps {
-    application: string;
-    serviceName: string;
+export interface PlatformNodejsProps extends BaseGeneratorProps {
     runtime: Runtime;
     nodejs: NodejsCoords;
     env?: object;
