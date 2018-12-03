@@ -133,7 +133,8 @@ function definedPropsOnly(propDefs: any, props: object): object {
     return filterObject(props, (key, value) => !!getPropDef(propDefs, key).id);
 }
 
-async function postApply(generator, res, targetDir, deployment) {
+function postApply(generator, res, targetDir, deployment) {
+    let p = Promise.resolve(res);
     const app = deployment.applications[0];
     for (const ci of app.capabilities) {
         let capConst = null;
@@ -145,10 +146,10 @@ async function postApply(generator, res, targetDir, deployment) {
         if (capConst) {
             const cap = new capConst(generator, targetDir);
             const props = { ...app.shared, ...ci.props, 'module': ci.module, 'application': app.application };
-            res = await cap.postApply(res, props, deployment);
+            p = p.then(() => cap.postApply(res, props, deployment));
         }
     }
-    return res;
+    return p;
 }
 
 function capInfo(propDefs, props, extra) {
