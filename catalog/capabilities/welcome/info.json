@@ -2,6 +2,9 @@
   "type": "capability",
   "name": "Welcome Application",
   "description": "Adds a Welcome Application to the project where all selected Capabilities can be tested",
+  "metadata": {
+    "category": "support"
+  },
   "props": [
   ]
 }
