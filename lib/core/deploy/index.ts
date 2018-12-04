@@ -74,6 +74,12 @@ function addCapability(deployment, capability) {
         };
         deployment.applications = [...deployment.applications, app];
     }
+    if (!!capability.shared) {
+        app.shared = { ...app.shared, ...capability.shared };
+    }
+    if (!!capability.sharedExtra) {
+        app.extra = { ...app.extra, ...capability.sharedExtra };
+    }
     app.capabilities = [ ...app.capabilities, cap ];
 }
 
