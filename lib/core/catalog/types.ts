@@ -93,8 +93,7 @@ abstract class BaseCatalogItem implements CatalogItem {
         if (typeof pattern === 'string') {
             pattern2 = join(this.targetDir, pattern);
         } else {
-            // TODO fix array elements too
-            pattern2 = pattern;
+            pattern2 = pattern.map(p => join(this.targetDir, p));
         }
         return transformFiles(pattern2, transformLine);
     }
