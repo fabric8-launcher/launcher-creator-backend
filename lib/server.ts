@@ -72,17 +72,17 @@ router.get('/enums/:id', (req, res) => {
 router.get('/download', (req, res, next) => {
     // Make sure we have all the required inputs
     if (!req.query.id) {
-        res.status(HttpStatus.BAD_REQUEST).send(result(HttpStatus.BAD_REQUEST, new Error('Missing download ID')));
+        sendReply(res, HttpStatus.BAD_REQUEST, new Error('Missing download ID'));
         return;
     }
     const id = req.query.id;
     zipCache.get(id, (err, data?: { name, file }) => {
         if (err) {
-            res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(result(HttpStatus.INTERNAL_SERVER_ERROR, err));
+            sendReply(res, HttpStatus.INTERNAL_SERVER_ERROR, err);
             return;
         }
         if (!data) {
-            res.status(HttpStatus.NOT_FOUND).send(result(HttpStatus.NOT_FOUND, new Error('Not found')));
+            sendReply(res, HttpStatus.NOT_FOUND, new Error('Not found'));
         } else {
             res.writeHead(HttpStatus.OK, {
                 'Content-Type': 'application/zip',
@@ -118,7 +118,7 @@ router.post('/zip', (req, res, next) => {
             res.status(HttpStatus.OK).send({ id });
         } catch (ex) {
             // TODO: Call catch(next)
-            res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(result(HttpStatus.INTERNAL_SERVER_ERROR, ex));
+            sendReply(res, HttpStatus.INTERNAL_SERVER_ERROR, ex);
         }
     });
 });
@@ -126,7 +126,7 @@ router.post('/zip', (req, res, next) => {
 router.post('/launch', (req, res, next) => {
     // Make sure we're autenticated
     if (!req.get('Authorization')) {
-        res.status(401).send(result(HttpStatus.UNAUTHORIZED, 'Unauthorized'));
+        sendReply(res, HttpStatus.UNAUTHORIZED, 'Unauthorized');
         return;
     }
     // And have all the required inputs
@@ -176,17 +176,16 @@ router.post('/launch', (req, res, next) => {
                     } catch (e) { /* ignore parse errors */
                     }
                     if (!err2 && res2.statusCode === HttpStatus.OK) {
-                        res.status(HttpStatus.OK).send(result(HttpStatus.OK, json || body));
+                        sendReply(res, HttpStatus.OK, json || body);
                     } else {
-                        res.status(res2.statusCode).send(result(res2.statusCode, json || err2 || res2.statusMessage));
-                        console.error(json || err2 || res2.statusMessage);
+                        sendReply(res, res2.statusCode, json || err2 || res2.statusMessage);
                     }
                     cleanTempDir();
                 });
             });
         } catch (ex) {
             // TODO: Call next
-            res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(result(HttpStatus.INTERNAL_SERVER_ERROR, ex));
+            sendReply(res, HttpStatus.INTERNAL_SERVER_ERROR, ex);
         }
     });
 });
@@ -203,7 +202,7 @@ if (sentryEnabled) {
 app.use((ex, req, res, next) => {
     // handle error
     if (ex) {
-        res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(result(HttpStatus.INTERNAL_SERVER_ERROR, ex, res.sentry));
+        sendReply(res, HttpStatus.INTERNAL_SERVER_ERROR, ex, res.sentry);
     }
 });
 
@@ -212,15 +211,15 @@ const server = app.listen(parseInt(process.argv[2] || '8080', 10), onListening);
 function validateGenerationRequest(req, res) {
     // Make sure we have all the required inputs
     if (!req.body.name) {
-        res.status(HttpStatus.BAD_REQUEST).send(result(HttpStatus.BAD_REQUEST, new Error('Missing application name')));
+        sendReply(res, HttpStatus.BAD_REQUEST, new Error('Missing application name'));
         return false;
     }
     if (!req.body.shared || (!req.body.shared.runtime && !req.body.shared.framework)) {
-        res.status(HttpStatus.BAD_REQUEST).send(result(HttpStatus.BAD_REQUEST, new Error('Missing application runtime or framework')));
+        sendReply(res, HttpStatus.BAD_REQUEST, new Error('Missing application runtime or framework'));
         return false;
     }
     if (!req.body.capabilities) {
-        res.status(HttpStatus.BAD_REQUEST).send(result(HttpStatus.BAD_REQUEST, new Error('Missing application capabilities')));
+        sendReply(res, HttpStatus.BAD_REQUEST, new Error('Missing application capabilities'));
         return false;
     }
     return true;
@@ -232,23 +231,26 @@ function onListening(): void {
     console.log(`Listening on ${bind}`);
 }
 
-function result(statusCode, msg, sentryId?) {
-    const res = {};
+function sendReply(res, statusCode, msg, sentryId?) {
+    const obj = {};
     if (msg instanceof Error) {
-        res['message'] = msg.toString();
+        obj['message'] = msg.toString();
         if (msg.stack) {
-            res['stack'] = msg.stack.toString();
+            obj['stack'] = msg.stack.toString();
         }
     } else if (Array.isArray(msg)) {
-        res['message'] = msg;
+        obj['message'] = msg;
     } else if (typeof msg === 'object') {
-        Object .assign(res, msg);
+        Object.assign(obj, msg);
     } else if (msg) {
-        res['message'] = msg.toString();
+        obj['message'] = msg.toString();
     }
-    res['statusCode'] = statusCode;
+    obj['statusCode'] = statusCode;
     if (sentryId) {
-        res['sentryId'] = sentryId;
+        obj['sentryId'] = sentryId;
     }
-    return res;
+    res.status(statusCode).send(obj);
+    if (statusCode !== HttpStatus.OK) {
+        console.error('SERVER ERROR', statusCode, msg);
+    }
 }
