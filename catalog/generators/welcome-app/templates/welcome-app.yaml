@@ -20,11 +20,6 @@ parameters:
 - name: SOURCE_REPOSITORY_URL
   description: The source URL for the application
   displayName: Source URL
-- name: OUTPUT_DIR
-  description: The location of the compiled static files from your web apps builder
-  displayName: Output Directory
-  value: build
-  required: false
 - name: OPENSHIFT_CONSOLE_URL
   description: The OpenShift Console URL for the application
   displayName: OpenShift Console URL
@@ -32,175 +27,67 @@ objects:
 - apiVersion: v1
   kind: ImageStream
   metadata:
-    name: welcome-app-build-output
-    labels:
-      app: ${APP_NAME}
-      apptype: welcome
-  spec: {}
-- apiVersion: v1
-  kind: ImageStream
-  metadata:
-    name: welcome-app-on-server-output
-    labels:
-      app: ${APP_NAME}
-      apptype: welcome
-  spec: {}
-- apiVersion: v1
-  kind: ImageStream
-  metadata:
-    name: webapp-builder
+    name: launcher-welcome-app
     labels:
       app: ${APP_NAME}
       apptype: welcome
   spec:
+    lookupPolicy:
+      local: false
     tags:
     - name: latest
       from:
         kind: DockerImage
-        name: nodeshift/centos7-s2i-web-app:latest
+        name: fabric8/launcher-creator-welcome-app
 - apiVersion: v1
-  kind: ImageStream
+  kind: DeploymentConfig
   metadata:
-    name: server-image
+    name: launcher-welcome-app
     labels:
       app: ${APP_NAME}
       apptype: welcome
   spec:
-    tags:
-    - name: latest
-      from:
-        kind: DockerImage
-        name: 'centos/nginx-112-centos7:latest'
-- apiVersion: v1
-  kind: BuildConfig
-  metadata:
-    name: welcome-app-build
-    labels:
-      app: ${APP_NAME}
-      apptype: welcome
-  spec:
-    output:
-      to:
-        kind: ImageStreamTag
-        name: welcome-app-build-output:latest
-    postCommit: {}
-    resources: {}
-    source:
-      git:
-        uri: https://github.com/fabric8-launcher/launcher-creator-welcome-app
-        ref: master
-      contextDir: .
-      type: Git
-    strategy:
-      type: Source
-      sourceStrategy:
-        env:
-        - name: OUTPUT_DIR
-          value: ${OUTPUT_DIR}
-        - name: REACT_APP_WELCOME_APP_CONFIG
-          value: ${WELCOME_APP_CONFIG}
-        - name: REACT_APP_OPENSHIFT_CONSOLE_URL
-          value: ${OPENSHIFT_CONSOLE_URL}
-        - name: REACT_APP_SOURCE_REPOSITORY_PROVIDER
-          value: ${SOURCE_REPOSITORY_PROVIDER}
-        - name: REACT_APP_SOURCE_REPOSITORY_URL
-          value: ${SOURCE_REPOSITORY_URL}
-        - name: BACKEND_SERVICE_NAME
-          value: ${BACKEND_SERVICE_NAME}
-        from:
-          kind: ImageStreamTag
-          name: webapp-builder:latest
-        incremental: false
-    triggers:
-      - type: ConfigChange
-      - type: ImageChange
-        imageChange:
-          {}
-  status:
-    lastVersion: 0
-- apiVersion: v1
-  kind: BuildConfig
-  metadata:
-    name: welcome-app-on-server-build
-    labels:
-      app: ${APP_NAME}
-      apptype: welcome
-  spec:
-    output:
-      to:
-        kind: ImageStreamTag
-        name: welcome-app-on-server-output:latest
-    postCommit: {}
-    resources: {}
-    source:
-      type: Image
-      images:
-      - from:
-          kind: ImageStreamTag
-          name: welcome-app-build-output:latest
-        paths:
-        - destinationDir: .
-          sourcePath: /opt/app-root/output/.
-    strategy:
-      type: Source
-      sourceStrategy:
-        from:
-          kind: ImageStreamTag
-          name: server-image:latest
-        incremental: true
-    triggers:
-    - type: ConfigChange
-    - type: ImageChange
-      imageChange: {}
-    - type: ImageChange
-      imageChange:
-        from:
-          kind: ImageStreamTag
-          name: welcome-app-build-output:latest
-  status:
-    lastVersion: 0
-- kind: DeploymentConfig
-  apiVersion: v1
-  metadata:
-    name: welcome-app-deployment
-    labels:
-      app: ${APP_NAME}
-      apptype: welcome
-  spec:
-    strategy:
-      resources:
-        {}
-    triggers:
-    - type: ConfigChange
-    - type: ImageChange
-      imageChangeParams:
-        automatic: true
-        containerNames:
-        - welcome-app-on-server-output
-        from:
-          kind: ImageStreamTag
-          name: welcome-app-on-server-output:latest
     replicas: 1
-    test: false
     selector:
       app: ${APP_NAME}
-      deploymentconfig: welcome-app-deployment
+      deploymentconfig: launcher-welcome-app
+    strategy:
+      resources: {}
     template:
       metadata:
         labels:
           app: ${APP_NAME}
-          deploymentconfig: welcome-app-deployment
+          deploymentconfig: launcher-welcome-app
       spec:
         containers:
-        - name: welcome-app-on-server-output
-          image: welcome-app-on-server-output:latest
+        - image: fabric8/launcher-creator-welcome-app
+          name: launcher-welcome-app
           ports:
           - containerPort: 8080
             protocol: TCP
-          resources:
-            {}
+          resources: {}
           env:
-            []
+            - name: WELCOME_APP_CONFIG
+              value: '${WELCOME_APP_CONFIG}'
+            - name: OPENSHIFT_CONSOLE_URL
+              value: '${OPENSHIFT_CONSOLE_URL}'
+            - name: SOURCE_REPOSITORY_PROVIDER
+              value: '${SOURCE_REPOSITORY_PROVIDER}'
+            - name: SOURCE_REPOSITORY_URL
+              value: '${SOURCE_REPOSITORY_URL}'
+            - name: BACKEND_SERVICE_NAME
+              value: '${BACKEND_SERVICE_NAME}'
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - launcher-welcome-app
+        from:
+          kind: ImageStreamTag
+          name: launcher-welcome-app:latest
+      type: ImageChange
   status:
     latestVersion: 0
     observedGeneration: 0
@@ -211,7 +98,7 @@ objects:
 - kind: Service
   apiVersion: v1
   metadata:
-    name: welcome-app-service
+    name: launcher-welcome-app
     labels:
       app: ${APP_NAME}
       apptype: welcome
@@ -223,14 +110,11 @@ objects:
       targetPort: 8080
     selector:
       app: ${APP_NAME}
-      deploymentconfig: welcome-app-deployment
-  status:
-    loadBalancer:
-      {}
+      deploymentconfig: launcher-welcome-app
 - apiVersion: v1
   kind: Route
   metadata:
-    name: welcome-app-route
+    name: launcher-welcome-app
     labels:
       app: ${APP_NAME}
       apptype: welcome
@@ -241,4 +125,4 @@ objects:
       targetPort: 8080-tcp
     to:
       kind: Service
-      name: welcome-app-service
+      name: launcher-welcome-app
