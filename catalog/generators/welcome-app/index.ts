@@ -25,14 +25,17 @@ export default class WelcomeApp extends BaseGenerator {
     public async apply(resources: Resources, props: WelcomeAppProps, extra: any = {}): Promise<Resources> {
         // Check if the Welcome App service already exists, so we don't create it twice
         const fileName = join(this.targetDir, '.openshiftio', 'service.welcome.yaml');
+        let res;
         if (!pathExistsSync(fileName)) {
             const template = join(this.sourceDir, 'templates', 'welcome-app.yaml');
-            const res = await readResources(template);
+            res = await readResources(template);
             res.parameter('APP_NAME')['value'] = props.deployment.applications[0].application;
-            res.parameter('WELCOME_APP_CONFIG')['value'] = JSON.stringify(props.deployment.applications[0]);
             res.parameter('BACKEND_SERVICE_NAME')['value'] = props.serviceName;
-            await writeResources(fileName, res);
+        } else {
+            res = await readResources(fileName);
         }
+        res.parameter('WELCOME_APP_CONFIG')['value'] = JSON.stringify(props.deployment.applications[0]);
+        await writeResources(fileName, res);
         return resources;
     }
 }
