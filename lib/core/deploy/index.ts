@@ -134,22 +134,23 @@ function definedPropsOnly(propDefs: any, props: object): object {
 }
 
 function postApply(generator, res, targetDir, deployment) {
-    let p = Promise.resolve(res);
+    const p = Promise.resolve(res);
     const app = deployment.applications[0];
-    for (const ci of app.capabilities) {
+    return app.capabilities.reduce((acc, cur) => {
         let capConst = null;
         try {
-            capConst = getCapabilityModule(ci.module);
+            capConst = getCapabilityModule(cur.module);
         } catch (ex) {
-            console.log(`Capability ${ci.module} wasn't found for post-apply, skipping.`);
+            console.log(`Capability ${cur.module} wasn't found for post-apply, skipping.`);
         }
         if (capConst) {
             const cap = new capConst(generator, targetDir);
-            const props = { ...app.shared, ...ci.props, 'module': ci.module, 'application': app.application };
-            p = p.then(() => cap.postApply(res, props, deployment));
+            const props = { ...app.shared, ...cur.props, 'module': cur.module, 'application': app.application };
+            return acc.then(() => cap.postApply(res, props, deployment));
+        } else {
+            return acc;
         }
-    }
-    return p;
+    }, p);
 }
 
 function capInfo(propDefs, props, extra) {
