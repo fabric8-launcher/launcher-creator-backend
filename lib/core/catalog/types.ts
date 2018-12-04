@@ -26,6 +26,17 @@ export interface Runtime {
     version?: string;
 }
 
+export interface MavenCoords {
+    groupId: string;
+    artifactId: string;
+    version: string;
+}
+
+export interface NodejsCoords {
+    name: string;
+    version: string;
+}
+
 export function toRuntime(arg: string) {
     const parts = arg.split('/', 2);
     const runtime: Runtime = { 'name': parts[0] };

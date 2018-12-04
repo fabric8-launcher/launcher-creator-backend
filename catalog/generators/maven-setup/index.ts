@@ -1,11 +1,5 @@
 
-import { BaseGenerator, BaseGeneratorProps } from 'core/catalog/types';
-
-export interface MavenCoords {
-    groupId: string;
-    artifactId: string;
-    version: string;
-}
+import { BaseGenerator, BaseGeneratorProps, MavenCoords } from 'core/catalog/types';
 
 export interface MavenSetupProps extends BaseGeneratorProps {
     maven: MavenCoords;

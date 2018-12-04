@@ -3,13 +3,7 @@ import * as _ from 'lodash';
 import { newApp, newRoute, setDeploymentEnv } from 'core/resources';
 import { cases } from 'core/template/transformers/cases';
 import { enumItem } from 'core/catalog';
-import { BaseGenerator, BaseGeneratorProps, Runtime } from 'core/catalog/types';
-
-export interface NodejsCoords {
-    groupId: string;
-    artifactId: string;
-    version: string;
-}
+import { BaseGenerator, BaseGeneratorProps, NodejsCoords, Runtime } from 'core/catalog/types';
 
 export interface PlatformNodejsProps extends BaseGeneratorProps {
     runtime: Runtime;
@@ -29,8 +23,7 @@ export default class PlatformNodejs extends BaseGenerator {
         // Check if the service already exists, so we don't create it twice
         if (!resources.service(props.serviceName)) {
             await this.copy();
-            await this.transform('gap', cases(props));
-            await this.transform('package.json', cases(props));
+            await this.transform(['package.json', 'gap'], cases(props));
             const res = await newApp(
                 props.serviceName,
                 props.application,
