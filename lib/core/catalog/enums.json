@@ -61,6 +61,24 @@
       "name": "Community"
     }
   ],
+  "framework.name": [
+    {
+      "id": "react",
+      "name": "React",
+      "description": "A reactive JavaScript framework for building user interfaces.",
+      "metadata": {
+        "language": "javascript"
+      }
+    },
+    {
+      "id": "angular",
+      "name": "Angular",
+      "description": "A declarative JavaScript framework for building user interfaces.",
+      "metadata": {
+        "language": "java"
+      }
+    }
+  ],
   "databaseType": [
     {
       "id": "postgresql",
