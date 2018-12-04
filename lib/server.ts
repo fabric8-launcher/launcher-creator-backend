@@ -100,16 +100,7 @@ zipCache.on('del', (key, value) => {
 
 router.post('/zip', (req, res, next) => {
     // Make sure we have all the required inputs
-    if (!req.body.name) {
-        res.status(HttpStatus.BAD_REQUEST).send(result(HttpStatus.BAD_REQUEST, new Error('Missing application name')));
-        return;
-    }
-    if (!req.body.shared || !req.body.shared.runtime || !req.body.shared.runtime.name || !req.body.shared.runtime.version) {
-        res.status(HttpStatus.BAD_REQUEST).send(result(HttpStatus.BAD_REQUEST, new Error('Missing application runtime')));
-        return;
-    }
-    if (!req.body.capabilities) {
-        res.status(HttpStatus.BAD_REQUEST).send(result(HttpStatus.BAD_REQUEST, new Error('Missing application capabilities')));
+    if (!validateGenerationRequest(req, res)) {
         return;
     }
     // Create temp dir
@@ -139,24 +130,7 @@ router.post('/launch', (req, res, next) => {
         return;
     }
     // And have all the required inputs
-    if (!req.body.name) {
-        res.status(HttpStatus.BAD_REQUEST).send(result(HttpStatus.BAD_REQUEST, new Error('Missing application name')));
-        return;
-    }
-    if (!req.body.shared || !req.body.shared.runtime || !req.body.shared.runtime.name || !req.body.shared.runtime.version) {
-        res.status(HttpStatus.BAD_REQUEST).send(result(HttpStatus.BAD_REQUEST, new Error('Missing application runtime')));
-        return;
-    }
-    if (!req.body.capabilities) {
-        res.status(HttpStatus.BAD_REQUEST).send(result(HttpStatus.BAD_REQUEST, new Error('Missing application capabilities')));
-        return;
-    }
-    if (!req.body.projectName) {
-        res.status(HttpStatus.BAD_REQUEST).send(result(HttpStatus.BAD_REQUEST, new Error('Missing OpenShift project name')));
-        return;
-    }
-    if (!req.body.gitRepository) {
-        res.status(HttpStatus.BAD_REQUEST).send(result(HttpStatus.BAD_REQUEST, new Error('Missing Git repository name')));
+    if (!validateGenerationRequest(req, res)) {
         return;
     }
     // Create temp dir
@@ -234,6 +208,23 @@ app.use((ex, req, res, next) => {
 });
 
 const server = app.listen(parseInt(process.argv[2] || '8080', 10), onListening);
+
+function validateGenerationRequest(req, res) {
+    // Make sure we have all the required inputs
+    if (!req.body.name) {
+        res.status(HttpStatus.BAD_REQUEST).send(result(HttpStatus.BAD_REQUEST, new Error('Missing application name')));
+        return false;
+    }
+    if (!req.body.shared || (!req.body.shared.runtime && !req.body.shared.framework)) {
+        res.status(HttpStatus.BAD_REQUEST).send(result(HttpStatus.BAD_REQUEST, new Error('Missing application runtime or framework')));
+        return false;
+    }
+    if (!req.body.capabilities) {
+        res.status(HttpStatus.BAD_REQUEST).send(result(HttpStatus.BAD_REQUEST, new Error('Missing application capabilities')));
+        return false;
+    }
+    return true;
+}
 
 function onListening(): void {
     const address = server.address();
