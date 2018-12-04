@@ -12,5 +12,8 @@
       "generators/*": [ "catalog/generators/*" ],
       "core/*": [ "lib/core/*" ]
     }
-  }
+  },
+  "exclude": [
+    "catalog/generators/*/files"
+  ]
 }
