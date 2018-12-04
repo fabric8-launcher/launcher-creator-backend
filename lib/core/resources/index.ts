@@ -350,6 +350,21 @@ function convertObjectToEnvWithRefs(env) {
     });
 }
 
+// Updates the environment variables for the BuildConfig selected
+// by 'bcName' with the given key/values in the object 'env'. The values
+// are either simple strings or they can be objects themselves in which
+// case they are references to keys in a ConfigMap or a Secret.
+export function setBuildEnv(res: Resources, env, bcName?: any): Resources {
+    if (!!env && res.buildConfigs.length > 0) {
+        const bc = (bcName) ? res.buildConfig(bcName) : res.buildConfigs[0];
+        const bcss = _.get(bc, 'spec.strategy.sourceStrategy');
+        if (bcss) {
+            bcss.env = mergeEnv(bcss.env, convertObjectToEnvWithRefs(env));
+        }
+    }
+    return res;
+}
+
 // Updates the environment variables for the DeploymentConfig selected
 // by 'dcName' with the given key/values in the object 'env'. The values
 // are either simple strings or they can be objects themselves in which
@@ -378,14 +393,19 @@ function setAppLabel(res: Resources, label: string|object): Resources {
 }
 
 // Returns a list of resources that when applied will create
-// an instance of the given image or template.
+// an instance of the given image or template. Any environment
+// variables being passed will be applied to any `DeploymentConfig`
+// and `BuildConfig` resources that could be found in the image
 export async function newApp(appName: string,
                              appLabel: string|object,
                              imageName: string,
-                             sourceUri?: string, env = {}): Promise<Resources> {
-    const appRes = await readTemplate(imageName, appName, null, sourceUri);
+                             sourceUri?: string,
+                             env = {}): Promise<Resources> {
+    let appRes = await readTemplate(imageName, appName, null, sourceUri);
     setAppLabel(appRes, appLabel);
-    return setDeploymentEnv(appRes, env);
+    appRes = setBuildEnv(appRes, env);
+    appRes = setDeploymentEnv(appRes, env);
+    return appRes;
 }
 
 // Helper function that creates a database using the given 'dbImageName'

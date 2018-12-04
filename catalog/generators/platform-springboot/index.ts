@@ -1,6 +1,6 @@
 
 import * as _ from 'lodash';
-import { newApp, newRoute, setDeploymentEnv } from 'core/resources';
+import { newApp, newRoute, setBuildEnv, setDeploymentEnv } from 'core/resources';
 import { cases } from 'core/template/transformers/cases';
 import { enumItem } from 'core/catalog';
 import { BaseGenerator, BaseGeneratorProps } from 'core/catalog/types';
@@ -34,7 +34,9 @@ export default class PlatformSpringBoot extends BaseGenerator {
             resources.add(res);
             return await newRoute(resources, props.application + '-route', props.application, props.serviceName);
         } else {
-            return setDeploymentEnv(resources, props.env, props.serviceName);
+            setBuildEnv(resources, props.env, props.serviceName);
+            setDeploymentEnv(resources, props.env, props.serviceName);
+            return resources;
         }
     }
 }
