@@ -23,6 +23,7 @@ public class DBInitHelper {
       .flatMapCompletable(connection ->
         vertx.fileSystem().rxReadFile("ddl.sql")
           .flatMapObservable(buffer -> Observable.from(buffer.toString().split(";")))
+          .filter(s->!s.trim().isEmpty())
           .flatMapSingle(connection::rxExecute)
           .doAfterTerminate(connection::close)
           .toCompletable()
