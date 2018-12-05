@@ -8,17 +8,21 @@ import { transformFiles } from 'core/template';
 import { mergePoms, updateGav, updateMetadata } from 'core/maven';
 import { mergePackageJson } from 'core/nodejs';
 
+export interface CapabilityDescriptor {
+    module: string;
+    props?: object;
+    extra?: object;
+}
+
+export interface ApplicationDescriptor {
+    application: string;
+    shared?: object;
+    extra?: object;
+    capabilities: CapabilityDescriptor[];
+}
+
 export interface DeploymentDescriptor {
-    applications: [{
-        application: string;
-        shared?: object;
-        extra?: object;
-        capabilities: [{
-            module: string;
-            props?: object;
-            extra?: object;
-        }];
-    }];
+    applications: ApplicationDescriptor[];
 }
 
 export interface Runtime {
