@@ -90,7 +90,7 @@ export function cases(props: object, lineComment: string = '//'): (line: string)
 
         // Perform any variable replacements
         const re = new RegExp('{{\s*\.([a-zA-Z0-9-.]+)\s*}}', 'g');
-        line = line.replace(re, (match, key) => _.get(props, key));
+        line = line.replace(re, (match, key) => _.get(props, key) || '');
 
         if (skipLine || (inIf && skipBlock)) {
             return null;

@@ -14,7 +14,7 @@ const testContents = `
     //{{else if .booleanOpt }}
     //    throw new Exception("Dummy option {{.booleanOpt}}");
     //{{else}}
-    //    throw new Exception("Not implemented {{.nested.opt}}");
+    //    throw new Exception("Not implemented {{.nested.opt}}-{{.doesntexist}}-{{.undeffed}}-{{.nullish}}");
     //{{end}}
     }
 `;
@@ -39,7 +39,7 @@ const resultBool = `
 
 const resultElse = `
     function connect(host) {
-        throw new Exception("Not implemented yet");
+        throw new Exception("Not implemented yet---");
     }
 `;
 
@@ -101,7 +101,7 @@ test('transform cases else', (t) => {
     const targetFile = fileSync();
     writeFileSync(targetFile.name, testContents, 'utf8');
 
-    const props = { 'nested': { 'opt': 'yet' } };
+    const props = { 'nested': { 'opt': 'yet' }, 'undeffed': undefined, 'nullish': null };
 
     transform(targetFile.name, targetFile.name, cases(props))
         .then((tfn: string) => {
