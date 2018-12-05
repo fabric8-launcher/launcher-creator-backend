@@ -72,6 +72,10 @@ abstract class BaseCatalogItem implements CatalogItem {
 
     public abstract async apply(resources: Resources, props?: object, extra?: object): Promise<Resources>;
 
+    protected name(...parts: string[]) {
+        return parts.filter(p => !!p).join('-');
+    }
+
     protected copy(from: string = 'files', to?: string): Promise<void> {
         const from2 = join(this.sourceDir, from);
         const to2 = !!to ? join(this.targetDir, to) : this.targetDir;
