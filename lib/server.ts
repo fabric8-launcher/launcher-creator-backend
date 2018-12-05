@@ -72,7 +72,7 @@ router.get('/enums/:id', (req, res) => {
 router.get('/download', (req, res, next) => {
     // Make sure we have all the required inputs
     if (!req.query.id) {
-        sendReply(res, HttpStatus.BAD_REQUEST, new Error('Missing download ID'));
+        sendReply(res, HttpStatus.BAD_REQUEST, 'Missing download ID');
         return;
     }
     const id = req.query.id;
@@ -82,7 +82,7 @@ router.get('/download', (req, res, next) => {
             return;
         }
         if (!data) {
-            sendReply(res, HttpStatus.NOT_FOUND, new Error('Not found'));
+            sendReply(res, HttpStatus.NOT_FOUND, 'Not found');
         } else {
             res.writeHead(HttpStatus.OK, {
                 'Content-Type': 'application/zip',
@@ -211,15 +211,15 @@ const server = app.listen(parseInt(process.argv[2] || '8080', 10), onListening);
 function validateGenerationRequest(req, res) {
     // Make sure we have all the required inputs
     if (!req.body.name) {
-        sendReply(res, HttpStatus.BAD_REQUEST, new Error('Missing application name'));
+        sendReply(res, HttpStatus.BAD_REQUEST, 'Missing application name');
         return false;
     }
     if (!req.body.shared || (!req.body.shared.runtime && !req.body.shared.framework)) {
-        sendReply(res, HttpStatus.BAD_REQUEST, new Error('Missing application runtime or framework'));
+        sendReply(res, HttpStatus.BAD_REQUEST, 'Missing application runtime or framework');
         return false;
     }
     if (!req.body.capabilities) {
-        sendReply(res, HttpStatus.BAD_REQUEST, new Error('Missing application capabilities'));
+        sendReply(res, HttpStatus.BAD_REQUEST, 'Missing application capabilities');
         return false;
     }
     return true;
