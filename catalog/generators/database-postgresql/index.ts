@@ -1,11 +1,9 @@
 
 import { newDatabaseUsingSecret } from 'core/resources';
-import { BaseGenerator } from 'core/catalog/types';
+import { BaseGenerator, BaseGeneratorProps } from 'core/catalog/types';
 import { DatabaseSecretRef } from 'generators/database-secret';
 
-export interface DatabasePostgresqlProps extends DatabaseSecretRef {
-    application: string;
-    serviceName: string;
+export interface DatabasePostgresqlProps extends BaseGeneratorProps, DatabaseSecretRef {
 }
 
 export default class DatabasePostgresql extends BaseGenerator {
