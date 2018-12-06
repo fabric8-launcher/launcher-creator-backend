@@ -2,6 +2,7 @@
 import { pathExistsSync, readJson, ensureFile, readFile, writeFile, createWriteStream } from 'fs-extra';
 import { join } from 'path';
 import * as yaml from 'js-yaml';
+import * as _ from 'lodash';
 
 import { validate } from 'core/info';
 import { getCapabilityModule, info, listEnums } from 'core/catalog';
@@ -47,40 +48,60 @@ async function writeDeployment(deploymentFile, deployment): Promise<any> {
     }
 }
 
-// Returns a name based on the given prefix that is
-// guaranteed to be unique in the given deployment
-function uniqueName(deployment, appName, prefix) {
-    let idx = 1;
-    let name;
-    do {
-        name = prefix + '-' + idx++;
-    } while (deployment.applications[appName].capabilities[name]);
-    return name;
+// Validates that the given capability can be added to the given deployment
+function validateAddCapability(deployment, props) {
+    const app = deployment.applications.find(item => item.application === props.application);
+    if (!!app) {
+        const tier = app.tiers.find(t => t.tier === props.tier);
+        if (!!tier) {
+            // TODO this is not entirely correct, but we should really get rid of 'framework'
+            const rtapp = _.get(tier, 'shared.runtime.name', _.get(tier, 'shared.framework.name'));
+            const rtcap = _.get(props, 'runtime.name', _.get(props, 'framework.name'));
+            if (!!rtapp && !!rtcap && rtapp !== rtcap) {
+                throw new Error(
+                    `Trying to add capability with incompatible 'runtime' or 'framework' (is '${rtcap}', should be '${rtapp}')`);
+            }
+        }
+        if (!app.tiers[0].tier && !!props.tier || !!app.tiers[0].tier && !props.tier) {
+            throw new Error(`Can't mix tiered and untiered capabilities`);
+        }
+    }
 }
 
 // Adds the given capability to the given deployment
 function addCapability(deployment, capability) {
     const cap = { ...capability };
     delete cap.application;
+    delete cap.tier;
     delete cap.shared;
     delete cap.sharedExtra;
     let app = deployment.applications.find(item => item.application === capability.application);
     if (!app) {
         app = {
             'application': capability.application,
-            'shared': capability.shared,
-            'extra': capability.sharedExtra,
-            'capabilities': []
+            'tiers': []
         };
         deployment.applications = [...deployment.applications, app];
     }
+    let tier = app.tiers.find(t => t.tier === capability.tier);
+    if (!tier) {
+        tier = {
+            'shared': {},
+            'extra': {},
+            'capabilities': []
+        };
+        if (!!capability.tier) {
+            tier.tier = capability.tier;
+        }
+        app.tiers = [ ...app.tiers, tier ];
+    }
     if (!!capability.shared) {
-        app.shared = { ...app.shared, ...capability.shared };
+        tier.shared = { ...tier.shared, ...capability.shared };
     }
     if (!!capability.sharedExtra) {
-        app.extra = { ...app.extra, ...capability.sharedExtra };
+        tier.extra = { ...tier.extra, ...capability.sharedExtra };
     }
-    app.capabilities = [ ...app.capabilities, cap ];
+    tier.capabilities = [ ...tier.capabilities, cap ];
 }
 
 // Returns a promise that will resolve when the given
@@ -108,30 +129,48 @@ export async function readOrCreateResources(resourcesFile): Promise<Resources> {
 // Returns a promise that will resolve when the given
 // resources were written to the given file
 export async function writeResources(resourcesFile, res): Promise<any> {
-    try {
-        await ensureFile(resourcesFile);
-        return await writeFile(resourcesFile, yaml.safeDump(res.json));
-    } catch (ex) {
-        console.error(`Failed to write resources file ${resourcesFile}: ${ex}`);
-        throw ex;
+    if (!_.isEmpty(res.json)) {
+        try {
+            await ensureFile(resourcesFile);
+            return await writeFile(resourcesFile, yaml.safeDump(res.json));
+        } catch (ex) {
+            console.error(`Failed to write resources file ${resourcesFile}: ${ex}`);
+            throw ex;
+        }
+    } else {
+        return false;
     }
 }
 
-async function applyCapability_(generator, res, targetDir, shared, props) {
+async function applyCapability_(generator, res: Resources, targetDir: string, shared, props) {
+    // Validate the properties that we get passed are valid
+    const capTargetDir = (!props.tier) ? targetDir : join(targetDir, props.tier);
     const capConst = getCapabilityModule(props.module);
     const propDefs = info(capConst).props;
     const allprops = { ...props, ...definedPropsOnly(propDefs, shared) };
     validate(propDefs, listEnums(), allprops);
-    const cap = new capConst(generator, targetDir);
+
+    // Read the deployment descriptor and validate if we can safely add this capability
+    const rf = resourcesFileName(capTargetDir);
     const df = deploymentFileName(targetDir);
-    const rf = resourcesFileName(targetDir);
+    const deployment = await readDeployment(df);
+    validateAddCapability(deployment, allprops);
+
+    // Apply the capability
+    const cap = new capConst(generator, capTargetDir);
     const extra = {};
     const res2 = await cap.apply(res, allprops, extra);
-    const deployment = await readDeployment(df);
+
+    // Add the capability's state to the deployment descriptor
     addCapability(deployment, capInfo(info(capConst).props, allprops, extra));
-    const res3 = await postApply(generator, res2, targetDir, deployment);
+
+    // Execute any post-apply generators
+    const res3 = await postApply(res2, targetDir, deployment);
+
+    // Write everything back to their respective files
     await writeResources(rf, res3);
     await writeDeployment(df, deployment);
+
     return deployment;
 }
 
@@ -139,24 +178,27 @@ function definedPropsOnly(propDefs: any, props: object): object {
     return filterObject(props, (key, value) => !!getPropDef(propDefs, key).id);
 }
 
-function postApply(generator, res, targetDir, deployment) {
-    const p = Promise.resolve(res);
+function postApply(res, targetDir, deployment) {
+    let p = Promise.resolve(res);
     const app = deployment.applications[0];
-    return app.capabilities.reduce((acc, cur) => {
-        let capConst = null;
-        try {
-            capConst = getCapabilityModule(cur.module);
-        } catch (ex) {
-            console.log(`Capability ${cur.module} wasn't found for post-apply, skipping.`);
+    for (const tier of app.tiers) {
+        for (const cap of tier.capabilities) {
+            let capConst = null;
+            try {
+                capConst = getCapabilityModule(cap.module);
+            } catch (ex) {
+                console.log(`Capability ${cap.module} wasn't found for post-apply, skipping.`);
+            }
+            if (capConst) {
+                const capTargetDir = (!tier.tier) ? targetDir : join(targetDir, tier.tier);
+                const generator = getGenerator(capTargetDir);
+                const capinst = new capConst(generator, capTargetDir);
+                const props = { ...tier.shared, ...cap.props, 'module': cap.module, 'application': app.application, 'tier': tier.tier };
+                p = p.then(() => capinst.postApply(res, props, deployment));
+            }
         }
-        if (capConst) {
-            const cap = new capConst(generator, targetDir);
-            const props = { ...app.shared, ...cur.props, 'module': cur.module, 'application': app.application };
-            return acc.then(() => cap.postApply(res, props, deployment));
-        } else {
-            return acc;
-        }
-    }, p);
+    }
+    return p;
 }
 
 function capInfo(propDefs, props, extra) {
@@ -167,9 +209,11 @@ function capInfo(propDefs, props, extra) {
     delete extra2.shared;
     delete props2.module;
     delete props2.application;
+    delete props2.tier;
     return {
         'module': props.module,
         'application': props.application,
+        'tier': props.tier,
         'props': props2,
         'shared': shared,
         'sharedExtra': sharedExtra,
@@ -184,13 +228,15 @@ function getPropDef(propDefs, propId) {
 // Calls `apply()` on the given capability (which allows it to copy, generate
 // and change files in the user's project) and adds information about the
 // capability to the `deployment.json` in the project's root.
-async function applyCapability(generator, res, targetDir, appName, shared, props) {
+async function applyCapability(generator, res: Resources, targetDir: string, appName: string, tier: string, shared, props) {
     props.application = appName;
+    if (!!tier) {
+        props.tier = tier;
+    }
     return await applyCapability_(generator, res, targetDir, shared, props);
 }
 
-// Calls `applyCapability()` on all the given capabilities
-export function apply(res, targetDir, appName, shared, capabilities) {
+function getGenerator(targetDir: string) {
     // The following function gets passed to all Capability `apply()` methods
     // which they then should use whenever they need to apply a Generator
     // to the target project. The same holds true for Generators when they
@@ -204,10 +250,16 @@ export function apply(res, targetDir, appName, shared, capabilities) {
         };
         return gen;
     };
+    return generator;
+}
 
+// Calls `applyCapability()` on all the given capabilities
+export function apply(res: Resources, targetDir: string, appName: string, tier: string, shared, capabilities) {
+    const genTargetDir = (!tier) ? targetDir : join(targetDir, tier);
+    const generator = getGenerator(genTargetDir);
     const p = Promise.resolve(true);
     return capabilities.reduce((acc, cur) => acc
-        .then(() => applyCapability(generator, res, targetDir, appName, shared, cur)), p);
+        .then(() => applyCapability(generator, res, targetDir, appName, tier, shared, cur)), p);
 }
 
 export function deploy(targetDir) {

@@ -1,13 +1,14 @@
 
 import * as _ from 'lodash';
+
 import { newApp, newRoute, setBuildEnv, setDeploymentEnv } from 'core/resources';
 import { cases } from 'core/template/transformers/cases';
 import { enumItem } from 'core/catalog';
-import { BaseGenerator, NodejsCoords } from 'core/catalog/types';
+import { BaseGenerator, BaseGeneratorProps, NodejsCoords } from 'core/catalog/types';
 
-export interface PlatformReactProps {
-    application: string;
-    serviceName: string;
+import PlatformBaseSupport from 'generators/platform-base-support';
+
+export interface PlatformReactProps extends BaseGeneratorProps {
     nodejs: NodejsCoords;
     env?: object;
 }
@@ -20,9 +21,11 @@ export default class PlatformReact extends BaseGenerator {
         _.set(extra, 'shared.frameworkImage', rtImage);
         _.set(extra, 'shared.frameworkInfo', enumItem('framework.name', 'react'));
         _.set(extra, 'shared.frameworkService', props.serviceName);
+        _.set(extra, 'shared.frameworkRoute', props.routeName);
 
         // Check if the service already exists, so we don't create it twice
         if (!resources.service(props.serviceName)) {
+            await this.generator(PlatformBaseSupport).apply(resources, props, extra);
             await this.copy();
             await this.transform(['package.json', 'gap'], cases(props));
             const res = await newApp(
@@ -32,7 +35,7 @@ export default class PlatformReact extends BaseGenerator {
                 null,
                 props.env || {});
             resources.add(res);
-            return await newRoute(resources, props.application + '-route', props.application, props.serviceName);
+            return await newRoute(resources, props.routeName, props.application, props.serviceName);
         } else {
             setBuildEnv(resources, props.env, props.serviceName);
             setDeploymentEnv(resources, props.env, props.serviceName);

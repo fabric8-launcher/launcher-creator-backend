@@ -11,9 +11,11 @@ export default class Rest extends BaseCapability {
     }
 
     public async postApply(resources, props, deployment) {
-        const rtServiceName = props.application + '-service';
         const waprops = {
-            'serviceName': rtServiceName,
+            'application': props.application,
+            'tier': props.tier,
+            'serviceName': 'welcome',
+            'routeName': 'welcome',
             deployment
         };
         return await this.generator(WelcomeApp).apply(resources, waprops);

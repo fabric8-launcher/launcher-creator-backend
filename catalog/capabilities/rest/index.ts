@@ -25,10 +25,14 @@ export default class Rest extends BaseCapability {
     public static readonly sourceDir: string = __dirname;
 
     public async apply(resources, props, extra) {
-        const rtServiceName = props.application + '-service';
+        const appName = this.name(props.application, props.tier);
+        const rtServiceName = appName;
+        const rtRouteName = appName;
         const rtprops = {
             'application': props.application,
+            'tier': props.tier,
             'serviceName': rtServiceName,
+            'routeName': rtRouteName,
             'runtime': props.runtime,
             'maven': props.maven,
             'nodejs': props.nodejs

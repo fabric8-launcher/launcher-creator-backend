@@ -45,12 +45,19 @@ if (args.length === 1 && args[0] === 'runtimes') {
     console.log(`Use 'yarn run -s apply <capability> --help' for more information.`);
     process.exit(1);
 } else {
-    const TARGET_DIR = args[0];
-    const APP_NAME = args[1];
-    const SHARED = { 'runtime': toRuntime(args[2]) };
+    let i = 0;
+
+    let TIER = null;
+    if (args[i] === '--tier') {
+        TIER = args[i + 1];
+        i += 2;
+    }
+
+    const TARGET_DIR = args[i++];
+    const APP_NAME = args[i++];
+    const SHARED = { 'runtime': toRuntime(args[i++]) };
 
     let CAPS = [];
-    let i = 3;
     while (i < args.length) {
         const CAP = args[i];
         const PROPS = args[i + 1] || '';
@@ -66,7 +73,7 @@ if (args.length === 1 && args[0] === 'runtimes') {
 
     readOrCreateResources(resourcesFileName(TARGET_DIR))
         .then((res) => {
-            apply(res, TARGET_DIR, APP_NAME, SHARED, CAPS)
+            apply(res, TARGET_DIR, APP_NAME, TIER, SHARED, CAPS)
                 .then(() => {
                     console.log(`Applied capability to "${TARGET_DIR}"`);
                     console.log('Go into that folder and type "./gap deploy" while logged into OpenShift to create the application');

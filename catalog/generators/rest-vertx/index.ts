@@ -17,7 +17,9 @@ export default class RestVertx extends BaseGenerator {
             // and then copy our own over that
             const pprops = {
                 'application': props.application,
+                'tier': props.tier,
                 'serviceName': props.serviceName,
+                'routeName': props.routeName,
                 'maven': props.maven,
             } as PlatformVertxProps;
             await this.generator(PlatformVertx).apply(resources, pprops, extra);
@@ -27,7 +29,9 @@ export default class RestVertx extends BaseGenerator {
                 blocks('return new RouterConsumer[]{', '}',
                     insertAtEnd('      new io.openshift.booster.http.HttpApplication(vertx)')));
         }
-        extra['sourceMapping'] = { 'greetingEndpoint': 'src/main/java/io/openshift/booster/http/HttpApplication.java' };
+        extra['sourceMapping'] = {
+            'greetingEndpoint': this.join(props.tier, 'src/main/java/io/openshift/booster/http/HttpApplication.java')
+        };
         return resources;
     }
 }

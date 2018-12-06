@@ -11,6 +11,11 @@ parameters:
   displayName: Welcome App Configuration
   required: true
 
+- name: FRONTEND_SERVICE_NAME
+  description: The frontend service name for the welcome app
+  displayName: Frontend service name
+  required: true
+
 - name: BACKEND_SERVICE_NAME
   description: The backend service name for the welcome app
   displayName: Backend service name
@@ -87,6 +92,8 @@ objects:
               value: '${SOURCE_REPOSITORY_PROVIDER}'
             - name: SOURCE_REPOSITORY_URL
               value: '${SOURCE_REPOSITORY_URL}'
+            - name: FRONTEND_SERVICE_NAME
+              value: '${FRONTEND_SERVICE_NAME}'
             - name: BACKEND_SERVICE_NAME
               value: '${BACKEND_SERVICE_NAME}'
           readinessProbe:

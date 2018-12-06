@@ -17,7 +17,9 @@ export default class DatabaseCrudThorntail extends BaseGenerator {
         if (!await this.filesCopied()) {
             const pprops = {
                 'application': props.application,
+                'tier': props.tier,
                 'serviceName': props.serviceName,
+                'routeName': props.routeName,
                 'maven': props.maven,
                 'env': {
                     'DB_HOST': {
@@ -48,7 +50,7 @@ export default class DatabaseCrudThorntail extends BaseGenerator {
             await this.mergePoms(`merge/pom.${props.databaseType}.xml`);
             await this.transform('src/**/*.java', cases(props));
         }
-        extra['sourceMapping'] = { 'dbEndpoint': 'src/main/java/io/openshift/booster/database/FruitResource.java' };
+        extra['sourceMapping'] = { 'dbEndpoint': this.join(props.tier, 'src/main/java/io/openshift/booster/database/FruitResource.java') };
         return resources;
     }
 }
