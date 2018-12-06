@@ -23,6 +23,7 @@ export default class DatabaseCrudNodejs extends BaseGenerator {
             const pprops = {
                 'application': props.application,
                 'serviceName': props.serviceName,
+                'routeName': props.routeName,
                 'runtime': props.runtime,
                 'nodejs': props.nodejs,
                 'env': {
@@ -50,7 +51,7 @@ export default class DatabaseCrudNodejs extends BaseGenerator {
             await this.transform('app.js',
                 insertAfter('//TODO: Add routes', await readFile(mergeFile, 'utf8')));
         }
-        extra['sourceMapping'] = { 'dbEndpoint': 'lib/routes/fruits.js' };
+        extra['sourceMapping'] = { 'dbEndpoint': this.join(props.tier, 'lib/routes/fruits.js') };
         return resources;
     }
 }

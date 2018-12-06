@@ -5,6 +5,7 @@ SERVICE_NAME={{.serviceName}}
 #OPENSHIFT_CONSOLE_URL=Set to your OpenShift cluster's Console URL
 
 SCRIPT_DIR=$(cd "$(dirname "$BASH_SOURCE")" ; pwd -P)
+OPENSHIFTIO_DIR=${SCRIPT_DIR}/.openshiftio
 
 case "$1" in
     "deploy")
@@ -16,9 +17,9 @@ case "$1" in
         if [[ ! -z "${OPENSHIFT_CONSOLE_URL}" ]]; then
             PARAMS="$PARAMS -p=OPENSHIFT_CONSOLE_URL=${OPENSHIFT_CONSOLE_URL}"
         fi
-        oc process -f ${SCRIPT_DIR}/.openshiftio/application.yaml --ignore-unknown-parameters ${PARAMS} | oc apply -f -
-        if [[ -f ${SCRIPT_DIR}/.openshiftio/service.welcome.yaml ]]; then
-             oc process -f ${SCRIPT_DIR}/.openshiftio/service.welcome.yaml --ignore-unknown-parameters ${PARAMS} | oc apply -f -
+        oc process -f ${OPENSHIFTIO_DIR}/application.yaml --ignore-unknown-parameters ${PARAMS} | oc apply -f -
+        if [[ -f ${OPENSHIFTIO_DIR}/service.welcome.yaml ]]; then
+             oc process -f ${OPENSHIFTIO_DIR}/service.welcome.yaml --ignore-unknown-parameters ${PARAMS} | oc apply -f -
         fi
         ;;
     "push")
@@ -47,6 +48,6 @@ case "$1" in
         echo "             to OpenShift. This can be overridden by using one of the following flags:"
         echo "      -s, --source - Pushes the local sources"
         echo "      -g, --git    - Reverts to using the sources from Git"
-        echo "   delete - Deletes the application from OpenShift"
+        echo "   delete  - Deletes the application from OpenShift"
     ;;
 esac

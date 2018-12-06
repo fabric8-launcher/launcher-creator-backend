@@ -1,10 +1,12 @@
 
 import * as _ from 'lodash';
+
 import { newApp, newRoute, setBuildEnv, setDeploymentEnv } from 'core/resources';
 import { cases } from 'core/template/transformers/cases';
 import { enumItem } from 'core/catalog';
 import { BaseGenerator, BaseGeneratorProps } from 'core/catalog/types';
 
+import PlatformBaseSupport from 'generators/platform-base-support';
 import MavenSetup, { MavenSetupProps } from 'generators/maven-setup';
 
 export interface PlatformSpringBootProps extends BaseGeneratorProps, MavenSetupProps {
@@ -19,9 +21,11 @@ export default class PlatformSpringBoot extends BaseGenerator {
         _.set(extra, 'shared.runtimeImage', rtImage);
         _.set(extra, 'shared.runtimeInfo', enumItem('runtime.name', 'springboot'));
         _.set(extra, 'shared.runtimeService', props.serviceName);
+        _.set(extra, 'shared.runtimeRoute', props.routeName);
 
         // Check if the service already exists, so we don't create it twice
         if (!resources.service(props.serviceName)) {
+            await this.generator(PlatformBaseSupport).apply(resources, props, extra);
             await this.copy();
             await this.transform('gap', cases(props));
             await this.generator(MavenSetup).apply(resources, props, extra);
@@ -32,7 +36,7 @@ export default class PlatformSpringBoot extends BaseGenerator {
                 null,
                 props.env || {});
             resources.add(res);
-            return await newRoute(resources, props.application + '-route', props.application, props.serviceName);
+            return await newRoute(resources, props.routeName, props.application, props.serviceName);
         } else {
             setBuildEnv(resources, props.env, props.serviceName);
             setDeploymentEnv(resources, props.env, props.serviceName);

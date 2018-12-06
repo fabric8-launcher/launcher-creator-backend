@@ -20,7 +20,9 @@ export default class RestNodejs extends BaseGenerator {
             // and then copy our own over that
             const pprops = {
                 'application': props.application,
+                'tier': props.tier,
                 'serviceName': props.serviceName,
+                'routeName': props.routeName,
                 'nodejs': props.nodejs,
             };
 
@@ -31,7 +33,7 @@ export default class RestNodejs extends BaseGenerator {
 
             await this.copy();
         }
-        extra['sourceMapping'] = { 'greetingEndpoint': 'greeting.js' };
+        extra['sourceMapping'] = { 'greetingEndpoint': this.join(props.tier, 'greeting.js') };
         return resources;
     }
 }

@@ -15,14 +15,18 @@ export default class RestSpring extends BaseGenerator {
             // and then copy our own over that
             const pprops = {
                 'application': props.application,
+                'tier': props.tier,
                 'serviceName': props.serviceName,
+                'routeName': props.routeName,
                 'maven': props.maven,
             } as PlatformSpringBootProps;
             await this.generator(PlatformSpringBoot).apply(resources, pprops, extra);
             await this.copy();
             await this.mergePoms();
         }
-        extra['sourceMapping'] = { 'greetingEndpoint': 'src/main/java/io/openshift/booster/service/GreetingController.java' };
+        extra['sourceMapping'] = {
+            'greetingEndpoint': this.join(props.tier, 'src/main/java/io/openshift/booster/service/GreetingController.java')
+        };
         return resources;
     }
 }

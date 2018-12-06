@@ -39,23 +39,28 @@ export default class Database extends BaseCapability {
     public static readonly sourceDir: string = __dirname;
 
     public async apply(resources, props, extra) {
-        const dbServiceName = props.application + '-database';
+        const appName = this.name(props.application, props.tier);
+        const dbServiceName = this.name(appName, 'database');
         const dbprops = {
             'application': props.application,
+            'tier': props.tier,
             'serviceName': dbServiceName,
-            'databaseUri': props.application + '-database',
+            'databaseUri': this.name(props.application, props.tier, 'database'),
             'databaseName': 'my_data',
-            'secretName': props.application + '-database-bind',
+            'secretName': this.name(props.application, props.tier, 'database-bind'),
         };
-        const rtServiceName = props.application + '-service';
+        const rtServiceName = appName;
+        const rtRouteName = appName;
         const rtprops = {
             'application': props.application,
+            'tier': props.tier,
             'serviceName': rtServiceName,
+            'routeName': rtRouteName,
             'runtime': props.runtime,
             'maven': props.maven,
             'nodejs': props.nodejs,
             'databaseType': props.databaseType,
-            'secretName': props.application + '-database-bind',
+            'secretName': this.name(props.application, props.tier, 'database-bind'),
         };
         await this.generator(DatabaseSecret).apply(resources, dbprops, extra);
         await this.generator(databaseByType(props.databaseType)).apply(resources, dbprops, extra);
