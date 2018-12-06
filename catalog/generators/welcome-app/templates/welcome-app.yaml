@@ -27,10 +27,10 @@ objects:
 - apiVersion: v1
   kind: ImageStream
   metadata:
-    name: launcher-welcome-app
+    name: welcome
     labels:
       app: ${APP_NAME}
-      apptype: welcome
+      creatorCategory: support
   spec:
     lookupPolicy:
       local: false
@@ -42,26 +42,26 @@ objects:
 - apiVersion: v1
   kind: DeploymentConfig
   metadata:
-    name: launcher-welcome-app
+    name: welcome
     labels:
       app: ${APP_NAME}
-      apptype: welcome
+      creatorCategory: support
   spec:
     replicas: 1
     selector:
       app: ${APP_NAME}
-      deploymentconfig: launcher-welcome-app
+      deploymentconfig: welcome
     strategy:
       resources: {}
     template:
       metadata:
         labels:
           app: ${APP_NAME}
-          deploymentconfig: launcher-welcome-app
+          deploymentconfig: welcome
       spec:
         containers:
         - image: fabric8/launcher-creator-welcome-app
-          name: launcher-welcome-app
+          name: welcome
           ports:
           - containerPort: 8080
             protocol: TCP
@@ -83,10 +83,10 @@ objects:
     - imageChangeParams:
         automatic: true
         containerNames:
-        - launcher-welcome-app
+        - welcome
         from:
           kind: ImageStreamTag
-          name: launcher-welcome-app:latest
+          name: welcome:latest
       type: ImageChange
   status:
     latestVersion: 0
@@ -98,10 +98,10 @@ objects:
 - kind: Service
   apiVersion: v1
   metadata:
-    name: launcher-welcome-app
+    name: welcome
     labels:
       app: ${APP_NAME}
-      apptype: welcome
+      creatorCategory: support
   spec:
     ports:
     - name: 8080-tcp
@@ -110,14 +110,14 @@ objects:
       targetPort: 8080
     selector:
       app: ${APP_NAME}
-      deploymentconfig: launcher-welcome-app
+      deploymentconfig: welcome
 - apiVersion: v1
   kind: Route
   metadata:
-    name: launcher-welcome-app
+    name: welcome
     labels:
       app: ${APP_NAME}
-      apptype: welcome
+      creatorCategory: support
     annotations:
       console.alpha.openshift.io/overview-app-route: 'true'
   spec:
@@ -125,4 +125,4 @@ objects:
       targetPort: 8080-tcp
     to:
       kind: Service
-      name: launcher-welcome-app
+      name: welcome
