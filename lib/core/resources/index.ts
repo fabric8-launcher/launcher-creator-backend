@@ -380,6 +380,18 @@ export function setDeploymentEnv(res: Resources, env, dcName?: any): Resources {
     return res;
 }
 
+// Updates the contextDir in the source strategy of the BuildConfig selected
+// by 'bcName' with the given path.
+export function setBuildContextDir(res: Resources, contextDir: string, bcName?: any): Resources {
+    if (!!contextDir && res.buildConfigs.length > 0) {
+        const bc = (bcName) ? res.buildConfig(bcName) : res.buildConfigs[0];
+        if (bc) {
+            _.set(bc, 'spec.source.contextDir', contextDir);
+        }
+    }
+    return res;
+}
+
 // Sets the "app" label on all resources to the given value
 function setAppLabel(res: Resources, label: string|object): Resources {
     res.items.forEach(r => {
