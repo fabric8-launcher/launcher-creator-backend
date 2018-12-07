@@ -23,7 +23,7 @@ $ yarn install
 To get a list of the capabilities you can apply to your project run:
 
 ```
-$ yarn -s apply --list
+$ yarn -s apply capabilities
 ```
 
 To apply a specific capability you need its name and which properties to pass. Use the `--help` option to find out what
@@ -36,7 +36,25 @@ $ yarn -s apply database --help
 To actually apply the Capability to the project pass all the required arguments and properties, for example:
 
 ```
-$ yarn -s apply path/to/project "my-app" vertx database '{ "databaseType": "mysql" }'
+$ yarn -s apply path/to/project "my-app" welcome
+```
+
+But for most capabilities need to specify a "runtime". You can get the list of runtimes by running:
+
+```
+$ yarn -s apply runtimes
+```
+
+Then you pick the one you want and you pass it on the command line, eg:
+
+```
+$ yarn -s apply path/to/project --runtime vertx "my-app" rest
+```
+
+Some capabilities can also take extra properties that change their default behaviour, eg:
+
+```
+$ yarn -s apply path/to/project --runtime vertx "my-app" database '{ "databaseType": "mysql" }'
 ```
 
 After the application has been generated it can be deployed in the currently active project on OpenShift by going into the

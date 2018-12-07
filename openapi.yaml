@@ -76,7 +76,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Capability'
+                $ref: '#/components/schemas/Capabilities'
         '404':
           description: Not Found
   /zip:
@@ -92,31 +92,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                name:
-                  description: The application name to use for the project
-                  type: string
-                shared:
-                  description: The shared properties that get applied to each selected Capability
-                  type: object
-                  properties:
-                    runtime:
-                      description: The runtime to use for the project
-                      type: string
-                capabilities:
-                  description: The capabilities to add to the project
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      module:
-                        description: The id of the selected Capability
-                        type: string
-              required:
-              - name
-              - runtime
-              - capabilities
+              $ref: '#/components/schemas/ZipRequest'
       responses:
         '200':
           description: OK
@@ -166,47 +142,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                name:
-                  description: The application name to use for the project
-                  type: string
-                shared:
-                  description: The shared properties that get applied to each selected Capability
-                  type: object
-                  properties:
-                    runtime:
-                      description: The runtime to use for the project
-                      type: string
-                capabilities:
-                  description: The capabilities to add to the project
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      module:
-                        description: The id of the selected Capability
-                        type: string
-                clusterId:
-                  description: The OpenShift cluster to use
-                  type: string
-                projectName:
-                  description: The OpenShift project name to be used
-                  type: string
-                gitOrganization:
-                  description: The Git Organization to push the code
-                  type: string
-                gitRepository:
-                  description: The Git Repository to push the code
-                  type: string
-              required:
-              - name
-              - runtime
-              - capabilities
-              - clusterId
-              - projectName
-              - gitOrganization
-              - gitRepository
+              $ref: '#/components/schemas/LaunchRequest'
       responses:
         '200':
           description: OK
@@ -234,7 +170,7 @@ components:
       items:
         $ref: '#/components/schemas/Enumeration'
 
-    Capability:
+    Capabilities:
       type: array
       items:
         type: object
@@ -260,6 +196,89 @@ components:
                   type: string
                 required:
                   type: boolean
+
+    ZipRequest:
+      type: object
+      properties:
+        project:
+          $ref: '#/components/schemas/Application'
+      required:
+      - project
+
+    LaunchRequest:
+      type: object
+      properties:
+        project:
+          $ref: '#/components/schemas/Application'
+        clusterId:
+          description: The OpenShift cluster to use
+          type: string
+        projectName:
+          description: The OpenShift project name to be used
+          type: string
+        gitOrganization:
+          description: The Git Organization to push the code
+          type: string
+        gitRepository:
+          description: The Git Repository to push the code
+          type: string
+      required:
+      - project
+      - clusterId
+      - projectName
+      - gitOrganization
+      - gitRepository
+
+    Application:
+      type: object
+      properties:
+        application:
+          description: The application name to use for the project
+          type: string
+        tiers:
+          description: The application tiers to use for the project
+          type: array
+          items:
+              type: object
+              properties:
+                tier:
+                  description: The name of the application tier
+                  type: string
+                shared:
+                  description: The shared properties that get applied to each selected Capability
+                  type: object
+                  properties:
+                    runtime:
+                      description: The runtime to use for the project
+                      type: object
+                      properties:
+                        name:
+                          description: The name of the runtime
+                          type: string
+                        version:
+                          description: The version of the runtime
+                          type: string
+                      required:
+                      - name
+                capabilities:
+                  description: The capabilities to add to the project
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      module:
+                        description: The id of the selected Capability
+                        type: string
+                      props:
+                        description: The properties for the selected Capability
+                        type: object
+                    required:
+                    - module
+              required:
+              - capabilities
+      required:
+      - application
+      - tiers
 
   securitySchemes:
     bearerAuth:            # arbitrary name for the security scheme

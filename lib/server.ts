@@ -13,6 +13,7 @@ import * as deploy from 'core/deploy';
 import {resources} from 'core/resources';
 import {zipFolder} from 'core/utils';
 import * as Sentry from 'raven';
+import { ApplicationDescriptor, DeploymentDescriptor } from 'core/catalog/types';
 
 tmp.setGracefulCleanup();
 const app = express();
@@ -98,6 +99,10 @@ zipCache.on('del', (key, value) => {
     console.info(`Cleaning zip cache key: ${key}`);
 });
 
+interface ZipRequest {
+    project: ApplicationDescriptor;  // All applications that are part of the deployment
+}
+
 router.post('/zip', (req, res, next) => {
     // Make sure we have all the required inputs
     if (!validateGenerationRequest(req, res)) {
@@ -111,10 +116,14 @@ router.post('/zip', (req, res, next) => {
         const projectZip = `${tempDir}/project.zip`;
         const out = fs.createWriteStream(projectZip);
         try {
-            await deploy.apply(resources({}), projectDir, req.body.name, req.body.tier, req.body.shared, req.body.capabilities);
-            await zipFolder(out, projectDir, req.body.name);
+            const zreq = req.body as ZipRequest;
+            const deployment: DeploymentDescriptor = {
+                'applications': [ zreq.project ]
+            };
+            await deploy.applyDeployment(resources({}), projectDir, deployment);
+            await zipFolder(out, projectDir, zreq.project.application);
             const id = shortid.generate();
-            zipCache.set(id, { 'file': projectZip, 'name': `${req.body.name}.zip`, cleanTempDir }, 600);
+            zipCache.set(id, { 'file': projectZip, 'name': `${zreq.project.application}.zip`, cleanTempDir }, 600);
             res.status(HttpStatus.OK).send({ id });
         } catch (ex) {
             // TODO: Call catch(next)
@@ -122,6 +131,14 @@ router.post('/zip', (req, res, next) => {
         }
     });
 });
+
+interface LaunchRequest {
+    project: ApplicationDescriptor;  // All applications that are part of the deployment
+    projectName: string;
+    gitRepository: string;
+    gitOrganization?: string;
+    clusterId?: string;
+}
 
 router.post('/launch', (req, res, next) => {
     // Make sure we're autenticated
@@ -141,25 +158,29 @@ router.post('/launch', (req, res, next) => {
         const projectZip = `${tempDir}/project.zip`;
         const out = fs.createWriteStream(projectZip);
         try {
-            await deploy.apply(resources({}), projectDir, req.body.name, req.body.tier, req.body.shared, req.body.capabilities);
-            zipFolder(out, projectDir, req.body.name);
+            const lreq = req.body as LaunchRequest;
+            const deployment: DeploymentDescriptor = {
+                'applications': [ lreq.project ]
+            };
+            await deploy.applyDeployment(resources({}), projectDir, deployment);
+            zipFolder(out, projectDir, lreq.project.application);
             out.on('finish', () => {
                 // Prepare to post
                 const ins = fs.createReadStream(projectZip);
                 const formData = {
-                    'projectName': req.body.projectName,
-                    'gitRepository': req.body.gitRepository,
+                    'projectName': lreq.projectName,
+                    'gitRepository': lreq.gitRepository,
                     'file': ins
                 };
-                if (req.body.gitOrganization) {
-                    formData['gitOrganization'] = req.body.gitOrganization;
+                if (lreq.gitOrganization) {
+                    formData['gitOrganization'] = lreq.gitOrganization;
                 }
                 const auth = {
                     'bearer': req.get('Authorization').slice(7)
                 };
                 const headers = {};
-                if (req.body.clusterId) {
-                    headers['X-OpenShift-Cluster'] = req.body.clusterId;
+                if (lreq.clusterId) {
+                    headers['X-OpenShift-Cluster'] = lreq.clusterId;
                 }
                 const backendUrl = process.env.LAUNCHER_BACKEND_URL || 'http://localhost:8080/api';
                 const options = {
@@ -169,7 +190,7 @@ router.post('/launch', (req, res, next) => {
                     headers
                 };
                 request.post(options, (err2, res2, body) => {
-                    console.info(`Pushed project "${req.body.name}" to ${backendUrl} - ${res2.statusCode}`);
+                    console.info(`Pushed project "${lreq.project.application}" to ${backendUrl} - ${res2.statusCode}`);
                     let json = null;
                     try {
                         json = JSON.parse(body);
@@ -210,17 +231,23 @@ const server = app.listen(parseInt(process.argv[2] || '8080', 10), onListening);
 
 function validateGenerationRequest(req, res) {
     // Make sure we have all the required inputs
-    if (!req.body.name) {
+    if (!req.body.project) {
+        sendReply(res, HttpStatus.BAD_REQUEST, 'Malformed request, missing project');
+        return false;
+    }
+    const appDesc = req.body.project as ApplicationDescriptor;
+    if (!appDesc.application) {
         sendReply(res, HttpStatus.BAD_REQUEST, 'Missing application name');
         return false;
     }
-    if (!req.body.shared || (!req.body.shared.runtime && !req.body.shared.framework)) {
-        sendReply(res, HttpStatus.BAD_REQUEST, 'Missing application runtime or framework');
-        return false;
+    if (!appDesc.tiers || !Array.isArray(appDesc.tiers) || appDesc.tiers.length === 0) {
+        sendReply(res, HttpStatus.BAD_REQUEST, 'Missing application tiers');
     }
-    if (!req.body.capabilities) {
-        sendReply(res, HttpStatus.BAD_REQUEST, 'Missing application capabilities');
-        return false;
+    for (const tier of appDesc.tiers) {
+        if (!tier.capabilities || !Array.isArray(tier.capabilities) || tier.capabilities.length === 0) {
+            sendReply(res, HttpStatus.BAD_REQUEST, 'Missing application tier capabilities');
+            return false;
+        }
     }
     return true;
 }
