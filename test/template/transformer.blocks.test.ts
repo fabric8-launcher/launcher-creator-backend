@@ -121,7 +121,8 @@ test('transform blocks id empty', (t) => {
             const result = readFileSync(tfn, 'utf8');
             const expected = testContentsEmpty;
             t.is(result, expected);
-        });
+        })
+        .finally(() => targetFile.removeCallback());
 });
 
 test('transform blocks id entries', (t) => {
@@ -136,7 +137,8 @@ test('transform blocks id entries', (t) => {
             const result = readFileSync(tfn, 'utf8');
             const expected = testContentsWithEntries;
             t.is(result, expected);
-        });
+        })
+        .finally(() => targetFile.removeCallback());
 });
 
 test('transform blocks insertAtEnd empty single', (t) => {
@@ -151,7 +153,8 @@ test('transform blocks insertAtEnd empty single', (t) => {
             const result = readFileSync(tfn, 'utf8');
             const expected = resultInsertAtEndEmptySingle;
             t.is(result, expected);
-        });
+        })
+        .finally(() => targetFile.removeCallback());
 });
 
 test('transform blocks insertAtEnd empty single 2', (t) => {
@@ -166,7 +169,8 @@ test('transform blocks insertAtEnd empty single 2', (t) => {
             const result = readFileSync(tfn, 'utf8');
             const expected = resultInsertAtEndEmptySingle;
             t.is(result, expected);
-        });
+        })
+        .finally(() => targetFile.removeCallback());
 });
 
 test('transform blocks insertAtEnd empty multi', (t) => {
@@ -181,7 +185,8 @@ test('transform blocks insertAtEnd empty multi', (t) => {
             const result = readFileSync(tfn, 'utf8');
             const expected = resultInsertAtEndEmptyMulti;
             t.is(result, expected);
-        });
+        })
+        .finally(() => targetFile.removeCallback());
 });
 
 test('transform blocks insertAtEnd empty multi 2', (t) => {
@@ -196,7 +201,8 @@ test('transform blocks insertAtEnd empty multi 2', (t) => {
             const result = readFileSync(tfn, 'utf8');
             const expected = resultInsertAtEndEmptyMulti;
             t.is(result, expected);
-        });
+        })
+        .finally(() => targetFile.removeCallback());
 });
 
 test('transform blocks insertAtEnd entries single', (t) => {
@@ -211,7 +217,8 @@ test('transform blocks insertAtEnd entries single', (t) => {
             const result = readFileSync(tfn, 'utf8');
             const expected = resultInsertAtEndWithEntriesSingle;
             t.is(result, expected);
-        });
+        })
+        .finally(() => targetFile.removeCallback());
 });
 
 test('transform blocks insertAtEnd entries single 2', (t) => {
@@ -226,7 +233,8 @@ test('transform blocks insertAtEnd entries single 2', (t) => {
             const result = readFileSync(tfn, 'utf8');
             const expected = resultInsertAtEndWithEntriesSingle;
             t.is(result, expected);
-        });
+        })
+        .finally(() => targetFile.removeCallback());
 });
 
 test('transform blocks insertAtEnd entries multi', (t) => {
@@ -241,7 +249,8 @@ test('transform blocks insertAtEnd entries multi', (t) => {
             const result = readFileSync(tfn, 'utf8');
             const expected = resultInsertAtEndWithEntriesMulti;
             t.is(result, expected);
-        });
+        })
+        .finally(() => targetFile.removeCallback());
 });
 
 test('transform blocks insertAtEnd entries multi 2', (t) => {
@@ -256,7 +265,8 @@ test('transform blocks insertAtEnd entries multi 2', (t) => {
             const result = readFileSync(tfn, 'utf8');
             const expected = resultInsertAtEndWithEntriesMulti;
             t.is(result, expected);
-        });
+        })
+        .finally(() => targetFile.removeCallback());
 });
 
 test('transform blocks insertAtStart empty single', (t) => {
@@ -271,7 +281,8 @@ test('transform blocks insertAtStart empty single', (t) => {
             const result = readFileSync(tfn, 'utf8');
             const expected = resultInsertAtStartEmptySingle;
             t.is(result, expected);
-        });
+        })
+        .finally(() => targetFile.removeCallback());
 });
 
 test('transform blocks insertAtStart empty single 2', (t) => {
@@ -286,7 +297,8 @@ test('transform blocks insertAtStart empty single 2', (t) => {
             const result = readFileSync(tfn, 'utf8');
             const expected = resultInsertAtStartEmptySingle;
             t.is(result, expected);
-        });
+        })
+        .finally(() => targetFile.removeCallback());
 });
 
 test('transform blocks insertAtStart empty multi', (t) => {
@@ -301,7 +313,8 @@ test('transform blocks insertAtStart empty multi', (t) => {
             const result = readFileSync(tfn, 'utf8');
             const expected = resultInsertAtStartEmptyMulti;
             t.is(result, expected);
-        });
+        })
+        .finally(() => targetFile.removeCallback());
 });
 
 test('transform blocks insertAtStart empty multi 2', (t) => {
@@ -316,7 +329,8 @@ test('transform blocks insertAtStart empty multi 2', (t) => {
             const result = readFileSync(tfn, 'utf8');
             const expected = resultInsertAtStartEmptyMulti;
             t.is(result, expected);
-        });
+        })
+        .finally(() => targetFile.removeCallback());
 });
 
 test('transform blocks insertAtStart entries single', (t) => {
@@ -331,7 +345,8 @@ test('transform blocks insertAtStart entries single', (t) => {
             const result = readFileSync(tfn, 'utf8');
             const expected = resultInsertAtStartWithEntriesSingle;
             t.is(result, expected);
-        });
+        })
+        .finally(() => targetFile.removeCallback());
 });
 
 test('transform blocks insertAtStart entries single 2', (t) => {
@@ -346,7 +361,8 @@ test('transform blocks insertAtStart entries single 2', (t) => {
             const result = readFileSync(tfn, 'utf8');
             const expected = resultInsertAtStartWithEntriesSingle;
             t.is(result, expected);
-        });
+        })
+        .finally(() => targetFile.removeCallback());
 });
 
 test('transform blocks insertAtStart entries multi', (t) => {
@@ -361,7 +377,8 @@ test('transform blocks insertAtStart entries multi', (t) => {
             const result = readFileSync(tfn, 'utf8');
             const expected = resultInsertAtStartWithEntriesMulti;
             t.is(result, expected);
-        });
+        })
+        .finally(() => targetFile.removeCallback());
 });
 
 test('transform blocks insertAtStart entries multi 2', (t) => {
@@ -376,5 +393,6 @@ test('transform blocks insertAtStart entries multi 2', (t) => {
             const result = readFileSync(tfn, 'utf8');
             const expected = resultInsertAtStartWithEntriesMulti;
             t.is(result, expected);
-        });
+        })
+        .finally(() => targetFile.removeCallback());
 });

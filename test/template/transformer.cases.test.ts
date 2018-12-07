@@ -57,7 +57,8 @@ test('transform cases compare 1', (t) => {
             const result = readFileSync(tfn, 'utf8');
             const expected = resultPostgresql;
             t.is(result, expected);
-        });
+        })
+        .finally(() => targetFile.removeCallback());
 });
 
 test('transform cases compare 2', (t) => {
@@ -74,7 +75,8 @@ test('transform cases compare 2', (t) => {
             const result = readFileSync(tfn, 'utf8');
             const expected = resultMysql;
             t.is(result, expected);
-        });
+        })
+        .finally(() => targetFile.removeCallback());
 });
 
 test('transform cases exist', (t) => {
@@ -91,7 +93,8 @@ test('transform cases exist', (t) => {
             const result = readFileSync(tfn, 'utf8');
             const expected = resultBool;
             t.is(result, expected);
-        });
+        })
+        .finally(() => targetFile.removeCallback());
 });
 
 test('transform cases else', (t) => {
@@ -108,7 +111,8 @@ test('transform cases else', (t) => {
             const result = readFileSync(tfn, 'utf8');
             const expected = resultElse;
             t.is(result, expected);
-        });
+        })
+        .finally(() => targetFile.removeCallback());
 });
 
 test('transform line with double slashes', (t) => {
@@ -133,5 +137,6 @@ test('transform line with double slashes', (t) => {
                 return ConnectionManager.connect("jdbc:postgresql://" + host);
             }`;
             t.is(result, expected);
-        });
+        })
+        .finally(() => targetFile.removeCallback());
 });

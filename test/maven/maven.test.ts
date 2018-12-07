@@ -38,7 +38,8 @@ test('merge poms', (t) => {
             const result = readFileSync(targetFile.name, 'utf8');
             const expected = '<?xml version="1.0" encoding="UTF-8"?>\n<project>\n  <dependencies>\n    <dependency>\n      <groupId>a</groupId>\n      <artifactId>b</artifactId>\n      <version>1.0</version>\n    </dependency>\n    <dependency>\n      <groupId>c</groupId>\n      <artifactId>d</artifactId>\n      <version>2.0</version>\n    </dependency>\n  </dependencies>\n</project>\n\n';
             t.is(result, expected);
-        });
+        })
+        .finally(() => targetFile.removeCallback());
 });
 
 test('update GAV', (t) => {
@@ -54,7 +55,8 @@ test('update GAV', (t) => {
             const result = readFileSync(targetFile.name, 'utf8');
             const expected = '<?xml version="1.0" encoding="UTF-8"?>\n<project>\n  <groupId>foo</groupId>\n  <artifactId>bar</artifactId>\n  <version>1.0</version>\n</project>\n\n';
             t.is(result, expected);
-        });
+        })
+        .finally(() => targetFile.removeCallback());
 });
 
 test('update parent GAV', (t) => {
@@ -70,7 +72,8 @@ test('update parent GAV', (t) => {
             const result = readFileSync(targetFile.name, 'utf8');
             const expected = '<?xml version="1.0" encoding="UTF-8"?>\n<project>\n  <groupId>empty</groupId>\n  <parent>\n    <artifactId>bar</artifactId>\n    <groupId>foo</groupId>\n  </parent>\n  <artifactId>empty</artifactId>\n</project>\n\n';
             t.is(result, expected);
-        });
+        })
+        .finally(() => targetFile.removeCallback());
 });
 
 test('update metadata', (t) => {
@@ -86,5 +89,6 @@ test('update metadata', (t) => {
             const result = readFileSync(targetFile.name, 'utf8');
             const expected = '<?xml version="1.0" encoding="UTF-8"?>\n<project>\n  <groupId>empty</groupId>\n  <artifactId>empty</artifactId>\n  <version>1.0</version>\n  <name>my-name</name>\n  <description>my-description</description>\n</project>\n\n';
             t.is(result, expected);
-        });
+        })
+        .finally(() => targetFile.removeCallback());
 });

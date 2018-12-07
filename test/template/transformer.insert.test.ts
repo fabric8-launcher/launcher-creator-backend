@@ -72,7 +72,8 @@ test('transform insertAfter string line', (t) => {
             const result = readFileSync(tfn, 'utf8');
             const expected = resultAfterStringLine;
             t.is(result, expected);
-        });
+        })
+        .finally(() => targetFile.removeCallback());
 });
 
 test('transform insertAfter string lines', (t) => {
@@ -87,7 +88,8 @@ test('transform insertAfter string lines', (t) => {
             const result = readFileSync(tfn, 'utf8');
             const expected = resultAfterStringLines;
             t.is(result, expected);
-        });
+        })
+        .finally(() => targetFile.removeCallback());
 });
 
 test('transform insertAfter string line at end', (t) => {
@@ -102,7 +104,8 @@ test('transform insertAfter string line at end', (t) => {
             const result = readFileSync(tfn, 'utf8');
             const expected = resultAfterStringLineAtEnd;
             t.is(result, expected);
-        });
+        })
+        .finally(() => targetFile.removeCallback());
 });
 
 test('transform insertAfter regexp line', (t) => {
@@ -117,7 +120,8 @@ test('transform insertAfter regexp line', (t) => {
             const result = readFileSync(tfn, 'utf8');
             const expected = resultAfterRegExpLine;
             t.is(result, expected);
-        });
+        })
+        .finally(() => targetFile.removeCallback());
 });
 
 test('transform insertBefore string line', (t) => {
@@ -132,7 +136,8 @@ test('transform insertBefore string line', (t) => {
             const result = readFileSync(tfn, 'utf8');
             const expected = resultBeforeStringLine;
             t.is(result, expected);
-        });
+        })
+        .finally(() => targetFile.removeCallback());
 });
 
 test('transform insertBefore string lines', (t) => {
@@ -147,7 +152,8 @@ test('transform insertBefore string lines', (t) => {
             const result = readFileSync(tfn, 'utf8');
             const expected = resultBeforeStringLines;
             t.is(result, expected);
-        });
+        })
+        .finally(() => targetFile.removeCallback());
 });
 
 test('transform insertBefore string line at start', (t) => {
@@ -162,7 +168,8 @@ test('transform insertBefore string line at start', (t) => {
             const result = readFileSync(tfn, 'utf8');
             const expected = resultBeforeStringLineAtStart;
             t.is(result, expected);
-        });
+        })
+        .finally(() => targetFile.removeCallback());
 });
 
 test('transform insertBefore regexp line', (t) => {
@@ -177,5 +184,6 @@ test('transform insertBefore regexp line', (t) => {
             const result = readFileSync(tfn, 'utf8');
             const expected = resultBeforeRegExpLine;
             t.is(result, expected);
-        });
+        })
+        .finally(() => targetFile.removeCallback());
 });

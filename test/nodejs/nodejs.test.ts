@@ -21,6 +21,7 @@ test('update parent dependencies', (t) => {
       const result = readFileSync(targetFile.name, 'utf8');
       const expected = '{\n  "name": "test",\n  "dependencies": {\n    "test": "1.0.0",\n    "super": "2.0.2"\n  }\n}';
       t.is(result, expected);
-    });
+    })
+    .finally(() => targetFile.removeCallback());
 
 });

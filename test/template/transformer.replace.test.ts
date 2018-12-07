@@ -58,7 +58,8 @@ test('transform replace string line', (t) => {
             const result = readFileSync(tfn, 'utf8');
             const expected = resultReplaceStringLine;
             t.is(result, expected);
-        });
+        })
+        .finally(() => targetFile.removeCallback());
 });
 
 test('transform replace string lines', (t) => {
@@ -73,7 +74,8 @@ test('transform replace string lines', (t) => {
             const result = readFileSync(tfn, 'utf8');
             const expected = resultReplaceStringLines;
             t.is(result, expected);
-        });
+        })
+        .finally(() => targetFile.removeCallback());
 });
 
 test('transform replace string line at start', (t) => {
@@ -88,7 +90,8 @@ test('transform replace string line at start', (t) => {
             const result = readFileSync(tfn, 'utf8');
             const expected = resultReplaceStringLineAtStart;
             t.is(result, expected);
-        });
+        })
+        .finally(() => targetFile.removeCallback());
 });
 
 test('transform replace string line at end', (t) => {
@@ -103,7 +106,8 @@ test('transform replace string line at end', (t) => {
             const result = readFileSync(tfn, 'utf8');
             const expected = resultReplaceStringLineAtEnd;
             t.is(result, expected);
-        });
+        })
+        .finally(() => targetFile.removeCallback());
 });
 
 test('transform replace regexp line', (t) => {
@@ -118,7 +122,8 @@ test('transform replace regexp line', (t) => {
             const result = readFileSync(tfn, 'utf8');
             const expected = resultReplaceRegExpLine;
             t.is(result, expected);
-        });
+        })
+        .finally(() => targetFile.removeCallback());
 });
 
 test('transform replace regexp lines', (t) => {
@@ -133,7 +138,8 @@ test('transform replace regexp lines', (t) => {
             const result = readFileSync(tfn, 'utf8');
             const expected = resultReplaceRegExpLines;
             t.is(result, expected);
-        });
+        })
+        .finally(() => targetFile.removeCallback());
 });
 
 test('transform replace regexp empty', (t) => {
@@ -148,5 +154,6 @@ test('transform replace regexp empty', (t) => {
             const result = readFileSync(tfn, 'utf8');
             const expected = resultReplaceRexExpEmpty;
             t.is(result, expected);
-        });
+        })
+        .finally(() => targetFile.removeCallback());
 });

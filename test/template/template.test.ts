@@ -34,7 +34,8 @@ test('transform identity', (t) => {
             const result = readFileSync(tfn, 'utf8');
             const expected = testContents;
             t.is(result, expected);
-        });
+        })
+        .finally(() => targetFile.removeCallback());
 });
 
 test('transform identity 2', (t) => {
@@ -52,7 +53,8 @@ test('transform identity 2', (t) => {
             const result = readFileSync(tfn, 'utf8');
             const expected = testContents;
             t.is(result, expected);
-        });
+        })
+        .finally(() => targetFile.removeCallback());
 });
 
 test('transform no blank lines', (t) => {
@@ -79,7 +81,8 @@ test('transform no blank lines', (t) => {
      56789
 `;
             t.is(result, expected);
-        });
+        })
+        .finally(() => targetFile.removeCallback());
 });
 
 test('transform chaining', (t) => {
@@ -104,7 +107,8 @@ test('transform chaining', (t) => {
      56789
 `;
             t.is(result, expected);
-        });
+        })
+        .finally(() => targetFile.removeCallback());
 });
 
 test('transform empty', (t) => {
@@ -122,7 +126,8 @@ test('transform empty', (t) => {
             const result = readFileSync(tfn, 'utf8');
             const expected = ``;
             t.is(result, expected);
-        });
+        })
+        .finally(() => targetFile.removeCallback());
 });
 
 test('transformFiles', (t) => {
@@ -146,5 +151,6 @@ test('transformFiles', (t) => {
             const result2 = readFileSync(join(targetDir.name, 'test.bar'), 'utf8');
             const expected2 = ``;
             t.is(result2, expected2);
-        });
+        })
+        .finally(() => targetDir.removeCallback());
 });

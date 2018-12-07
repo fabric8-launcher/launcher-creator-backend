@@ -21,5 +21,6 @@ test('transform id', (t) => {
             const result = readFileSync(tfn, 'utf8');
             const expected = testContents;
             t.is(result, expected);
-        });
+        })
+        .finally(() => targetFile.removeCallback());
 });
