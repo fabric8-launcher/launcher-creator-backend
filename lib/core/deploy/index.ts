@@ -261,8 +261,9 @@ async function applyCapability(
 }
 
 // Calls `applyCapability()` on all the capabilities in the given tier descriptor
-function applyTier(res: Resources, targetDir: string, appName: string, tier: TierDescriptor): Promise<DeploymentDescriptor> {
+async function applyTier(targetDir: string, appName: string, tier: TierDescriptor): Promise<DeploymentDescriptor> {
     const genTargetDir = (!tier.tier) ? targetDir : join(targetDir, tier.tier);
+    const res = await readOrCreateResources(resourcesFileName(genTargetDir));
     const generator = getGeneratorConstructorWrapper(genTargetDir);
     const p = Promise.resolve(emptyDeploymentDescriptor);
     return tier.capabilities.reduce((acc, cur) => acc
@@ -270,17 +271,17 @@ function applyTier(res: Resources, targetDir: string, appName: string, tier: Tie
 }
 
 // Calls `applyTier()` on all the tiers in the given application descriptor
-export function applyApplication(res: Resources, targetDir: string, application: ApplicationDescriptor): Promise<DeploymentDescriptor> {
+export function applyApplication(targetDir: string, application: ApplicationDescriptor): Promise<DeploymentDescriptor> {
     const p = Promise.resolve(emptyDeploymentDescriptor);
     return application.tiers.reduce((acc, cur) => acc
-        .then(() => applyTier(res, targetDir, application.application, cur)), p);
+        .then(() => applyTier(targetDir, application.application, cur)), p);
 }
 
 // Calls `applyApplication()` on all the applications in the given deployment descriptor
-export function applyDeployment(res: Resources, targetDir: string, deployment: DeploymentDescriptor): Promise<DeploymentDescriptor> {
+export function applyDeployment(targetDir: string, deployment: DeploymentDescriptor): Promise<DeploymentDescriptor> {
     const p = Promise.resolve(emptyDeploymentDescriptor);
     return deployment.applications.reduce((acc, cur) => acc
-        .then(() => applyApplication(res, targetDir, cur)), p);
+        .then(() => applyApplication(targetDir, cur)), p);
 }
 
 export function deploy(targetDir) {

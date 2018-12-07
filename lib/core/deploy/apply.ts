@@ -1,7 +1,7 @@
 
 import { printUsage } from 'core/info';
 import { listCapabilityInfos, getCapabilityModule, info, listEnums } from 'core/catalog';
-import { resourcesFileName, readOrCreateResources, applyDeployment, readDeployment } from '.';
+import { applyDeployment, readDeployment } from '.';
 import {
     ApplicationDescriptor,
     CapabilityDescriptor,
@@ -11,8 +11,7 @@ import {
 } from 'core/catalog/types';
 
 async function apply(targetDir: string, deployment: DeploymentDescriptor) {
-    const res = await readOrCreateResources(resourcesFileName(targetDir));
-    await applyDeployment(res, targetDir, deployment);
+    await applyDeployment(targetDir, deployment);
     console.log(`Applied capability to "${targetDir}"`);
     console.log('Go into that folder and type "./gap deploy" while logged into OpenShift to create the application');
     console.log('in the currently active project. Afterwards type "./gap push" at any time to push the current');

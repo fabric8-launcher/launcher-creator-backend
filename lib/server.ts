@@ -10,7 +10,6 @@ import * as HttpStatus from 'http-status-codes';
 
 import * as catalog from 'core/catalog';
 import * as deploy from 'core/deploy';
-import {resources} from 'core/resources';
 import {zipFolder} from 'core/utils';
 import * as Sentry from 'raven';
 import { ApplicationDescriptor, DeploymentDescriptor } from 'core/catalog/types';
@@ -120,7 +119,7 @@ router.post('/zip', (req, res, next) => {
             const deployment: DeploymentDescriptor = {
                 'applications': [ zreq.project ]
             };
-            await deploy.applyDeployment(resources({}), projectDir, deployment);
+            await deploy.applyDeployment(projectDir, deployment);
             await zipFolder(out, projectDir, zreq.project.application);
             const id = shortid.generate();
             zipCache.set(id, { 'file': projectZip, 'name': `${zreq.project.application}.zip`, cleanTempDir }, 600);
@@ -162,7 +161,7 @@ router.post('/launch', (req, res, next) => {
             const deployment: DeploymentDescriptor = {
                 'applications': [ lreq.project ]
             };
-            await deploy.applyDeployment(resources({}), projectDir, deployment);
+            await deploy.applyDeployment(projectDir, deployment);
             zipFolder(out, projectDir, lreq.project.application);
             out.on('finish', () => {
                 // Prepare to post
