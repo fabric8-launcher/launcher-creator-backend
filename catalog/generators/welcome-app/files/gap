@@ -24,6 +24,8 @@ case "$1" in
              oc process -f ${OPENSHIFTIO_DIR}/service.welcome.yaml --ignore-unknown-parameters ${PARAMS} | oc apply -f -
         fi
         ;;
+    "build")
+        ;;
     "push")
         ;;
     "delete")

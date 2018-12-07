@@ -5,9 +5,13 @@ APP_NAME={{.application}}
 SCRIPT_DIR=$(cd "$(dirname "$BASH_SOURCE")" ; pwd -P)
 
 case "$1" in
-    "deploy"|"push")
+    "deploy"|"build"|"push")
         for file in ${SCRIPT_DIR}/*/gap; do
+            DIR=$(basename $(dirname "$file"))
+            echo "Tier '$DIR'..."
+            pushd >/dev/null "$DIR"
             $file "$@"
+            popd >/dev/null
         done
         ;;
     "delete")

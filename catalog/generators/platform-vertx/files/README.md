@@ -13,7 +13,7 @@ Now the only thing that is left to do is push the project's code to OpenShift to
 one is by first building the project yourself locally and pushing the resulting binary, like this:
 
 ```
-$ mvn clean install
+$ ./gap build
 $ ./gap push --binary
 ```
 
