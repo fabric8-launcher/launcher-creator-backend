@@ -15,7 +15,7 @@ export interface CapabilityDescriptor {
 }
 
 export interface TierDescriptor {
-    tier: string;               // The name of the tier
+    tier?: string;               // The name of the tier
     shared?: object;            // Any shared properties that will be passed to all capabilities
     extra?: object;             // Any shared properties returned by capabilities
     capabilities: CapabilityDescriptor[];   // All capabilities that are part of the tier
@@ -23,6 +23,7 @@ export interface TierDescriptor {
 
 export interface ApplicationDescriptor {
     application: string;        // The name of the application
+    extra?: object;             // Any application properties unused by the creator itself
     tiers: TierDescriptor[];    // All capabilities that are part of the application
 }
 

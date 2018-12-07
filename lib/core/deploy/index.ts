@@ -9,6 +9,7 @@ import { getCapabilityModule, info, listEnums } from 'core/catalog';
 import { applyFromFile, startBuild, deleteApp } from 'core/oc';
 import { filterObject, zipFolder } from 'core/utils';
 import { resources, Resources } from 'core/resources';
+import { ApplicationDescriptor, CapabilityDescriptor, DeploymentDescriptor, TierDescriptor } from 'core/catalog/types';
 
 // Returns the name of the deployment file in the given directory
 export function deploymentFileName(targetDir) {
@@ -20,25 +21,27 @@ export function resourcesFileName(targetDir) {
     return join(targetDir, '.openshiftio', 'application.yaml');
 }
 
+const emptyDeploymentDescriptor: DeploymentDescriptor = { 'applications': [] };
+
 // Returns a promise that will resolve to the JSON
 // contents of the given file or to an empty object
 // if the file wasn't found
-async function readDeployment(deploymentFile): Promise<any> {
+export async function readDeployment(deploymentFile: string): Promise<DeploymentDescriptor> {
     if (pathExistsSync(deploymentFile)) {
         try {
-            return await readJson(deploymentFile);
+            return await readJson(deploymentFile) as DeploymentDescriptor;
         } catch (ex) {
             console.error(`Failed to read deployment file ${deploymentFile}: ${ex}`);
             throw ex;
         }
     } else {
-        return {'applications': []};
+        return emptyDeploymentDescriptor;
     }
 }
 
 // Returns a promise that will resolve when the given
 // deployment was written to the given file
-async function writeDeployment(deploymentFile, deployment): Promise<any> {
+export async function writeDeployment(deploymentFile: string, deployment: DeploymentDescriptor): Promise<any> {
     try {
         await ensureFile(deploymentFile);
         return writeFile(deploymentFile, JSON.stringify(deployment, null, 2));
@@ -106,7 +109,7 @@ function addCapability(deployment, capability) {
 
 // Returns a promise that will resolve when the given
 // resources were read from the given file
-export async function readResources(resourcesFile): Promise<Resources> {
+export async function readResources(resourcesFile: string): Promise<Resources> {
     try {
         const text = await readFile(resourcesFile, 'utf8');
         return resources(yaml.safeLoad(text));
@@ -118,7 +121,7 @@ export async function readResources(resourcesFile): Promise<Resources> {
 
 // Returns a promise that will resolve to a list of resources read
 // from the given file if it exists or to an empty Resources object
-export async function readOrCreateResources(resourcesFile): Promise<Resources> {
+export async function readOrCreateResources(resourcesFile: string): Promise<Resources> {
     if (pathExistsSync(resourcesFile)) {
         return readResources(resourcesFile);
     } else {
@@ -142,38 +145,6 @@ export async function writeResources(resourcesFile, res): Promise<any> {
     }
 }
 
-async function applyCapability_(generator, res: Resources, targetDir: string, shared, props) {
-    // Validate the properties that we get passed are valid
-    const capTargetDir = (!props.tier) ? targetDir : join(targetDir, props.tier);
-    const capConst = getCapabilityModule(props.module);
-    const propDefs = info(capConst).props;
-    const allprops = { ...props, ...definedPropsOnly(propDefs, shared) };
-    validate(propDefs, listEnums(), allprops);
-
-    // Read the deployment descriptor and validate if we can safely add this capability
-    const rf = resourcesFileName(capTargetDir);
-    const df = deploymentFileName(targetDir);
-    const deployment = await readDeployment(df);
-    validateAddCapability(deployment, allprops);
-
-    // Apply the capability
-    const cap = new capConst(generator, capTargetDir);
-    const extra = {};
-    const res2 = await cap.apply(res, allprops, extra);
-
-    // Add the capability's state to the deployment descriptor
-    addCapability(deployment, capInfo(info(capConst).props, allprops, extra));
-
-    // Execute any post-apply generators
-    const res3 = await postApply(res2, targetDir, deployment);
-
-    // Write everything back to their respective files
-    await writeResources(rf, res3);
-    await writeDeployment(df, deployment);
-
-    return deployment;
-}
-
 function definedPropsOnly(propDefs: any, props: object): object {
     return filterObject(props, (key, value) => !!getPropDef(propDefs, key).id);
 }
@@ -191,7 +162,7 @@ function postApply(res, targetDir, deployment) {
             }
             if (capConst) {
                 const capTargetDir = (!tier.tier) ? targetDir : join(targetDir, tier.tier);
-                const generator = getGenerator(capTargetDir);
+                const generator = getGeneratorConstructorWrapper(capTargetDir);
                 const capinst = new capConst(generator, capTargetDir);
                 const props = { ...tier.shared, ...cap.props, 'module': cap.module, 'application': app.application, 'tier': tier.tier };
                 p = p.then(() => capinst.postApply(res, props, deployment));
@@ -225,18 +196,7 @@ function getPropDef(propDefs, propId) {
     return propDefs.find(pd => pd.id === propId) || {};
 }
 
-// Calls `apply()` on the given capability (which allows it to copy, generate
-// and change files in the user's project) and adds information about the
-// capability to the `deployment.json` in the project's root.
-async function applyCapability(generator, res: Resources, targetDir: string, appName: string, tier: string, shared, props) {
-    props.application = appName;
-    if (!!tier) {
-        props.tier = tier;
-    }
-    return await applyCapability_(generator, res, targetDir, shared, props);
-}
-
-function getGenerator(targetDir: string) {
+function getGeneratorConstructorWrapper(targetDir: string) {
     // The following function gets passed to all Capability `apply()` methods
     // which they then should use whenever they need to apply a Generator
     // to the target project. The same holds true for Generators when they
@@ -253,13 +213,74 @@ function getGenerator(targetDir: string) {
     return generator;
 }
 
-// Calls `applyCapability()` on all the given capabilities
-export function apply(res: Resources, targetDir: string, appName: string, tier: string, shared, capabilities) {
-    const genTargetDir = (!tier) ? targetDir : join(targetDir, tier);
-    const generator = getGenerator(genTargetDir);
-    const p = Promise.resolve(true);
-    return capabilities.reduce((acc, cur) => acc
-        .then(() => applyCapability(generator, res, targetDir, appName, tier, shared, cur)), p);
+// Calls `apply()` on the given capability (which allows it to copy, generate
+// and change files in the user's project) and adds information about the
+// capability to the `deployment.json` in the project's root.
+async function applyCapability(
+        generator,
+        res: Resources,
+        targetDir: string,
+        appName: string,
+        tierName: string,
+        shared: object,
+        capability: CapabilityDescriptor): Promise<DeploymentDescriptor> {
+    const props: any = { ...capability.props, 'module': capability.module, 'application': appName };
+    if (!!tierName) {
+        props.tier = tierName;
+    }
+
+    // Validate the properties that we get passed are valid
+    const capTargetDir = (!props.tier) ? targetDir : join(targetDir, props.tier);
+    const capConst = getCapabilityModule(props.module);
+    const propDefs = info(capConst).props;
+    const allprops = { ...props, ...definedPropsOnly(propDefs, shared) };
+    validate(propDefs, listEnums(), allprops);
+
+    // Read the deployment descriptor and validate if we can safely add this capability
+    const rf = resourcesFileName(capTargetDir);
+    const df = deploymentFileName(targetDir);
+    const deployment = await readDeployment(df);
+    validateAddCapability(deployment, allprops);
+
+    // Apply the capability
+    const cap = new capConst(generator, capTargetDir);
+    const extra = {};
+    const res2 = await cap.apply(res, allprops, extra);
+
+    // Add the capability's state to the deployment descriptor
+    addCapability(deployment, capInfo(info(capConst).props, allprops, extra));
+
+    // Execute any post-apply generators
+    const res3 = await postApply(res2, targetDir, deployment);
+
+    // Write everything back to their respective files
+    await writeResources(rf, res3);
+    await writeDeployment(df, deployment);
+
+    return deployment;
+}
+
+// Calls `applyCapability()` on all the capabilities in the given tier descriptor
+function applyTier(res: Resources, targetDir: string, appName: string, tier: TierDescriptor): Promise<DeploymentDescriptor> {
+    const genTargetDir = (!tier.tier) ? targetDir : join(targetDir, tier.tier);
+    const generator = getGeneratorConstructorWrapper(genTargetDir);
+    const p = Promise.resolve(emptyDeploymentDescriptor);
+    return tier.capabilities.reduce((acc, cur) => acc
+        .then(() => applyCapability(generator, res, targetDir, appName, tier.tier, tier.shared, cur)), p);
+}
+
+// Calls `applyTier()` on all the tiers in the given application descriptor
+export function applyApplication(res: Resources, targetDir: string, application: ApplicationDescriptor): Promise<DeploymentDescriptor> {
+    const p = Promise.resolve(emptyDeploymentDescriptor);
+    return application.tiers.reduce((acc, cur) => acc
+        .then(() => applyTier(res, targetDir, application.application, cur)), p);
+}
+
+// Calls `applyApplication()` on all the applications in the given deployment descriptor
+export function applyDeployment(res: Resources, targetDir: string, deployment: DeploymentDescriptor): Promise<DeploymentDescriptor> {
+    const p = Promise.resolve(emptyDeploymentDescriptor);
+    return deployment.applications.reduce((acc, cur) => acc
+        .then(() => applyApplication(res, targetDir, cur)), p);
 }
 
 export function deploy(targetDir) {
