@@ -5,24 +5,50 @@ parameters:
   description: The name for the application
   displayName: Application Name
   required: true
+
 - name: WELCOME_APP_CONFIG
   description: The configuration for the welcome app
   displayName: Welcome App Configuration
   required: true
+
 - name: BACKEND_SERVICE_NAME
   description: The backend service name for the welcome app
   displayName: Backend service name
   required: true
+
 - name: SOURCE_REPOSITORY_PROVIDER
   description: The source repository provider
   displayName: Source Provider
   value: GitHub
+
 - name: SOURCE_REPOSITORY_URL
   description: The source URL for the application
   displayName: Source URL
+
 - name: OPENSHIFT_CONSOLE_URL
   description: The OpenShift Console URL for the application
   displayName: OpenShift Console URL
+
+- description: CPU request
+  displayName: CPU request
+  name: CPU_REQUEST
+  value: "10m"
+
+- description: CPU limit
+  displayName: CPU limit
+  name: CPU_LIMIT
+  value: "50m"
+
+- description: Memory request
+  displayName: Memory request
+  name: MEMORY_REQUEST
+  value: "8M"
+
+- description: Memory limit
+  displayName: Memory limit
+  name: MEMORY_LIMIT
+  value: "16M"
+
 objects:
 - apiVersion: v1
   kind: ImageStream
@@ -65,7 +91,13 @@ objects:
           ports:
           - containerPort: 8080
             protocol: TCP
-          resources: {}
+          resources:
+            requests:
+              cpu: ${CPU_REQUEST}
+              memory: ${MEMORY_REQUEST}
+            limits:
+              cpu: ${CPU_LIMIT}
+              memory: ${MEMORY_LIMIT}
           env:
             - name: WELCOME_APP_CONFIG
               value: '${WELCOME_APP_CONFIG}'
@@ -77,6 +109,20 @@ objects:
               value: '${SOURCE_REPOSITORY_URL}'
             - name: BACKEND_SERVICE_NAME
               value: '${BACKEND_SERVICE_NAME}'
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 10
+            timeoutSeconds: 10
+            periodSeconds: 20
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 10
+            timeoutSeconds: 10
+            periodSeconds: 20
     test: false
     triggers:
     - type: ConfigChange
