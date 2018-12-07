@@ -4,19 +4,32 @@ APP_NAME={{.application}}
 
 SCRIPT_DIR=$(cd "$(dirname "$BASH_SOURCE")" ; pwd -P)
 
-if [[ $1 == "delete" ]]; then
-    shift
-    oc delete all,secrets -l app=${APP_NAME}
-fi
+OK=1
+for arg in "$@"; do
+    case "$arg" in
+        "deploy"|"build"|"clean"|"push"|"delete")
+            ;;
+        *)
+            OK=0
+            ;;
+    esac
+done
 
-if [[ $# > 0 ]]; then
-    for file in ${SCRIPT_DIR}/*/gap; do
-        DIR=$(basename $(dirname "$file"))
-        echo "Tier '$DIR'..."
-        pushd >/dev/null "$DIR"
-        $file "$@"
-        popd >/dev/null
-    done
+if [[ $# > 0 && $OK == 1 ]]; then
+    if [[ $1 == "delete" ]]; then
+        shift
+        oc delete all,secrets -l app=${APP_NAME}
+    fi
+
+    if [[ $# > 0 ]]; then
+        for file in ${SCRIPT_DIR}/*/gap; do
+            DIR=$(basename $(dirname "$file"))
+            echo "Tier '$DIR'..."
+            pushd >/dev/null "$DIR"
+            $file "$@"
+            popd >/dev/null
+        done
+    fi
 else
     echo "Usage: gap [deploy|build|clean|push|delete] ..."
     echo "   deploy  - Deploys the application to OpenShift"
