@@ -24,15 +24,13 @@ case "$1" in
              oc process -f ${OPENSHIFTIO_DIR}/service.welcome.yaml --ignore-unknown-parameters ${PARAMS} | oc apply -f -
         fi
         ;;
-    "build")
-        ;;
-    "push")
+    "build"|"clean"|"push")
         ;;
     "delete")
         oc delete all,secrets -l app=${APP_NAME}
         ;;
     *)
-        echo "Usage: gap [deploy|push|delete] ..."
+        echo "Usage: gap [deploy|delete] ..."
         echo "   deploy  - Deploys the application to OpenShift"
         echo "   delete  - Deletes the application from OpenShift"
     ;;

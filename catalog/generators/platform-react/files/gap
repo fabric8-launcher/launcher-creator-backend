@@ -25,7 +25,7 @@ while [[ $# > 0 ]]; do
                  oc process -f ${OPENSHIFTIO_DIR}/service.welcome.yaml --ignore-unknown-parameters ${PARAMS} | oc apply -f -
             fi
             ;;
-        "build")
+        "build"|"clean")
             ;;
         "push")
             if [[ "$1" == "--source" || "$1" == "-s" || "$1" == "--binary" || "$1" == "-b" ]]; then

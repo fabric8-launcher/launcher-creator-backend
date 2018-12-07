@@ -29,6 +29,9 @@ while [[ $# > 0 ]]; do
         "build")
             mvn package
             ;;
+        "clean")
+            mvn clean
+            ;;
         "push")
             FROM=${SCRIPT_DIR}/target/${JAR_NAME}
             if [[ "$1" == "--binary" || "$1" == "-b" ]]; then
@@ -52,8 +55,10 @@ while [[ $# > 0 ]]; do
             oc delete all,secrets -l app=${APP_NAME}
             ;;
         *)
-            echo "Usage: gap [deploy|push|delete] ..."
+            echo "Usage: gap [deploy|build|clean|push|delete] ..."
             echo "   deploy  - Deploys the application to OpenShift"
+            echo "   build   - Builds the application from code"
+            echo "   clean   - Cleans any build artifacts"
             echo "   push    - Pushes code to the application. By default this will push the pe-compiled"
             echo "             binary if it exists, otherwise it will push the local sources to be compiled"
             echo "             on OpenShift. This can be overridden by using one of the following flags:"
