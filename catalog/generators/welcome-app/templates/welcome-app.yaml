@@ -29,26 +29,6 @@ parameters:
   description: The OpenShift Console URL for the application
   displayName: OpenShift Console URL
 
-- description: CPU request
-  displayName: CPU request
-  name: CPU_REQUEST
-  value: "10m"
-
-- description: CPU limit
-  displayName: CPU limit
-  name: CPU_LIMIT
-  value: "50m"
-
-- description: Memory request
-  displayName: Memory request
-  name: MEMORY_REQUEST
-  value: "8M"
-
-- description: Memory limit
-  displayName: Memory limit
-  name: MEMORY_LIMIT
-  value: "80Mi"
-
 objects:
 - apiVersion: v1
   kind: ImageStream
@@ -93,11 +73,11 @@ objects:
             protocol: TCP
           resources:
             requests:
-              cpu: ${CPU_REQUEST}
-              memory: ${MEMORY_REQUEST}
+              cpu: "10m"
+              memory: "8M"
             limits:
-              cpu: ${CPU_LIMIT}
-              memory: ${MEMORY_LIMIT}
+              cpu: "50m"
+              memory: "80Mi"
           env:
             - name: WELCOME_APP_CONFIG
               value: '${WELCOME_APP_CONFIG}'
