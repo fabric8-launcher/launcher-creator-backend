@@ -86,7 +86,7 @@ async function main() {
             SHARED['runtime'] = toRuntime(args[i + 1]);
             i += 2;
         } else if (args[i] === '--framework') {
-            SHARED['runtime'] = { 'name': args[i + 1] };
+            SHARED['framework'] = { 'name': args[i + 1] };
             i += 2;
         }
 

@@ -77,7 +77,7 @@
       "description": "A declarative JavaScript framework for building user interfaces.",
       "icon": "data:image/svg+xml,%3c%3fxml version='1.0' encoding='utf-8'%3f%3e %3c!-- Generator: Adobe Illustrator 19.1.0%2c SVG Export Plug-In . SVG Version: 6.00 Build 0) --%3e %3csvg version='1.1' id='Layer_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' viewBox='0 0 250 250' style='enable-background:new 0 0 250 250%3b' xml:space='preserve'%3e %3cstyle type='text/css'%3e .st0%7bfill:%23DD0031%3b%7d .st1%7bfill:%23C3002F%3b%7d .st2%7bfill:white%3b%7d %3c/style%3e %3cg%3e %3cpolygon class='st0' points='125%2c30 125%2c30 125%2c30 31.9%2c63.2 46.1%2c186.3 125%2c230 125%2c230 125%2c230 203.9%2c186.3 218.1%2c63.2 '/%3e %3cpolygon class='st1' points='125%2c30 125%2c52.2 125%2c52.1 125%2c153.4 125%2c153.4 125%2c230 125%2c230 203.9%2c186.3 218.1%2c63.2 125%2c30 '/%3e %3cpath class='st2' d='M125%2c52.1L66.8%2c182.6h0h21.7h0l11.7-29.2h49.4l11.7%2c29.2h0h21.7h0L125%2c52.1L125%2c52.1L125%2c52.1L125%2c52.1 L125%2c52.1z M142%2c135.4H108l17-40.9L142%2c135.4z'/%3e %3c/g%3e %3c/svg%3e",
       "metadata": {
-        "language": "java"
+        "language": "javascript"
       }
     }
   ],

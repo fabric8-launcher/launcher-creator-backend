@@ -19,7 +19,7 @@ export default class PlatformAngular extends BaseGenerator {
     public async apply(resources, props: PlatformAngularProps, extra: any = {}) {
         const rtImage = 'nodeshift/centos7-s2i-web-app';
         _.set(extra, 'shared.frameworkImage', rtImage);
-        _.set(extra, 'shared.frameworkInfo', enumItem('framework.name', 'react'));
+        _.set(extra, 'shared.frameworkInfo', enumItem('framework.name', 'angular'));
         _.set(extra, 'shared.frameworkService', props.serviceName);
         _.set(extra, 'shared.frameworkRoute', props.routeName);
 
