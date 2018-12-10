@@ -413,16 +413,16 @@ function setComputeResources_(res: Resources, name: string, compres: ComputeReso
     return res;
 }
 
-// Sets the compute resources for the DeploymentConfig selected by 'dcName'
+// Sets the CPU resources for the DeploymentConfig selected by 'dcName'
 // with the given ComputeResources for cpu and memory.
-export function setComputeResources(res: Resources, cpu: ComputeResource, memory: ComputeResource, dcName?: any): Resources {
-    if (!!cpu) {
-        setComputeResources_(res, 'cpu', cpu, dcName);
-    }
-    if (!!memory) {
-        setComputeResources_(res, 'memory', memory, dcName);
-    }
-    return res;
+export function setCpuResources(res: Resources, cpu: ComputeResource, dcName?: any): Resources {
+    return setComputeResources_(res, 'cpu', cpu, dcName);
+}
+
+// Sets the memory resources for the DeploymentConfig selected by 'dcName'
+// with the given ComputeResources for cpu and memory.
+export function setMemoryResources(res: Resources, memory: ComputeResource, dcName?: any): Resources {
+    return setComputeResources_(res, 'memory', memory, dcName);
 }
 
 // Sets the "app" label on all resources to the given value

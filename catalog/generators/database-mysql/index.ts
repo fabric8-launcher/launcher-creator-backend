@@ -1,5 +1,5 @@
 
-import { newApp, setComputeResources } from 'core/resources';
+import { newApp, setMemoryResources } from 'core/resources';
 import { BaseGenerator, BaseGeneratorProps } from 'core/catalog/types';
 import { DatabaseSecretRef } from 'generators/database-secret';
 
@@ -23,7 +23,7 @@ export default class DatabaseMysql extends BaseGenerator {
                 'MYSQL_USER': { 'secret': props.secretName, 'key': 'user' },
                 'MYSQL_PASSWORD': { 'secret': props.secretName, 'key': 'password' }
             });
-            setComputeResources(res, null, { 'limit': '512Mi' });
+            setMemoryResources(res, { 'limit': '512Mi' });
             resources.add(res);
         }
         return resources;
