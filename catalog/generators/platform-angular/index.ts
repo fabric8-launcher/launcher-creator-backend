@@ -1,7 +1,14 @@
 
 import * as _ from 'lodash';
 
-import { newApp, newRoute, setBuildContextDir, setBuildEnv, setDeploymentEnv } from 'core/resources';
+import {
+    newApp,
+    newRoute,
+    setBuildContextDir,
+    setBuildEnv,
+    setDefaultHealthChecks,
+    setDeploymentEnv
+} from 'core/resources';
 import { cases } from 'core/template/transformers/cases';
 import { enumItem } from 'core/catalog';
 import { BaseGenerator, BaseGeneratorProps, NodejsCoords } from 'core/catalog/types';
@@ -38,6 +45,7 @@ export default class PlatformAngular extends BaseGenerator {
                 null,
                 env);
             setBuildContextDir(res, props.tier);
+            setDefaultHealthChecks(res);
             resources.add(res);
             return await newRoute(resources, props.routeName, props.application, props.serviceName);
         } else {
