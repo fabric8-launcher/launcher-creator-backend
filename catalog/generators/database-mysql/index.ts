@@ -1,10 +1,29 @@
 
-import { newApp, setMemoryResources } from 'core/resources';
+import { newApp, setHealthProbe, setMemoryResources } from 'core/resources';
 import { BaseGenerator, BaseGeneratorProps } from 'core/catalog/types';
 import { DatabaseSecretRef } from 'generators/database-secret';
 
 export interface DatabaseMysqlProps extends BaseGeneratorProps, DatabaseSecretRef {
 }
+
+const livenessProbe = {
+    'initialDelaySeconds': 30,
+    'tcpSocket': {
+        'port': 3306
+    }
+};
+
+const readinessProbe = {
+    'initialDelaySeconds': 5,
+    'exec': {
+        'command': [
+            '/bin/sh',
+            '-i',
+            '-c',
+            'MYSQL_PWD="$MYSQL_PASSWORD" mysql -h 127.0.0.1 -u $MYSQL_USER -D $MYSQL_DATABASE -e \'SELECT 1\''
+        ]
+    }
+};
 
 export default class DatabaseMysql extends BaseGenerator {
     public static readonly sourceDir: string = __dirname;
@@ -24,6 +43,8 @@ export default class DatabaseMysql extends BaseGenerator {
                 'MYSQL_PASSWORD': { 'secret': props.secretName, 'key': 'password' }
             });
             setMemoryResources(res, { 'limit': '512Mi' });
+            setHealthProbe(res, 'livenessProbe', livenessProbe);
+            setHealthProbe(res, 'readinessProbe', readinessProbe);
             resources.add(res);
         }
         return resources;

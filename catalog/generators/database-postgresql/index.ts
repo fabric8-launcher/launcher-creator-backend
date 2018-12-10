@@ -1,10 +1,29 @@
 
-import { newApp, setMemoryResources } from 'core/resources';
+import { newApp, setHealthProbe, setMemoryResources } from 'core/resources';
 import { BaseGenerator, BaseGeneratorProps } from 'core/catalog/types';
 import { DatabaseSecretRef } from 'generators/database-secret';
 
 export interface DatabasePostgresqlProps extends BaseGeneratorProps, DatabaseSecretRef {
 }
+
+const livenessProbe = {
+    'initialDelaySeconds': 120,
+    'exec': {
+        'command': [
+            '/usr/libexec/check-container',
+            '--live'
+        ]
+    }
+};
+
+const readinessProbe = {
+    'initialDelaySeconds': 5,
+    'exec': {
+        'command': [
+            '/usr/libexec/check-container'
+        ]
+    }
+};
 
 export default class DatabasePostgresql extends BaseGenerator {
     public static readonly sourceDir: string = __dirname;
@@ -23,6 +42,8 @@ export default class DatabasePostgresql extends BaseGenerator {
                 'POSTGRESQL_PASSWORD': { 'secret': props.secretName, 'key': 'password' }
             });
             setMemoryResources(res, { 'limit': '512Mi' });
+            setHealthProbe(res, 'livenessProbe', livenessProbe);
+            setHealthProbe(res, 'readinessProbe', readinessProbe);
             resources.add(res);
         }
         return resources;
