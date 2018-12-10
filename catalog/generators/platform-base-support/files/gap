@@ -9,6 +9,8 @@ for arg in "$@"; do
     case "$arg" in
         "deploy"|"build"|"clean"|"push"|"delete")
             ;;
+        "-b"|"--binary"|"-s"|"--source"|"-g"|"--git")
+            ;;
         *)
             OK=0
             ;;
