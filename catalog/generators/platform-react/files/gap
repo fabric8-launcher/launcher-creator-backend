@@ -6,6 +6,10 @@ SERVICE_NAME={{.serviceName}}
 
 SCRIPT_DIR=$(cd "$(dirname "$BASH_SOURCE")" ; pwd -P)
 OPENSHIFTIO_DIR=${SCRIPT_DIR}/.openshiftio
+SOURCE_DIR=${SCRIPT_DIR}
+if [[ ! -z "{{.tier}}" ]]; then
+    SOURCE_DIR=${SOURCE_DIR}/..
+fi
 
 while [[ $# > 0 ]]; do
     CMD=$1
@@ -30,7 +34,7 @@ while [[ $# > 0 ]]; do
         "push")
             if [[ "$1" == "--source" || "$1" == "-s" || "$1" == "--binary" || "$1" == "-b" ]]; then
                 shift
-                oc start-build ${SERVICE_NAME} --from-dir ${SCRIPT_DIR} "$@"
+                oc start-build ${SERVICE_NAME} --from-dir ${SOURCE_DIR} "$@"
             elif [[ "$1" == "--git" || "$1" == "-g" ]]; then
                 shift
                 oc start-build ${SERVICE_NAME} "$@"
@@ -38,7 +42,7 @@ while [[ $# > 0 ]]; do
                 if [[ -f ${FROM} ]]; then
                     oc start-build ${SERVICE_NAME} --from-file ${FROM} "$@"
                 else
-                    oc start-build ${SERVICE_NAME} --from-dir ${SCRIPT_DIR} "$@"
+                    oc start-build ${SERVICE_NAME} --from-dir ${SOURCE_DIR} "$@"
                 fi
             fi
             ;;
