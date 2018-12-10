@@ -6,6 +6,18 @@ parameters:
   displayName: Application Name
   required: true
 
+- name: WELCOME_IMAGE_NAME
+  description: The Welcome App's image name
+  displayName: Image Name
+  required: true
+  value: fabric8/launcher-creator-welcome-app
+
+- name: WELCOME_IMAGE_TAG
+  description: The Welcome App's image tag
+  displayName: Image Tag
+  required: true
+  value: latest
+
 - name: WELCOME_APP_CONFIG
   description: The configuration for the welcome app
   displayName: Welcome App Configuration
@@ -46,10 +58,10 @@ objects:
     lookupPolicy:
       local: false
     tags:
-    - name: latest
+    - name: ${WELCOME_IMAGE_TAG}
       from:
         kind: DockerImage
-        name: fabric8/launcher-creator-welcome-app
+        name: ${WELCOME_IMAGE_NAME}:${WELCOME_IMAGE_TAG}
 - apiVersion: v1
   kind: DeploymentConfig
   metadata:
@@ -71,7 +83,7 @@ objects:
           deploymentconfig: welcome
       spec:
         containers:
-        - image: fabric8/launcher-creator-welcome-app
+        - image: ${WELCOME_IMAGE_NAME}:${WELCOME_IMAGE_TAG}
           name: welcome
           ports:
           - containerPort: 8080
@@ -119,7 +131,7 @@ objects:
         - welcome
         from:
           kind: ImageStreamTag
-          name: welcome:latest
+          name: welcome:${WELCOME_IMAGE_TAG}
       type: ImageChange
   status:
     latestVersion: 0

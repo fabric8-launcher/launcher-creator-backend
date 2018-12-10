@@ -6,8 +6,9 @@ import * as _ from 'lodash';
 import { readResources, writeResources } from 'core/deploy';
 import { BaseGenerator, BaseGeneratorProps, DeploymentDescriptor } from 'core/catalog/types';
 import { Resources } from 'core/resources';
-import { cases } from "core/template/transformers/cases";
-import PlatformBaseSupport from "generators/platform-base-support";
+import { cases } from 'core/template/transformers/cases';
+
+import PlatformBaseSupport from 'generators/platform-base-support';
 
 const WELCOME_APP_REPO_URL = 'https://github.com/fabric8-launcher/launcher-creator-welcome-app';
 
@@ -52,6 +53,7 @@ export default class WelcomeApp extends BaseGenerator {
 
         res.parameter('FRONTEND_SERVICE_NAME')['value'] = !props.tier ? props.application : this.name(props.application, 'frontend');
         res.parameter('BACKEND_SERVICE_NAME')['value'] = !props.tier ? props.application : this.name(props.application, 'backend');
+        res.parameter('WELCOME_IMAGE_TAG')['value'] = process.env['WELCOME_IMAGE_TAG'] || 'latest';
         res.parameter('WELCOME_APP_CONFIG')['value'] = JSON.stringify(props.deployment.applications[0]);
 
         await writeResources(fileName, res);
