@@ -1,5 +1,5 @@
 
-import { newApp } from 'core/resources';
+import { newApp, setComputeResources } from 'core/resources';
 import { BaseGenerator, BaseGeneratorProps } from 'core/catalog/types';
 import { DatabaseSecretRef } from 'generators/database-secret';
 
@@ -22,6 +22,7 @@ export default class DatabasePostgresql extends BaseGenerator {
                 'POSTGRESQL_USER': { 'secret': props.secretName, 'key': 'user' },
                 'POSTGRESQL_PASSWORD': { 'secret': props.secretName, 'key': 'password' }
             });
+            setComputeResources(res, null, { 'limit': '512Mi' });
             resources.add(res);
         }
         return resources;

@@ -392,6 +392,39 @@ export function setBuildContextDir(res: Resources, contextDir: string, bcName?: 
     return res;
 }
 
+export interface ComputeResource {
+    request?: number|string;
+    limit?: number|string;
+}
+
+function setComputeResources_(res: Resources, name: string, compres: ComputeResource, dcName?: any): Resources {
+    if (res.deploymentConfigs.length > 0) {
+        const dc = (dcName) ? res.deploymentConfig(dcName) : res.deploymentConfigs[0];
+        const dcc = _.get(dc, 'spec.template.spec.containers[0]');
+        if (dcc) {
+            if (!!compres.request) {
+                _.set(dcc, `resources.requests.${name}`, compres.request);
+            }
+            if (!!compres.limit) {
+                _.set(dcc, `resources.limits.${name}`, compres.limit);
+            }
+        }
+    }
+    return res;
+}
+
+// Sets the compute resources for the DeploymentConfig selected by 'dcName'
+// with the given ComputeResources for cpu and memory.
+export function setComputeResources(res: Resources, cpu: ComputeResource, memory: ComputeResource, dcName?: any): Resources {
+    if (!!cpu) {
+        setComputeResources_(res, 'cpu', cpu, dcName);
+    }
+    if (!!memory) {
+        setComputeResources_(res, 'memory', memory, dcName);
+    }
+    return res;
+}
+
 // Sets the "app" label on all resources to the given value
 function setAppLabel(res: Resources, label: string|object): Resources {
     res.items.forEach(r => {
