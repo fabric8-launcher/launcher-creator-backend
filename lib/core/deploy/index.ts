@@ -21,7 +21,9 @@ export function resourcesFileName(targetDir) {
     return join(targetDir, '.openshiftio', 'application.yaml');
 }
 
-const emptyDeploymentDescriptor: DeploymentDescriptor = { 'applications': [] };
+function emptyDeploymentDescriptor(): DeploymentDescriptor {
+    return _.cloneDeep({ 'applications': [] });
+}
 
 // Returns a promise that will resolve to the JSON
 // contents of the given file or to an empty object
@@ -35,7 +37,7 @@ export async function readDeployment(deploymentFile: string): Promise<Deployment
             throw ex;
         }
     } else {
-        return emptyDeploymentDescriptor;
+        return emptyDeploymentDescriptor();
     }
 }
 
@@ -265,21 +267,21 @@ async function applyTier(targetDir: string, appName: string, tier: TierDescripto
     const genTargetDir = (!tier.tier) ? targetDir : join(targetDir, tier.tier);
     const res = await readOrCreateResources(resourcesFileName(genTargetDir));
     const generator = getGeneratorConstructorWrapper(genTargetDir);
-    const p = Promise.resolve(emptyDeploymentDescriptor);
+    const p = Promise.resolve(emptyDeploymentDescriptor());
     return tier.capabilities.reduce((acc, cur) => acc
         .then(() => applyCapability(generator, res, targetDir, appName, tier.tier, tier.shared, cur)), p);
 }
 
 // Calls `applyTier()` on all the tiers in the given application descriptor
 export function applyApplication(targetDir: string, application: ApplicationDescriptor): Promise<DeploymentDescriptor> {
-    const p = Promise.resolve(emptyDeploymentDescriptor);
+    const p = Promise.resolve(emptyDeploymentDescriptor());
     return application.tiers.reduce((acc, cur) => acc
         .then(() => applyTier(targetDir, application.application, cur)), p);
 }
 
 // Calls `applyApplication()` on all the applications in the given deployment descriptor
 export function applyDeployment(targetDir: string, deployment: DeploymentDescriptor): Promise<DeploymentDescriptor> {
-    const p = Promise.resolve(emptyDeploymentDescriptor);
+    const p = Promise.resolve(emptyDeploymentDescriptor());
     return deployment.applications.reduce((acc, cur) => acc
         .then(() => applyApplication(targetDir, cur)), p);
 }
