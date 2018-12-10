@@ -7,7 +7,8 @@ import {
     setBuildContextDir,
     setBuildEnv,
     setDefaultHealthChecks,
-    setDeploymentEnv
+    setDeploymentEnv,
+    setMemoryResources
 } from 'core/resources';
 import { cases } from 'core/template/transformers/cases';
 import { enumItem } from 'core/catalog';
@@ -42,6 +43,7 @@ export default class PlatformReact extends BaseGenerator {
                 null,
                 props.env || {});
             setBuildContextDir(res, props.tier);
+            setMemoryResources(res, { 'limit': '512Mi' });
             setDefaultHealthChecks(res);
             resources.add(res);
             return await newRoute(resources, props.routeName, props.application, props.serviceName);

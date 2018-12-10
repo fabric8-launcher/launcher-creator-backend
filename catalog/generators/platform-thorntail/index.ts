@@ -5,7 +5,8 @@ import {
     setBuildContextDir,
     setBuildEnv,
     setDefaultHealthChecks,
-    setDeploymentEnv
+    setDeploymentEnv,
+    setMemoryResources
 } from 'core/resources';
 import {cases} from 'core/template/transformers/cases';
 import {enumItem} from 'core/catalog';
@@ -42,6 +43,7 @@ export default class PlatformThorntail extends BaseGenerator {
                 props.env || {});
             setBuildContextDir(res, props.tier);
             setDefaultHealthChecks(res);
+            setMemoryResources(res, { 'limit': '2G' });
             resources.add(res);
             return await newRoute(resources, props.routeName, props.application, props.serviceName);
         } else {
