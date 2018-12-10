@@ -420,27 +420,6 @@ export async function newApp(appName: string,
     return appRes;
 }
 
-// Helper function that creates a database using the given 'dbImageName'
-// and the given environment variables from 'env' and 'secretEnv' (the
-// latter being taken from a previously created Secret indicated by
-// 'secretName').
-export async function newDatabaseUsingSecret(res: Resources,
-                                             appName: string,
-                                             appLabel: string,
-                                             dbImageName: string,
-                                             env): Promise<Resources> {
-    if (!res.service(appName)) {
-        // Create the database resource definitions
-        const appRes = await newApp(appName, appLabel, dbImageName, null, env);
-        const resNew = res.add(appRes);
-        // console.log(`Database ${dbServiceName} added`);
-        return resNew;
-    } else {
-        // console.log(`Database ${dbServiceName} already exists`);
-        return res;
-    }
-}
-
 export async function newRoute(res: Resources,
                                appName: string,
                                appLabel: string|object,
