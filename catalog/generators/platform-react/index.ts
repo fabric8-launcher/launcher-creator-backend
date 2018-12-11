@@ -6,7 +6,6 @@ import {
     newRoute,
     setBuildContextDir,
     setBuildEnv,
-    setDefaultHealthChecks,
     setDeploymentEnv,
     setMemoryResources
 } from 'core/resources';
@@ -44,7 +43,6 @@ export default class PlatformReact extends BaseGenerator {
                 props.env || {});
             setBuildContextDir(res, props.tier);
             setMemoryResources(res, { 'limit': '512Mi' });
-            setDefaultHealthChecks(res);
             resources.add(res);
             return await newRoute(resources, props.routeName, props.application, props.serviceName);
         } else {
