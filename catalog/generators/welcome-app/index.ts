@@ -53,6 +53,7 @@ export default class WelcomeApp extends BaseGenerator {
 
         res.parameter('FRONTEND_SERVICE_NAME')['value'] = !props.tier ? props.application : this.name(props.application, 'frontend');
         res.parameter('BACKEND_SERVICE_NAME')['value'] = !props.tier ? props.application : this.name(props.application, 'backend');
+        res.parameter('WELCOME_IMAGE_NAME')['value'] = process.env['WELCOME_IMAGE_NAME'] || 'fabric8/launcher-creator-welcome-app';
         res.parameter('WELCOME_IMAGE_TAG')['value'] = process.env['WELCOME_IMAGE_TAG'] || 'latest';
         res.parameter('WELCOME_APP_CONFIG')['value'] = JSON.stringify(props.deployment.applications[0]);
 
