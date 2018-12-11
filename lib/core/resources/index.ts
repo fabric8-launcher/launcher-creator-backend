@@ -439,17 +439,33 @@ export function setHealthProbe(res: Resources, probeName: string, probe: object,
 
 // Sets the deault health checks for the DeploymentConfig selected by 'dcName'.
 // Both the readiness and the liveness check will use `/health`.
-export function setDefaultHealthChecks(res: Resources, dcName?: any): Resources {
-    const probe = {
+export function setPathHealthChecks(res: Resources,
+                                    readinessPath: string,
+                                    livenessPath: string ,
+                                    dcName?: any): Resources {
+    const readinessProbe = {
         'httpGet': {
-            'path': '/health',
+            'path': readinessPath,
             'port': 8080,
             'scheme': 'HTTP'
         }
     };
-    res = setHealthProbe(res, 'readinessProbe', _.cloneDeep(probe), dcName);
-    res = setHealthProbe(res, 'livenessProbe', _.cloneDeep(probe), dcName);
+    const livenessProbe = {
+        'httpGet': {
+            'path': livenessPath,
+            'port': 8080,
+            'scheme': 'HTTP'
+        }
+    };
+    res = setHealthProbe(res, 'readinessProbe', readinessProbe, dcName);
+    res = setHealthProbe(res, 'livenessProbe', livenessProbe, dcName);
     return res;
+}
+
+// Sets the deault health checks for the DeploymentConfig selected by 'dcName'.
+// Both the readiness and the liveness check will use `/health`.
+export function setDefaultHealthChecks(res: Resources, dcName?: any): Resources {
+    return setPathHealthChecks(res, '/health', '/health');
 }
 
 // Sets the "app" label on all resources to the given value
