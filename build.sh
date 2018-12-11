@@ -1,7 +1,9 @@
 #!/bin/bash
 
+rm -rf dist
+
 node node_modules/typescript/bin/tsc --project .
 
-find lib/ -type f ! -name '*.ts' -exec sh -c 'mkdir -p "dist/$(dirname "{}")" && cp "{}" "dist/{}"' \;
-find catalog/ -type f ! -regex 'catalog/[^/]+/[^/]+/[^/]+\.ts' -exec sh -c 'mkdir -p "dist/$(dirname "{}")" && cp "{}" "dist/{}"' \;
+cp -a lib dist/
+cp -a catalog dist/
 
