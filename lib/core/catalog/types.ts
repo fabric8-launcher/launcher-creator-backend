@@ -157,6 +157,16 @@ export interface BaseGeneratorProps {
     routeName: string;
 }
 
+export interface BaseGeneratorExtra {
+    image: string;
+    service: string;
+}
+
+export interface BasePlatformExtra extends BaseGeneratorExtra {
+    route: string;
+    enumInfo: Enum;
+}
+
 interface Generator extends CatalogItem {
 }
 

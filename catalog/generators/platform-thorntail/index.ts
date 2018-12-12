@@ -9,8 +9,8 @@ import {
     setMemoryResources
 } from 'core/resources';
 import {cases} from 'core/template/transformers/cases';
-import {enumItem} from 'core/catalog';
-import {BaseGenerator, BaseGeneratorProps} from 'core/catalog/types';
+import { enumItem } from 'core/catalog';
+import { BaseGenerator, BaseGeneratorProps, BasePlatformExtra } from 'core/catalog/types';
 
 import MavenSetup, {MavenSetupProps} from 'generators/maven-setup';
 import PlatformBaseSupport from 'generators/platform-base-support';
@@ -19,15 +19,21 @@ export interface PlatformThorntailProps extends BaseGeneratorProps, MavenSetupPr
     env?: object;
 }
 
+export interface PlatformThorntailExtra extends BasePlatformExtra {
+}
+
 export default class PlatformThorntail extends BaseGenerator {
     public static readonly sourceDir: string = __dirname;
 
     public async apply(resources, props: PlatformThorntailProps, extra: any = {}) {
         const rtImage = 'registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift';
-        _.set(extra, 'shared.runtimeImage', rtImage);
-        _.set(extra, 'shared.runtimeInfo', enumItem('runtime.name', 'thorntail'));
-        _.set(extra, 'shared.runtimeService', props.serviceName);
-        _.set(extra, 'shared.runtimeRoute', props.routeName);
+        const exProps: PlatformThorntailExtra = {
+            'image': rtImage,
+            'enumInfo': enumItem('runtime.name', 'thorntail'),
+            'service': props.serviceName,
+            'route': props.routeName
+        };
+        _.set(extra, 'shared.runtimeInfo', exProps);
 
         // Check if the service already exists, so we don't create it twice
         if (!resources.service(props.serviceName)) {
