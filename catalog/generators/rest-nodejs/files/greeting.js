@@ -23,7 +23,7 @@ const router = express.Router();
 
 router.get('/greeting', (request, response) => {
   const name = request.query ? request.query.name : undefined;
-  response.send({content: `Hello, ${name || 'World!'}`});
+  response.send({content: `Hello, ${name || 'World'}!`});
 });
 
 module.exports = router;
