@@ -1,9 +1,12 @@
 
 import { newApp, setHealthProbe, setMemoryResources } from 'core/resources';
-import { BaseGenerator, BaseGeneratorProps } from 'core/catalog/types';
+import { BaseGenerator, BaseGeneratorExtra, BaseGeneratorProps } from 'core/catalog/types';
 import { DatabaseSecretRef } from 'generators/database-secret';
 
 export interface DatabasePostgresqlProps extends BaseGeneratorProps, DatabaseSecretRef {
+}
+
+export interface DatabasePostgresqlExtra extends BaseGeneratorExtra {
 }
 
 const livenessProbe = {
@@ -30,8 +33,11 @@ export default class DatabasePostgresql extends BaseGenerator {
 
     public async apply(resources, props: DatabasePostgresqlProps, extra: any = {}) {
         const dbImage = 'postgresql';
-        extra.databaseImage = dbImage;
-        extra.databaseService = props.serviceName;
+        const exProps: DatabasePostgresqlExtra = {
+            'image': dbImage,
+            'service': props.secretName
+        };
+        extra.databaseInfo = exProps;
 
         // Check that the database doesn't already exist
         if (!resources.service(props.serviceName)) {

@@ -11,7 +11,7 @@ import {
 } from 'core/resources';
 import { cases } from 'core/template/transformers/cases';
 import { enumItem } from 'core/catalog';
-import { BaseGenerator, BaseGeneratorProps, NodejsCoords } from 'core/catalog/types';
+import { BaseGenerator, BaseGeneratorProps, BasePlatformExtra, NodejsCoords } from 'core/catalog/types';
 
 import PlatformBaseSupport from 'generators/platform-base-support';
 
@@ -20,15 +20,21 @@ export interface PlatformAngularProps extends BaseGeneratorProps {
     env?: object;
 }
 
+export interface PlatformAngularExtra extends BasePlatformExtra {
+}
+
 export default class PlatformAngular extends BaseGenerator {
     public static readonly sourceDir: string = __dirname;
 
     public async apply(resources, props: PlatformAngularProps, extra: any = {}) {
         const rtImage = 'nodeshift/centos7-s2i-web-app';
-        _.set(extra, 'shared.frameworkImage', rtImage);
-        _.set(extra, 'shared.frameworkInfo', enumItem('framework.name', 'angular'));
-        _.set(extra, 'shared.frameworkService', props.serviceName);
-        _.set(extra, 'shared.frameworkRoute', props.routeName);
+        const exProps: PlatformAngularExtra = {
+            'image': rtImage,
+            'enumInfo': enumItem('framework.name', 'angular'),
+            'service': props.serviceName,
+            'route': props.routeName
+        };
+        _.set(extra, 'shared.frameworkInfo', exProps);
 
         const env = props.env || {};
         env['OUTPUT_DIR'] = 'dist';

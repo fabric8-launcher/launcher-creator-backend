@@ -11,7 +11,7 @@ import {
 } from 'core/resources';
 import { cases } from 'core/template/transformers/cases';
 import { enumItem } from 'core/catalog';
-import { BaseGenerator, BaseGeneratorProps, Runtime } from 'core/catalog/types';
+import { BaseGenerator, BaseGeneratorProps, BasePlatformExtra, Runtime } from 'core/catalog/types';
 
 import MavenSetup, { MavenSetupProps } from 'generators/maven-setup';
 import PlatformBaseSupport from 'generators/platform-base-support';
@@ -21,15 +21,21 @@ export interface PlatformVertxProps extends BaseGeneratorProps, MavenSetupProps 
     env?: object;
 }
 
+export interface PlatformVertxExtra extends BasePlatformExtra {
+}
+
 export default class PlatformVertx extends BaseGenerator {
     public static readonly sourceDir: string = __dirname;
 
     public async apply(resources, props: PlatformVertxProps, extra: any = {}) {
         const rtImage = 'registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift';
-        _.set(extra, 'shared.runtimeImage', rtImage);
-        _.set(extra, 'shared.runtimeInfo', enumItem('runtime.name', 'vertx'));
-        _.set(extra, 'shared.runtimeService', props.serviceName);
-        _.set(extra, 'shared.runtimeRoute', props.routeName);
+        const exProps: PlatformVertxExtra = {
+            'image': rtImage,
+            'enumInfo': enumItem('runtime.name', 'vertx'),
+            'service': props.serviceName,
+            'route': props.routeName
+        };
+        _.set(extra, 'shared.runtimeInfo', exProps);
 
         // Check if the service already exists, so we don't create it twice
         if (!resources.service(props.serviceName)) {

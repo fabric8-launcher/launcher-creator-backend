@@ -11,7 +11,7 @@ import {
 } from 'core/resources';
 import { cases } from 'core/template/transformers/cases';
 import { enumItem } from 'core/catalog';
-import { BaseGenerator, BaseGeneratorProps, NodejsCoords, Runtime } from 'core/catalog/types';
+import { BaseGenerator, BaseGeneratorProps, BasePlatformExtra, NodejsCoords, Runtime } from 'core/catalog/types';
 
 import PlatformBaseSupport from 'generators/platform-base-support';
 
@@ -21,15 +21,21 @@ export interface PlatformNodejsProps extends BaseGeneratorProps {
     env?: object;
 }
 
+export interface PlatformNodejsExtra extends BasePlatformExtra {
+}
+
 export default class PlatformNodejs extends BaseGenerator {
     public static readonly sourceDir: string = __dirname;
 
     public async apply(resources, props: PlatformNodejsProps, extra: any = {}) {
         const rtImage = 'nodeshift/centos7-s2i-nodejs';
-        _.set(extra, 'shared.runtimeImage', rtImage);
-        _.set(extra, 'shared.runtimeInfo', enumItem('runtime.name', 'nodejs'));
-        _.set(extra, 'shared.runtimeService', props.serviceName);
-        _.set(extra, 'shared.runtimeRoute', props.routeName);
+        const exProps: PlatformNodejsExtra = {
+            'image': rtImage,
+            'enumInfo': enumItem('runtime.name', 'nodejs'),
+            'service': props.serviceName,
+            'route': props.routeName
+        };
+        _.set(extra, 'shared.runtimeInfo', exProps);
 
         // Check if the service already exists, so we don't create it twice
         if (!resources.service(props.serviceName)) {

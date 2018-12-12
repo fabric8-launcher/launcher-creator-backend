@@ -12,7 +12,7 @@ import {
 } from 'core/resources';
 import { cases } from 'core/template/transformers/cases';
 import { enumItem } from 'core/catalog';
-import { BaseGenerator, BaseGeneratorProps } from 'core/catalog/types';
+import { BaseGenerator, BaseGeneratorProps, BasePlatformExtra } from 'core/catalog/types';
 
 import PlatformBaseSupport from 'generators/platform-base-support';
 import MavenSetup, { MavenSetupProps } from 'generators/maven-setup';
@@ -21,15 +21,21 @@ export interface PlatformSpringBootProps extends BaseGeneratorProps, MavenSetupP
     env?: object;
 }
 
+export interface PlatformSpringBootExtra extends BasePlatformExtra {
+}
+
 export default class PlatformSpringBoot extends BaseGenerator {
     public static readonly sourceDir: string = __dirname;
 
     public async apply(resources, props: PlatformSpringBootProps, extra: any = {}) {
         const rtImage = 'registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift';
-        _.set(extra, 'shared.runtimeImage', rtImage);
-        _.set(extra, 'shared.runtimeInfo', enumItem('runtime.name', 'springboot'));
-        _.set(extra, 'shared.runtimeService', props.serviceName);
-        _.set(extra, 'shared.runtimeRoute', props.routeName);
+        const exProps: PlatformSpringBootExtra = {
+            'image': rtImage,
+            'enumInfo': enumItem('runtime.name', 'springboot'),
+            'service': props.serviceName,
+            'route': props.routeName
+        };
+        _.set(extra, 'shared.runtimeInfo', exProps);
 
         // Check if the service already exists, so we don't create it twice
         if (!resources.service(props.serviceName)) {
