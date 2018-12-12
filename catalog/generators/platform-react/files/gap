@@ -9,6 +9,7 @@ OPENSHIFTIO_DIR=${SCRIPT_DIR}/.openshiftio
 SOURCE_DIR=${SCRIPT_DIR}
 if [[ ! -z "{{.tier}}" ]]; then
     SOURCE_DIR=${SOURCE_DIR}/..
+    TIER_DIR=/{{.tier}}
 fi
 
 while [[ $# > 0 ]]; do
@@ -39,11 +40,7 @@ while [[ $# > 0 ]]; do
                 shift
                 oc start-build ${SERVICE_NAME} "$@"
             else
-                if [[ -f ${FROM} ]]; then
-                    oc start-build ${SERVICE_NAME} --from-file ${FROM} "$@"
-                else
-                    oc start-build ${SERVICE_NAME} --from-dir ${SOURCE_DIR} "$@"
-                fi
+                oc start-build ${SERVICE_NAME} --from-dir ${SOURCE_DIR} "$@"
             fi
             ;;
         "delete")
