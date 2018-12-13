@@ -21,7 +21,7 @@
     "generate": "NODE_PATH=lib:catalog ts-node ./lib/core/resources/generate.ts",
     "debug": "NODE_PATH=lib:catalog node --inspect-brk ./node_modules/.bin/ts-node --transpile-only lib/server.ts 8081",
     "debug-apply": "NODE_PATH=lib:catalog node --inspect-brk ./node_modules/.bin/ts-node --transpile-only lib/core/deploy/apply.ts",
-    "lint": "tslint -t verbose --project .",
+    "lint": "tslint -c tslint.json -t verbose --project .",
     "test": "npm run build && NODE_PATH=dist/lib:dist/catalog node node_modules/tape/bin/tape ./dist/test/**/*.test.js | tap-spec",
     "watch": "nodemon $NODE_DEBUG_OPTION"
   },
