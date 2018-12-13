@@ -1,6 +1,6 @@
 
 import * as _ from 'lodash';
-import { Enums, listEnums } from 'core/catalog';
+import { Enums } from 'core/catalog/types';
 
 export interface PropertyDef {
     id: string;
@@ -22,6 +22,17 @@ interface EnumPropertyDef extends PropertyDef {
 }
 
 interface ObjectPropertyDef extends PropertyDef {
+    props: PropertyDef[];
+}
+
+export interface InfoDef {
+    type: string;
+    name: string;
+    description?: string;
+    metadata: {
+        category: string;
+        icon?: string;
+    };
     props: PropertyDef[];
 }
 

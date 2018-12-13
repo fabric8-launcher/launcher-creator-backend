@@ -31,6 +31,18 @@ export interface DeploymentDescriptor {
     applications: ApplicationDescriptor[];  // All applications that are part of the deployment
 }
 
+export interface Enums {
+    [key: string]: Enum[];
+}
+
+export interface Enum {
+    id: string;
+    name: string;
+    description?: string;
+    icon?: string;
+    metadata?: object;
+}
+
 export interface Runtime {
     name: string;
     version?: string;

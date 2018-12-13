@@ -1,7 +1,7 @@
 
 import * as test from 'tape';
 import * as info from 'core/info';
-import { Enums } from 'core/catalog';
+import { Enums } from 'core/catalog/types';
 
 const def = [
     {

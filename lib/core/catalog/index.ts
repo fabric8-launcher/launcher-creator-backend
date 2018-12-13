@@ -1,6 +1,8 @@
 
 import { readdir, statSync, pathExistsSync } from 'fs-extra';
 import { join } from 'path';
+import { Enum, Enums } from 'core/catalog/types';
+import { InfoDef } from 'core/info';
 
 function catalogModuleFolder() {
     if (!!process.env['LAUNCHER_CREATOR_CATALOG']) {
@@ -24,7 +26,7 @@ function catalogFileFolder() {
     }
 }
 
-export function info(itemConst) {
+export function info(itemConst): InfoDef {
     return require(join(itemConst.sourceDir, 'info.json'));
 }
 
@@ -60,18 +62,6 @@ export async function listGeneratorInfos() {
     const gens = await listGenerators();
     return gens
         .map(([f, g]) => ({'module': f, ...info(g)}));
-}
-
-export interface Enums {
-    [key: string]: Enum[];
-}
-
-export interface Enum {
-    id: string;
-    name: string;
-    description?: string;
-    icon?: string;
-    metadata?: object;
 }
 
 export function listEnums(): Enums {

@@ -74,37 +74,37 @@ function validateAddCapability(deployment, props) {
 }
 
 // Adds the given capability to the given deployment
-function addCapability(deployment, capability) {
-    const cap = { ...capability };
+function addCapability(deployment, capState) {
+    const cap = { ...capState };
     delete cap.application;
     delete cap.tier;
     delete cap.shared;
     delete cap.sharedExtra;
-    let app = deployment.applications.find(item => item.application === capability.application);
+    let app = deployment.applications.find(item => item.application === capState.application);
     if (!app) {
         app = {
-            'application': capability.application,
+            'application': capState.application,
             'tiers': []
         };
         deployment.applications = [...deployment.applications, app];
     }
-    let tier = app.tiers.find(t => t.tier === capability.tier);
+    let tier = app.tiers.find(t => t.tier === capState.tier);
     if (!tier) {
         tier = {
             'shared': {},
             'extra': {},
             'capabilities': []
         };
-        if (!!capability.tier) {
-            tier.tier = capability.tier;
+        if (!!capState.tier) {
+            tier.tier = capState.tier;
         }
         app.tiers = [ ...app.tiers, tier ];
     }
-    if (!!capability.shared) {
-        tier.shared = { ...tier.shared, ...capability.shared };
+    if (!!capState.shared) {
+        tier.shared = { ...tier.shared, ...capState.shared };
     }
-    if (!!capability.sharedExtra) {
-        tier.extra = { ...tier.extra, ...capability.sharedExtra };
+    if (!!capState.sharedExtra) {
+        tier.extra = { ...tier.extra, ...capState.sharedExtra };
     }
     tier.capabilities = [ ...tier.capabilities, cap ];
 }
@@ -174,7 +174,7 @@ function postApply(res, targetDir, deployment) {
     return p;
 }
 
-function capInfo(propDefs, props, extra) {
+function createCapState(propDefs, props, extra) {
     const props2 = filterObject(props, (key, value) => !getPropDef(propDefs, key).shared);
     const shared = filterObject(props, (key, value) => getPropDef(propDefs, key).shared);
     const sharedExtra = extra.shared;
@@ -234,7 +234,8 @@ async function applyCapability(
     // Validate the properties that we get passed are valid
     const capTargetDir = (!props.tier) ? targetDir : join(targetDir, props.tier);
     const capConst = getCapabilityModule(props.module);
-    const propDefs = info(capConst).props;
+    const capInfo = info(capConst);
+    const propDefs = capInfo.props;
     const allprops = { ...props, ...definedPropsOnly(propDefs, shared) };
     validate(propDefs, listEnums(), allprops);
 
@@ -250,7 +251,7 @@ async function applyCapability(
     const res2 = await cap.apply(res, allprops, extra);
 
     // Add the capability's state to the deployment descriptor
-    addCapability(deployment, capInfo(info(capConst).props, allprops, extra));
+    addCapability(deployment, createCapState(propDefs, allprops, extra));
 
     // Execute any post-apply generators
     const res3 = await postApply(res2, targetDir, deployment);
