@@ -100,13 +100,28 @@ function addCapability(deployment, capState) {
         }
         app.parts = [ ...app.parts, part ];
     }
+    part.capabilities = [...part.capabilities, cap];
     if (!!capState.shared) {
         part.shared = { ...part.shared, ...capState.shared };
     }
-    if (!!capState.sharedExtra) {
-        part.extra = { ...part.extra, ...capState.sharedExtra };
+    const overall = overallCategory(part.capabilities);
+    if (!!capState.sharedExtra || !!overall) {
+        part.extra = { ...part.extra, ...capState.sharedExtra, ...overall };
     }
-    part.capabilities = [ ...part.capabilities, cap ];
+}
+
+function overallCategory(capabilities: any[]): object {
+    if (capabilities.length > 0) {
+        let categories = _.uniq(capabilities.map(c => c.extra.category));
+        if (categories.length > 1) {
+            // This is a bit of a hack, we're purposely removing "support"
+            // because we know we're not really interested in that one
+            categories = categories.filter(c => c !== 'support');
+        }
+        return { 'category': categories[0] };
+    } else {
+        return {};
+    }
 }
 
 // Returns a promise that will resolve when the given
@@ -247,7 +262,7 @@ async function applyCapability(
 
     // Apply the capability
     const cap = new capConst(generator, capTargetDir);
-    const extra = { 'shared': { 'category': capInfo.metadata.category } };
+    const extra = { 'category': capInfo.metadata.category };
     const res2 = await cap.apply(res, allprops, extra);
 
     // Add the capability's state to the deployment descriptor
