@@ -59,12 +59,11 @@ function validateAddCapability(deployment, props) {
     if (!!app) {
         const part = app.parts.find(t => t.subFolderName === props.subFolderName);
         if (!!part) {
-            // TODO this is not entirely correct, but we should really get rid of 'framework'
-            const rtapp = _.get(part, 'shared.runtime.name', _.get(part, 'shared.framework.name'));
-            const rtcap = _.get(props, 'runtime.name', _.get(props, 'framework.name'));
+            const rtapp = _.get(part, 'shared.runtime.name');
+            const rtcap = _.get(props, 'runtime.name');
             if (!!rtapp && !!rtcap && rtapp !== rtcap) {
                 throw new Error(
-                    `Trying to add capability with incompatible 'runtime' or 'framework' (is '${rtcap}', should be '${rtapp}')`);
+                    `Trying to add capability with incompatible 'runtime' (is '${rtcap}', should be '${rtapp}')`);
             }
         }
         if (!app.parts[0].subFolderName && !!props.subFolderName || !!app.parts[0].subFolderName && !props.subFolderName) {

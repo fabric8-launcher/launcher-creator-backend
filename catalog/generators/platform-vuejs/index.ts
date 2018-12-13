@@ -30,11 +30,11 @@ export default class PlatformVueJS extends BaseGenerator {
         const rtImage = 'nodeshift/centos7-s2i-web-app';
         const exProps: PlatformVueJSExtra = {
             'image': rtImage,
-            'enumInfo': enumItem('framework.name', 'vuejs'),
+            'enumInfo': enumItem('runtime.name', 'vuejs'),
             'service': props.serviceName,
             'route': props.routeName
         };
-        _.set(extra, 'shared.frameworkInfo', exProps);
+        _.set(extra, 'shared.runtimeInfo', exProps);
 
         const env = props.env || {};
         env['OUTPUT_DIR'] = 'dist';

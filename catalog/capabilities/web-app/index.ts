@@ -5,8 +5,8 @@ import PlatformReact from 'generators/platform-react';
 import PlatformAngular from 'generators/platform-angular';
 import PlatformVueJS from 'generators/platform-vuejs';
 
-// Returns the corresponding framework generator depending on the given framework type
-function frameworkByType(type) {
+// Returns the corresponding runtime generator depending on the given runtime type
+function runtimeByType(type) {
     if (type.name === 'react') {
         return PlatformReact;
     } else if (type.name === 'angular') {
@@ -14,7 +14,7 @@ function frameworkByType(type) {
     } else if (type.name === 'vuejs') {
         return PlatformVueJS;
     } else {
-        throw new Error(`Unsupported framework type: ${type.name}`);
+        throw new Error(`Unsupported runtime type: ${type.name}`);
     }
 }
 
@@ -30,12 +30,12 @@ export default class Rest extends BaseCapability {
             'subFolderName': props.subFolderName,
             'serviceName': rtServiceName,
             'routeName': rtRouteName,
-            'framework': props.framework,
+            'runtime': props.runtime,
             'nodejs': {
                 'name': props.application,
                 'version': '1.0.0'
             }
         };
-        return await this.generator(frameworkByType(props.framework)).apply(resources, rtprops, extra);
+        return await this.generator(runtimeByType(props.runtime)).apply(resources, rtprops, extra);
     }
 }

@@ -21,7 +21,7 @@ export default class WelcomeApp extends BaseGenerator {
         await this.generator(PlatformBaseSupport).apply(resources, props, extra);
 
         // This is here in case we get applied in a subFolderName of our own
-        // (meaning there's no runtime/framework so there's no gap or README)
+        // (meaning there's no runtime so there's no gap or README)
         if (!await this.filesCopied()) {
             await this.copy();
             await this.transform('gap', cases(props));

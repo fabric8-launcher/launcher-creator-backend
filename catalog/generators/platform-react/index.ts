@@ -30,11 +30,11 @@ export default class PlatformReact extends BaseGenerator {
         const rtImage = 'nodeshift/centos7-s2i-web-app';
         const exProps: PlatformReactExtra = {
             'image': rtImage,
-            'enumInfo': enumItem('framework.name', 'react'),
+            'enumInfo': enumItem('runtime.name', 'react'),
             'service': props.serviceName,
             'route': props.routeName
         };
-        _.set(extra, 'shared.frameworkInfo', exProps);
+        _.set(extra, 'shared.runtimeInfo', exProps);
 
         // Check if the service already exists, so we don't create it twice
         if (!resources.service(props.serviceName)) {

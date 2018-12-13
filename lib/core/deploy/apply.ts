@@ -85,9 +85,6 @@ async function main() {
         if (args[i] === '--runtime') {
             SHARED['runtime'] = toRuntime(args[i + 1]);
             i += 2;
-        } else if (args[i] === '--framework') {
-            SHARED['framework'] = { 'name': args[i + 1] };
-            i += 2;
         }
 
         const APP_NAME = args[i++];

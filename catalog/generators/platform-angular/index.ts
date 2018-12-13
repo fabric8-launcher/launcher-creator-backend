@@ -30,11 +30,11 @@ export default class PlatformAngular extends BaseGenerator {
         const rtImage = 'nodeshift/centos7-s2i-web-app';
         const exProps: PlatformAngularExtra = {
             'image': rtImage,
-            'enumInfo': enumItem('framework.name', 'angular'),
+            'enumInfo': enumItem('runtime.name', 'angular'),
             'service': props.serviceName,
             'route': props.routeName
         };
-        _.set(extra, 'shared.frameworkInfo', exProps);
+        _.set(extra, 'shared.runtimeInfo', exProps);
 
         const env = props.env || {};
         env['OUTPUT_DIR'] = 'dist';
