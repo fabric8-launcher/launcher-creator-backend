@@ -19,7 +19,7 @@ export default class DatabaseCrudVertx extends BaseGenerator {
         if (!await this.filesCopied()) {
             const pprops = {
                 'application': props.application,
-                'tier': props.tier,
+                'subFolderName': props.subFolderName,
                 'serviceName': props.serviceName,
                 'routeName': props.routeName,
                 'runtime': props.runtime,
@@ -50,7 +50,7 @@ export default class DatabaseCrudVertx extends BaseGenerator {
                     insertAtEnd('      new io.openshift.booster.database.CrudApplication(vertx),')));
         }
         extra['sourceMapping'] = {
-            'dbEndpoint': this.join(props.tier, 'src/main/java/io/openshift/booster/database/CrudApplication.java')
+            'dbEndpoint': this.join(props.subFolderName, 'src/main/java/io/openshift/booster/database/CrudApplication.java')
         };
         return resources;
     }

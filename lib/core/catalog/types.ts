@@ -14,17 +14,17 @@ export interface CapabilityDescriptor {
     extra?: object;             // Any properties the capability might return
 }
 
-export interface TierDescriptor {
-    tier?: string;               // The name of the tier
+export interface PartDescriptor {
+    subFolderName?: string;               // The name of the subFolderName
     shared?: object;            // Any shared properties that will be passed to all capabilities
     extra?: object;             // Any shared properties returned by capabilities
-    capabilities: CapabilityDescriptor[];   // All capabilities that are part of the tier
+    capabilities: CapabilityDescriptor[];   // All capabilities that are part of the subFolderName
 }
 
 export interface ApplicationDescriptor {
     application: string;        // The name of the application
     extra?: object;             // Any application properties unused by the creator itself
-    tiers: TierDescriptor[];    // All capabilities that are part of the application
+    parts: PartDescriptor[];    // Parts are groups of capabilities that make up the application
 }
 
 export interface DeploymentDescriptor {
@@ -152,7 +152,7 @@ interface Capability extends CatalogItem {
 
 export interface BaseGeneratorProps {
     application: string;
-    tier?: string;
+    subFolderName?: string;
     serviceName: string;
     routeName: string;
 }

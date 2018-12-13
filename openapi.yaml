@@ -242,7 +242,7 @@ components:
               type: object
               properties:
                 tier:
-                  description: The name of the application tier
+                  description: The name of the application subFolderName
                   type: string
                 shared:
                   description: The shared properties that get applied to each selected Capability

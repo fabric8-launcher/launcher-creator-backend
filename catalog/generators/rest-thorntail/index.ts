@@ -14,7 +14,7 @@ export default class RestThorntail extends BaseGenerator {
             // and then copy our own over that
             const pprops = {
                 'application': props.application,
-                'tier': props.tier,
+                'subFolderName': props.subFolderName,
                 'serviceName': props.serviceName,
                 'routeName': props.routeName,
                 'maven': props.maven,
@@ -24,7 +24,7 @@ export default class RestThorntail extends BaseGenerator {
             await this.mergePoms();
         }
         extra['sourceMapping'] = {
-            'greetingEndpoint': this.join(props.tier, 'src/main/java/io/openshift/booster/http/GreetingEndpoint.java')
+            'greetingEndpoint': this.join(props.subFolderName, 'src/main/java/io/openshift/booster/http/GreetingEndpoint.java')
         };
         return resources;
     }

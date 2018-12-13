@@ -7,9 +7,9 @@ SERVICE_NAME={{.serviceName}}
 SCRIPT_DIR=$(cd "$(dirname "$BASH_SOURCE")" ; pwd -P)
 OPENSHIFTIO_DIR=${SCRIPT_DIR}/.openshiftio
 SOURCE_DIR=${SCRIPT_DIR}
-if [[ ! -z "{{.tier}}" ]]; then
+if [[ ! -z "{{.subFolderName}}" ]]; then
     SOURCE_DIR=${SOURCE_DIR}/..
-    TIER_DIR=/{{.tier}}
+    SUB_DIR=/{{.subFolderName}}
 fi
 
 while [[ $# > 0 ]]; do

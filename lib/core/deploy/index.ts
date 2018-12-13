@@ -9,7 +9,7 @@ import { getCapabilityModule, info, listEnums } from 'core/catalog';
 import { applyFromFile, startBuild, deleteApp } from 'core/oc';
 import { filterObject, zipFolder } from 'core/utils';
 import { resources, Resources } from 'core/resources';
-import { ApplicationDescriptor, CapabilityDescriptor, DeploymentDescriptor, TierDescriptor } from 'core/catalog/types';
+import { ApplicationDescriptor, CapabilityDescriptor, DeploymentDescriptor, PartDescriptor } from 'core/catalog/types';
 
 // Returns the name of the deployment file in the given directory
 export function deploymentFileName(targetDir) {
@@ -57,18 +57,18 @@ export async function writeDeployment(deploymentFile: string, deployment: Deploy
 function validateAddCapability(deployment, props) {
     const app = deployment.applications.find(item => item.application === props.application);
     if (!!app) {
-        const tier = app.tiers.find(t => t.tier === props.tier);
-        if (!!tier) {
+        const part = app.parts.find(t => t.subFolderName === props.subFolderName);
+        if (!!part) {
             // TODO this is not entirely correct, but we should really get rid of 'framework'
-            const rtapp = _.get(tier, 'shared.runtime.name', _.get(tier, 'shared.framework.name'));
+            const rtapp = _.get(part, 'shared.runtime.name', _.get(part, 'shared.framework.name'));
             const rtcap = _.get(props, 'runtime.name', _.get(props, 'framework.name'));
             if (!!rtapp && !!rtcap && rtapp !== rtcap) {
                 throw new Error(
                     `Trying to add capability with incompatible 'runtime' or 'framework' (is '${rtcap}', should be '${rtapp}')`);
             }
         }
-        if (!app.tiers[0].tier && !!props.tier || !!app.tiers[0].tier && !props.tier) {
-            throw new Error(`Can't mix tiered and untiered capabilities`);
+        if (!app.parts[0].subFolderName && !!props.subFolderName || !!app.parts[0].subFolderName && !props.subFolderName) {
+            throw new Error(`Can't mix capabilities in the root folder and in sub folders`);
         }
     }
 }
@@ -77,36 +77,36 @@ function validateAddCapability(deployment, props) {
 function addCapability(deployment, capState) {
     const cap = { ...capState };
     delete cap.application;
-    delete cap.tier;
+    delete cap.subFolderName;
     delete cap.shared;
     delete cap.sharedExtra;
     let app = deployment.applications.find(item => item.application === capState.application);
     if (!app) {
         app = {
             'application': capState.application,
-            'tiers': []
+            'parts': []
         };
         deployment.applications = [...deployment.applications, app];
     }
-    let tier = app.tiers.find(t => t.tier === capState.tier);
-    if (!tier) {
-        tier = {
+    let part = app.parts.find(p => p.subFolderName === capState.subFolderName);
+    if (!part) {
+        part = {
             'shared': {},
             'extra': {},
             'capabilities': []
         };
-        if (!!capState.tier) {
-            tier.tier = capState.tier;
+        if (!!capState.subFolderName) {
+            part.subFolderName = capState.subFolderName;
         }
-        app.tiers = [ ...app.tiers, tier ];
+        app.parts = [ ...app.parts, part ];
     }
     if (!!capState.shared) {
-        tier.shared = { ...tier.shared, ...capState.shared };
+        part.shared = { ...part.shared, ...capState.shared };
     }
     if (!!capState.sharedExtra) {
-        tier.extra = { ...tier.extra, ...capState.sharedExtra };
+        part.extra = { ...part.extra, ...capState.sharedExtra };
     }
-    tier.capabilities = [ ...tier.capabilities, cap ];
+    part.capabilities = [ ...part.capabilities, cap ];
 }
 
 // Returns a promise that will resolve when the given
@@ -154,8 +154,8 @@ function definedPropsOnly(propDefs: any, props: object): object {
 function postApply(res, targetDir, deployment) {
     let p = Promise.resolve(res);
     const app = deployment.applications[0];
-    for (const tier of app.tiers) {
-        for (const cap of tier.capabilities) {
+    for (const part of app.parts) {
+        for (const cap of part.capabilities) {
             let capConst = null;
             try {
                 capConst = getCapabilityModule(cap.module);
@@ -163,10 +163,10 @@ function postApply(res, targetDir, deployment) {
                 console.log(`Capability ${cap.module} wasn't found for post-apply, skipping.`);
             }
             if (capConst) {
-                const capTargetDir = (!tier.tier) ? targetDir : join(targetDir, tier.tier);
+                const capTargetDir = (!part.subFolderName) ? targetDir : join(targetDir, part.subFolderName);
                 const generator = getGeneratorConstructorWrapper(capTargetDir);
                 const capinst = new capConst(generator, capTargetDir);
-                const props = { ...tier.shared, ...cap.props, 'module': cap.module, 'application': app.application, 'tier': tier.tier };
+                const props = { ...part.shared, ...cap.props, 'module': cap.module, 'application': app.application, 'subFolderName': part.subFolderName };
                 p = p.then(() => capinst.postApply(res, props, deployment));
             }
         }
@@ -182,11 +182,11 @@ function createCapState(propDefs, props, extra) {
     delete extra2.shared;
     delete props2.module;
     delete props2.application;
-    delete props2.tier;
+    delete props2.subFolderName;
     return {
         'module': props.module,
         'application': props.application,
-        'tier': props.tier,
+        'subFolderName': props.subFolderName,
         'props': props2,
         'shared': shared,
         'sharedExtra': sharedExtra,
@@ -223,16 +223,16 @@ async function applyCapability(
         res: Resources,
         targetDir: string,
         appName: string,
-        tierName: string,
+        subFolderName: string,
         shared: object,
         capability: CapabilityDescriptor): Promise<DeploymentDescriptor> {
     const props: any = { ...capability.props, 'module': capability.module, 'application': appName };
-    if (!!tierName) {
-        props.tier = tierName;
+    if (!!subFolderName) {
+        props.subFolderName = subFolderName;
     }
 
     // Validate the properties that we get passed are valid
-    const capTargetDir = (!props.tier) ? targetDir : join(targetDir, props.tier);
+    const capTargetDir = (!props.subFolderName) ? targetDir : join(targetDir, props.subFolderName);
     const capConst = getCapabilityModule(props.module);
     const capInfo = info(capConst);
     const propDefs = capInfo.props;
@@ -263,21 +263,21 @@ async function applyCapability(
     return deployment;
 }
 
-// Calls `applyCapability()` on all the capabilities in the given tier descriptor
-async function applyTier(targetDir: string, appName: string, tier: TierDescriptor): Promise<DeploymentDescriptor> {
-    const genTargetDir = (!tier.tier) ? targetDir : join(targetDir, tier.tier);
+// Calls `applyCapability()` on all the capabilities in the given subFolderName descriptor
+async function applyPart(targetDir: string, appName: string, part: PartDescriptor): Promise<DeploymentDescriptor> {
+    const genTargetDir = (!part.subFolderName) ? targetDir : join(targetDir, part.subFolderName);
     const res = await readOrCreateResources(resourcesFileName(genTargetDir));
     const generator = getGeneratorConstructorWrapper(genTargetDir);
     const p = Promise.resolve(emptyDeploymentDescriptor());
-    return tier.capabilities.reduce((acc, cur) => acc
-        .then(() => applyCapability(generator, res, targetDir, appName, tier.tier, tier.shared, cur)), p);
+    return part.capabilities.reduce((acc, cur) => acc
+        .then(() => applyCapability(generator, res, targetDir, appName, part.subFolderName, part.shared, cur)), p);
 }
 
-// Calls `applyTier()` on all the tiers in the given application descriptor
+// Calls `applyPart()` on all the parts in the given application descriptor
 export function applyApplication(targetDir: string, application: ApplicationDescriptor): Promise<DeploymentDescriptor> {
     const p = Promise.resolve(emptyDeploymentDescriptor());
-    return application.tiers.reduce((acc, cur) => acc
-        .then(() => applyTier(targetDir, application.application, cur)), p);
+    return application.parts.reduce((acc, cur) => acc
+        .then(() => applyPart(targetDir, application.application, cur)), p);
 }
 
 // Calls `applyApplication()` on all the applications in the given deployment descriptor

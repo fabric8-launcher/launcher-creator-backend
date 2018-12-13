@@ -44,7 +44,7 @@ export default class PlatformAngular extends BaseGenerator {
                 rtImage,
                 null,
                 env);
-            setBuildContextDir(res, props.tier);
+            setBuildContextDir(res, props.subFolderName);
             setMemoryResources(res, { 'limit': '512Mi' });
             setPathHealthChecks(res, '/', '/');
             resources.add(res);

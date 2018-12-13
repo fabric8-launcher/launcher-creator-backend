@@ -43,7 +43,7 @@ export default class PlatformSpringBoot extends BaseGenerator {
                 rtImage,
                 null,
                 props.env || {});
-            setBuildContextDir(res, props.tier);
+            setBuildContextDir(res, props.subFolderName);
             setMemoryResources(res, { 'limit': '2G' });
             setDefaultHealthChecks(res);
             resources.add(res);

@@ -8,9 +8,9 @@ JAR_NAME={{.maven.artifactId}}-{{.maven.version}}-thorntail.jar
 SCRIPT_DIR=$(cd "$(dirname "$BASH_SOURCE")" ; pwd -P)
 OPENSHIFTIO_DIR=${SCRIPT_DIR}/.openshiftio
 SOURCE_DIR=${SCRIPT_DIR}
-if [[ ! -z "{{.tier}}" ]]; then
+if [[ ! -z "{{.subFolderName}}" ]]; then
     SOURCE_DIR=${SOURCE_DIR}/..
-    TIER_DIR=/{{.tier}}
+    SUB_DIR=/{{.subFolderName}}
 fi
 
 while [[ $# > 0 ]]; do
@@ -42,8 +42,8 @@ while [[ $# > 0 ]]; do
             if [[ "$1" == "--binary" || "$1" == "-b" ]]; then
                 shift
                 FROM=${SCRIPT_DIR}/target/_oc_build_tmp_
-                mkdir -p ${FROM}${TIER_DIR}
-                cp ${BINARY} ${FROM}${TIER_DIR}
+                mkdir -p ${FROM}${SUB_DIR}
+                cp ${BINARY} ${FROM}${SUB_DIR}
                 oc start-build ${SERVICE_NAME} --from-dir ${FROM} "$@"
                 rm -rf ${FROM}
             elif [[ "$1" == "--source" || "$1" == "-s" ]]; then
@@ -55,8 +55,8 @@ while [[ $# > 0 ]]; do
             else
                 if [[ -f ${BINARY} ]]; then
                     FROM=${SCRIPT_DIR}/target/_oc_build_tmp_
-                    mkdir -p ${FROM}${TIER_DIR}
-                    cp ${BINARY} ${FROM}${TIER_DIR}
+                    mkdir -p ${FROM}${SUB_DIR}
+                    cp ${BINARY} ${FROM}${SUB_DIR}
                     oc start-build ${SERVICE_NAME} --from-dir ${FROM} "$@"
                     rm -rf ${FROM}
                 else

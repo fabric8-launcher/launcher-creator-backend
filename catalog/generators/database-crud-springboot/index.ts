@@ -18,7 +18,7 @@ export default class DatabaseCrudSpringBoot extends BaseGenerator {
         if (!await this.filesCopied()) {
             const pprops = {
                 'application': props.application,
-                'tier': props.tier,
+                'subFolderName': props.subFolderName,
                 'serviceName': props.serviceName,
                 'routeName': props.routeName,
                 'maven': props.maven,
@@ -45,7 +45,7 @@ export default class DatabaseCrudSpringBoot extends BaseGenerator {
             await this.transform('src/**/*.properties', cases(props));
         }
         extra['sourceMapping'] = {
-            'dbEndpoint': this.join(props.tier, 'src/main/java/io/openshift/booster/database/service/FruitRepository.java')
+            'dbEndpoint': this.join(props.subFolderName, 'src/main/java/io/openshift/booster/database/service/FruitRepository.java')
         };
         return resources;
     }

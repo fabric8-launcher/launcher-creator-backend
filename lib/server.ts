@@ -239,12 +239,12 @@ function validateGenerationRequest(req, res) {
         sendReply(res, HttpStatus.BAD_REQUEST, 'Missing application name');
         return false;
     }
-    if (!appDesc.tiers || !Array.isArray(appDesc.tiers) || appDesc.tiers.length === 0) {
-        sendReply(res, HttpStatus.BAD_REQUEST, 'Missing application tiers');
+    if (!appDesc.parts || !Array.isArray(appDesc.parts) || appDesc.parts.length === 0) {
+        sendReply(res, HttpStatus.BAD_REQUEST, 'Missing application parts');
     }
-    for (const tier of appDesc.tiers) {
-        if (!tier.capabilities || !Array.isArray(tier.capabilities) || tier.capabilities.length === 0) {
-            sendReply(res, HttpStatus.BAD_REQUEST, 'Missing application tier capabilities');
+    for (const part of appDesc.parts) {
+        if (!part.capabilities || !Array.isArray(part.capabilities) || part.capabilities.length === 0) {
+            sendReply(res, HttpStatus.BAD_REQUEST, 'Missing application part capabilities');
             return false;
         }
     }

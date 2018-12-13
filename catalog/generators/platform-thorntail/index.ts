@@ -41,7 +41,7 @@ export default class PlatformThorntail extends BaseGenerator {
                 rtImage,
                 null,
                 props.env || {});
-            setBuildContextDir(res, props.tier);
+            setBuildContextDir(res, props.subFolderName);
             setDefaultHealthChecks(res);
             setMemoryResources(res, { 'limit': '2G' });
             resources.add(res);

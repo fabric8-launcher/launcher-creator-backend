@@ -19,12 +19,12 @@ export default class Rest extends BaseCapability {
     public static readonly sourceDir: string = __dirname;
 
     public async apply(resources, props, extra) {
-        const appName = this.name(props.application, props.tier);
+        const appName = this.name(props.application, props.subFolderName);
         const rtServiceName = appName;
         const rtRouteName = appName;
         const rtprops = {
             'application': props.application,
-            'tier': props.tier,
+            'subFolderName': props.subFolderName,
             'serviceName': rtServiceName,
             'routeName': rtRouteName,
             'framework': props.framework,

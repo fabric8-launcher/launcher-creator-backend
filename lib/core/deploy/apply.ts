@@ -6,7 +6,7 @@ import {
     ApplicationDescriptor,
     CapabilityDescriptor,
     DeploymentDescriptor,
-    TierDescriptor,
+    PartDescriptor,
     toRuntime
 } from 'core/catalog/types';
 
@@ -48,13 +48,13 @@ async function main() {
         await apply(TARGET_DIR, deployment);
     } else if (args.length < 3) {
         console.error(`Missing arguments`);
-        console.log(`Usage: yarn run -s apply <project_dir> [--tier <tier>] [--runtime <runtime>[/<version>]] <app_name> <capability> [<json_props>] ...`);
+        console.log(`Usage: yarn run -s apply <project_dir> [--folder <folder>] [--runtime <runtime>[/<version>]] <app_name> <capability> [<json_props>] ...`);
         console.log(`                         <project_dir> --descriptor <descriptor_file>`);
         console.log(`                         <capability> --help`);
         console.log(`                         capabilities`);
         console.log(`                         runtimes`);
         console.log(`    project_dir     - The project directory. Will be created if it doesn't exist.`);
-        console.log(`    tier            - Optional tier to use for the capability.`);
+        console.log(`    folder          - Optional subfolder to use for the capability.`);
         console.log(`    app_name        - The name of the application.`);
         console.log(`    runtime         - The runtime to use for the application.`);
         console.log(`    version         - The runtime version to use for the application (optional).`);
@@ -71,13 +71,13 @@ async function main() {
 
         const TARGET_DIR = args[i++];
 
-        const tier: TierDescriptor = {
+        const part: PartDescriptor = {
             'shared': {},
             'capabilities': []
         };
 
-        if (args[i] === '--tier') {
-            tier.tier = args[i + 1];
+        if (args[i] === '--subFolderName') {
+            part.subFolderName = args[i + 1];
             i += 2;
         }
 
@@ -92,11 +92,11 @@ async function main() {
 
         const APP_NAME = args[i++];
 
-        tier.shared = SHARED;
+        part.shared = SHARED;
 
         const app: ApplicationDescriptor = {
             'application': APP_NAME,
-            'tiers': [tier]
+            'parts': [part]
         };
 
         const deployment: DeploymentDescriptor = {
@@ -112,7 +112,7 @@ async function main() {
                 cap.props = JSON.parse(PROPS);
                 i++;
             }
-            tier.capabilities = [...tier.capabilities, cap];
+            part.capabilities = [...part.capabilities, cap];
             i++;
         }
 

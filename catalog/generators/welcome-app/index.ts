@@ -33,7 +33,7 @@ export default class WelcomeApp extends BaseGenerator {
         // We're not really a platform, but the setup it does for tiered applications is useful to us
         await this.generator(PlatformBaseSupport).apply(resources, props, extra);
 
-        // This is here in case we get applied in a tier of our own
+        // This is here in case we get applied in a subFolderName of our own
         // (meaning there's no runtime/framework so there's no gap or README)
         if (!await this.filesCopied()) {
             await this.copy();
@@ -51,8 +51,8 @@ export default class WelcomeApp extends BaseGenerator {
             res = await readResources(fileName);
         }
 
-        res.parameter('FRONTEND_SERVICE_NAME')['value'] = !props.tier ? props.application : this.name(props.application, 'frontend');
-        res.parameter('BACKEND_SERVICE_NAME')['value'] = !props.tier ? props.application : this.name(props.application, 'backend');
+        res.parameter('FRONTEND_SERVICE_NAME')['value'] = !props.subFolderName ? props.application : this.name(props.application, 'frontend');
+        res.parameter('BACKEND_SERVICE_NAME')['value'] = !props.subFolderName ? props.application : this.name(props.application, 'backend');
         res.parameter('WELCOME_IMAGE_NAME')['value'] = process.env['WELCOME_IMAGE_NAME'] || 'fabric8/launcher-creator-welcome-app';
         res.parameter('WELCOME_IMAGE_TAG')['value'] = process.env['WELCOME_IMAGE_TAG'] || 'latest';
         res.parameter('WELCOME_APP_CONFIG')['value'] = JSON.stringify(props.deployment.applications[0]);

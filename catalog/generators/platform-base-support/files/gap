@@ -26,7 +26,7 @@ if [[ $# > 0 && $OK == 1 ]]; then
     if [[ $# > 0 ]]; then
         for file in ${SCRIPT_DIR}/*/gap; do
             DIR=$(basename $(dirname "$file"))
-            echo "Tier '$DIR'..."
+            echo "Part '$DIR'..."
             pushd >/dev/null "$DIR"
             $file "$@"
             popd >/dev/null

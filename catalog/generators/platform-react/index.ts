@@ -41,7 +41,7 @@ export default class PlatformReact extends BaseGenerator {
                 rtImage,
                 null,
                 props.env || {});
-            setBuildContextDir(res, props.tier);
+            setBuildContextDir(res, props.subFolderName);
             setMemoryResources(res, { 'limit': '512Mi' });
             setPathHealthChecks(res, '/', '/');
             resources.add(res);

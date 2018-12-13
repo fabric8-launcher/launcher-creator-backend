@@ -13,7 +13,7 @@ export default class Rest extends BaseCapability {
     public async postApply(resources, props, deployment) {
         const waprops = {
             'application': props.application,
-            'tier': props.tier,
+            'subFolderName': props.subFolderName,
             'serviceName': 'welcome',
             'routeName': 'welcome',
             deployment

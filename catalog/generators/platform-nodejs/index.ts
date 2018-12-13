@@ -42,7 +42,7 @@ export default class PlatformNodejs extends BaseGenerator {
                 rtImage,
                 null,
                 props.env || {});
-            setBuildContextDir(res, props.tier);
+            setBuildContextDir(res, props.subFolderName);
             setDefaultHealthChecks(res);
             setMemoryResources(res, { 'limit': '1024Mi' });
             resources.add(res);

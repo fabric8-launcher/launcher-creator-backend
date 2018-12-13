@@ -1,4 +1,4 @@
-# tiered-platform
+# multi-part-platform
 
 Created by the Cloud App Generator
 
