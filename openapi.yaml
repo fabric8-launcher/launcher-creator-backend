@@ -235,14 +235,14 @@ components:
         application:
           description: The application name to use for the project
           type: string
-        tiers:
-          description: The application tiers to use for the project
+        parts:
+          description: The application parts to use for the project
           type: array
           items:
               type: object
               properties:
-                tier:
-                  description: The name of the application subFolderName
+                subFolderName:
+                  description: The (optional) name of the subfolder to use for the capabilities
                   type: string
                 shared:
                   description: The shared properties that get applied to each selected Capability
@@ -278,7 +278,7 @@ components:
               - capabilities
       required:
       - application
-      - tiers
+      - parts
 
   securitySchemes:
     bearerAuth:            # arbitrary name for the security scheme

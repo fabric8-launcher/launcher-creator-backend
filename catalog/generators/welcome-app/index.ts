@@ -30,7 +30,7 @@ export default class WelcomeApp extends BaseGenerator {
         _.set(extra, 'shared.welcomeService', props.serviceName);
         _.set(extra, 'shared.welcomeRoute', props.routeName);
 
-        // We're not really a platform, but the setup it does for tiered applications is useful to us
+        // We're not really a platform, but the setup it does for multi-part applications is useful to us
         await this.generator(PlatformBaseSupport).apply(resources, props, extra);
 
         // This is here in case we get applied in a subFolderName of our own
