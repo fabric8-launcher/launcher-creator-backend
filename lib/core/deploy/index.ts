@@ -247,7 +247,7 @@ async function applyCapability(
 
     // Apply the capability
     const cap = new capConst(generator, capTargetDir);
-    const extra = {};
+    const extra = { 'shared': { 'category': capInfo.metadata.category } };
     const res2 = await cap.apply(res, allprops, extra);
 
     // Add the capability's state to the deployment descriptor
