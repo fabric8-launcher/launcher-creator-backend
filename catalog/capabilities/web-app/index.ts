@@ -3,6 +3,7 @@ import { BaseCapability } from 'core/catalog/types';
 
 import PlatformReact from 'generators/platform-react';
 import PlatformAngular from 'generators/platform-angular';
+import PlatformVueJS from 'generators/platform-vuejs';
 
 // Returns the corresponding framework generator depending on the given framework type
 function frameworkByType(type) {
@@ -10,6 +11,8 @@ function frameworkByType(type) {
         return PlatformReact;
     } else if (type.name === 'angular') {
         return PlatformAngular;
+    } else if (type.name === 'vuejs') {
+        return PlatformVueJS;
     } else {
         throw new Error(`Unsupported framework type: ${type.name}`);
     }

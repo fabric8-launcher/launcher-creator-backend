@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+
+APP_NAME={{.application}}
+SERVICE_NAME={{.serviceName}}
+#OPENSHIFT_CONSOLE_URL=Set to your OpenShift cluster's Console URL
+
+SCRIPT_DIR=$(cd "$(dirname "$BASH_SOURCE")" ; pwd -P)
+OPENSHIFTIO_DIR=${SCRIPT_DIR}/.openshiftio
+SOURCE_DIR=${SCRIPT_DIR}
+if [[ ! -z "{{.subFolderName}}" ]]; then
+    SOURCE_DIR=${SOURCE_DIR}/..
+    SUB_DIR=/{{.subFolderName}}
+fi
+
+while [[ $# > 0 ]]; do
+    CMD=$1
+    shift
+    case "$CMD" in
+        "deploy")
+            PARAMS=""
+            REPO_URL=$(git config --get remote.origin.url || echo "")
+            if [[ ! -z "${REPO_URL}" ]]; then
+                PARAMS="$PARAMS -p=SOURCE_REPOSITORY_URL=${REPO_URL}"
+            fi
+            if [[ ! -z "${OPENSHIFT_CONSOLE_URL}" ]]; then
+                PARAMS="$PARAMS -p=OPENSHIFT_CONSOLE_URL=${OPENSHIFT_CONSOLE_URL}"
+            fi
+            oc process -f ${OPENSHIFTIO_DIR}/application.yaml --ignore-unknown-parameters ${PARAMS} | oc apply -f -
+            if [[ -f ${OPENSHIFTIO_DIR}/service.welcome.yaml ]]; then
+                 oc process -f ${OPENSHIFTIO_DIR}/service.welcome.yaml --ignore-unknown-parameters ${PARAMS} | oc apply -f -
+            fi
+            ;;
+        "build"|"clean")
+            ;;
+        "push")
+            if [[ "$1" == "--source" || "$1" == "-s" || "$1" == "--binary" || "$1" == "-b" ]]; then
+                shift
+                oc start-build ${SERVICE_NAME} --from-dir ${SOURCE_DIR} "$@"
+            elif [[ "$1" == "--git" || "$1" == "-g" ]]; then
+                shift
+                oc start-build ${SERVICE_NAME} "$@"
+            else
+                oc start-build ${SERVICE_NAME} --from-dir ${SOURCE_DIR} "$@"
+            fi
+            ;;
+        "delete")
+            oc delete all,secrets -l app=${APP_NAME}
+            ;;
+        *)
+            echo "Usage: gap [deploy|push|delete] ..."
+            echo "   deploy  - Deploys the application to OpenShift"
+            echo "   push    - Pushes code to the application. By default this will push the local sources"
+            echo "             to OpenShift. This can be overridden by using one of the following flags:"
+            echo "      -s, --source - Pushes the local sources"
+            echo "      -g, --git    - Reverts to using the sources from Git"
+            echo "   delete  - Deletes the application from OpenShift"
+        ;;
+    esac
+done
