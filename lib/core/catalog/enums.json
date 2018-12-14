@@ -79,7 +79,17 @@
       "metadata": {
         "language": "javascript"
       }
+    },
+    {
+      "id": "vuejs",
+      "name": "Vue.js",
+      "description": "The Progressive JavaScript Framework",
+      "icon": "data:image/svg+xml,%3c%3fxml version='1.0' encoding='UTF-8' standalone='no'%3f%3e %3csvg xmlns:dc='http://purl.org/dc/elements/1.1/' xmlns:cc='http://creativecommons.org/ns%23' xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns%23' xmlns:svg='http://www.w3.org/2000/svg' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 400' height='400' width='400' xml:space='preserve' id='svg2' version='1.1'%3e%3cmetadata id='metadata8'%3e%3crdf:RDF%3e%3ccc:Work rdf:about=''%3e%3cdc:format%3eimage/svg%2bxml%3c/dc:format%3e%3cdc:type rdf:resource='http://purl.org/dc/dcmitype/StillImage' /%3e%3c/cc:Work%3e%3c/rdf:RDF%3e%3c/metadata%3e%3cdefs id='defs6' /%3e%3cg transform='matrix(1.3333333%2c0%2c0%2c-1.3333333%2c0%2c400)' id='g10'%3e%3cg transform='translate(178.0626%2c235.0086)' id='g12'%3e%3cpath id='path14' style='fill:%234dba87%3bfill-opacity:1%3bfill-rule:nonzero%3bstroke:none' d='M 0%2c0 -22.669%2c-39.264 -45.338%2c0 h -75.491 L -22.669%2c-170.017 75.491%2c0 Z' /%3e%3c/g%3e%3cg transform='translate(178.0626%2c235.0086)' id='g16'%3e%3cpath id='path18' style='fill:%23435466%3bfill-opacity:1%3bfill-rule:nonzero%3bstroke:none' d='M 0%2c0 -22.669%2c-39.264 -45.338%2c0 H -81.565 L -22.669%2c-102.01 36.227%2c0 Z' /%3e%3c/g%3e%3c/g%3e%3c/svg%3e",
+      "metadata": {
+        "language": "javascript"
+      }
     }
+
   ],
   "databaseType": [
     {
