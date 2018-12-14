@@ -76,7 +76,7 @@ async function main() {
             'capabilities': []
         };
 
-        if (args[i] === '--subFolderName') {
+        if (args[i] === '--folder') {
             part.subFolderName = args[i + 1];
             i += 2;
         }
