@@ -24,7 +24,8 @@
           "default": "react",
           "values": [
             "react",
-            "angular"
+            "angular",
+            "vuejs"
           ]
         }
       ]
