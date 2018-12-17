@@ -37,7 +37,7 @@ export default class PlatformAngular extends BaseGenerator {
         _.set(extra, 'shared.runtimeInfo', exProps);
 
         const env = props.env || {};
-        env['OUTPUT_DIR'] = 'dist';
+        env['OUTPUT_DIR'] = 'dist/' + props.application;
 
         // Check if the service already exists, so we don't create it twice
         if (!resources.service(props.serviceName)) {
