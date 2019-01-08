@@ -8,8 +8,10 @@ OK=1
 for arg in "$@"; do
     case "$arg" in
         "deploy"|"build"|"clean"|"push"|"delete")
+            CMD=$arg
             ;;
-        "-b"|"--binary"|"-s"|"--source"|"-g"|"--git")
+        -*)
+            [[ "$CMD" == "push" ]] || OK=0
             ;;
         *)
             OK=0
