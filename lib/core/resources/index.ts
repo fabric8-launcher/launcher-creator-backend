@@ -448,14 +448,20 @@ export function setPathHealthChecks(res: Resources,
             'path': readinessPath,
             'port': 8080,
             'scheme': 'HTTP'
-        }
+        },
+        'initialDelaySeconds': 5,
+        'timeoutSeconds': 3,
+        'periodSeconds': 10,
+        'failureThreshold': 10
     };
     const livenessProbe = {
         'httpGet': {
             'path': livenessPath,
             'port': 8080,
             'scheme': 'HTTP'
-        }
+        },
+        'initialDelaySeconds': 5,
+        'timeoutSeconds': 3
     };
     res = setHealthProbe(res, 'readinessProbe', readinessProbe, dcName);
     res = setHealthProbe(res, 'livenessProbe', livenessProbe, dcName);
