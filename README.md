@@ -154,3 +154,10 @@ $ oc new-app \
      -e LAUNCHER_BACKEND_URL=https://forge.api.prod-preview.openshift.io/api
 ```
 
+## Run Integration Tests
+
+Simply run the integration test script like this:
+
+```
+$ ./run_ittests.sh
+```
