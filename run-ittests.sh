@@ -2,14 +2,19 @@
 
 set -e
 
-BACKEND_CAPS="rest database welcome"
+BACKEND_CAPS_1="rest database welcome"
+BACKEND_CAPS_2='rest database {"databaseType":"mysql"} welcome'
 FRONTEND_CAPS="web-app welcome"
 
 function run_all_tests() {
-    run_test nodejs $BACKEND_CAPS
-    run_test springboot $BACKEND_CAPS
-    run_test thorntail $BACKEND_CAPS
-    run_test vertx $BACKEND_CAPS
+    run_test nodejs $BACKEND_CAPS_1
+    run_test nodejs $BACKEND_CAPS_2
+    run_test springboot $BACKEND_CAPS_1
+    run_test springboot $BACKEND_CAPS_2
+    run_test thorntail $BACKEND_CAPS_1
+    run_test thorntail $BACKEND_CAPS_2
+    run_test vertx $BACKEND_CAPS_1
+    run_test vertx $BACKEND_CAPS_2
 
     run_test angular $FRONTEND_CAPS
     run_test react $FRONTEND_CAPS

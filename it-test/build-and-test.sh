@@ -102,6 +102,7 @@ sleep 5
 # And finally we run all the tests
 
 for cap in $CAPS; do
+    if [[ $cap == "{"* ]]; then continue; fi
     echo "   Testing capability ${BLUE}$cap${RST}"
     shopt -s nullglob
     for script in ${SCRIPT_DIR}/cap-test/$cap/test-*.sh; do
