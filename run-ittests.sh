@@ -22,6 +22,21 @@ function run_test() {
     set -e
 }
 
+function restore() {
+    # Restore the original project as current
+    if [[ "$PRJ" != "" ]]; then
+        set +e
+        oc project $PRJ > /dev/null
+    fi
+}
+
+function restore_trap() {
+    echo ""
+    echo "Exiting..."
+    restore
+    exit 1
+}
+
 SCRIPT_DIR=$(cd "$(dirname "$BASH_SOURCE")" ; pwd -P)
 
 RES=0
@@ -34,13 +49,11 @@ set +e
 PRJ=$(oc project -q)
 set -e
 
+trap restore_trap INT
+
 run_all_tests
 
-# Restore the original project as current
-if [[ "$PRJ" != "" ]]; then
-    set +e
-    oc project $PRJ > /dev/null
-fi
+restore
 
 if [[ $RES == 0 ]]; then
     echo "Tests finished successfully"

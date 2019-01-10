@@ -13,6 +13,22 @@ echo "Testing runtime ${BLUE}$RUNTIME${RST} with ${BLUE}$CAPS${RST}"
 # Setup
 ITDIR=$(mktemp -d --tmpdir creator-it-XXXXXXXX)
 PRJ=$(basename ${ITDIR,,})
+
+# Peform final cleanup
+function cleanup() {
+    oc delete project $PRJ > /dev/null
+    rm -rf $ITDIR
+}
+
+function cleanup_trap() {
+    echo ""
+    echo "Exiting..."
+    cleanup
+    exit 1
+}
+
+trap cleanup_trap INT
+
 oc new-project $PRJ > /dev/null
 
 echo -n "   Creating project - "
@@ -29,9 +45,7 @@ else
     echo "$OUT"
 fi
 
-# Cleanup
-oc delete project $PRJ > /dev/null
-rm -rf $ITDIR
+cleanup
 
 exit $RES
 
