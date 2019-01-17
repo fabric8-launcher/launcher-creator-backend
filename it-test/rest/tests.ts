@@ -1,0 +1,20 @@
+import 'mocha';
+import * as assert from 'assert';
+import { Context } from '../functions';
+import * as request from 'request';
+import { promisify } from 'util';
+import * as HttpStatus from 'http-status-codes';
+
+export function test(ctx: Context) {
+    const get = promisify(request.get);
+
+    it('GreetingDefault', function() {
+        const url = `http://${ctx.routeHost}/api/greeting`;
+        return get(url).then(res => assert.strictEqual(res.statusCode, HttpStatus.OK));
+    });
+
+    it('GreetingWithName', function() {
+        const url = `http://${ctx.routeHost}/api/greeting?name=Tako`;
+        return get(url).then(res => assert.strictEqual(res.statusCode, HttpStatus.OK));
+    });
+}
