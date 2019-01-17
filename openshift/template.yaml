@@ -110,7 +110,6 @@ objects:
                 name: launcher
                 key: launcher.creator.sentry.dsn
                 optional: true
-          resources: {}
           terminationMessagePath: /dev/termination-log
           readinessProbe:
             httpGet:
