@@ -159,5 +159,5 @@ $ oc new-app \
 Simply run the integration test script like this:
 
 ```
-$ ./run_ittests.sh
+$ yarn ittest
 ```
