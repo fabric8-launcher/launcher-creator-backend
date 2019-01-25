@@ -90,12 +90,13 @@ function testRuntimeCaps(runtime: string, capabilities: Capability[]) {
 }
 
 function testRuntimeCap(runtime: string, capability: Capability, context: Context) {
-    describe(`Capability ${capName(capability)}`, function() {
-        const capDir = `./it-test/${capability}`;
+    const name = capName(capability);
+    describe(`Capability ${name}`, function() {
+        const capDir = `./it-test/${name}`;
         if (existsSync(capDir)) {
             const files = readdirSync(capDir);
             files.forEach(function(file) {
-                const mod = require(`./${capability}/${file}`);
+                const mod = require(`./${name}/${file}`);
                 Object.keys(mod)
                     .filter(funcName => funcName.startsWith('test'))
                     .forEach(function(funcName) {

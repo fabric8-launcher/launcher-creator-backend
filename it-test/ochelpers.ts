@@ -3,7 +3,11 @@ import * as sleep from 'system-sleep';
 
 export function waitForProject() {
     // First we cancel the first build which will fail anyway
-    run('oc', 'cancel-build', 'ittest-1');
+    try {
+        run('oc', 'cancel-build', 'ittest-1');
+    } catch (e) {
+        // Ignore any errors
+    }
     // Then we wait for the second build to complete or fail
     waitForBuild();
     // Then we wait for the deployment to spin up our application

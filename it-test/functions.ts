@@ -22,6 +22,14 @@ export function capName(cap: Capability): string {
     }
 }
 
+export function capOpts(cap: Capability): object {
+    if (typeof cap === 'string') {
+        return {};
+    } else {
+        return (cap as CapabilityDef).opts;
+    }
+}
+
 export function deployment(runtime: string, capabilities: Capability[]) {
     const caps = capabilities.map(cap => {
         if (typeof cap === 'string') {
