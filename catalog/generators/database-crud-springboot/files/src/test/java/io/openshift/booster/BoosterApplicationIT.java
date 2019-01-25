@@ -57,14 +57,14 @@ public class BoosterApplicationIT {
 
     @Test
     public void testGetAll() {
-        Fruit cherry = fruitRepository.save(new Fruit("Cherry"));
         Fruit apple = fruitRepository.save(new Fruit("Apple"));
+        Fruit orange = fruitRepository.save(new Fruit("Orange"));
         requestSpecification()
                 .get()
                 .then()
                 .statusCode(200)
-                .body("id", hasItems(cherry.getId(), apple.getId()))
-                .body("name", hasItems(cherry.getName(), apple.getName()));
+                .body("id", hasItems(apple.getId(), orange.getId()))
+                .body("name", hasItems(apple.getName(), orange.getName()));
     }
 
     @Test
@@ -78,13 +78,13 @@ public class BoosterApplicationIT {
 
     @Test
     public void testGetOne() {
-        Fruit cherry = fruitRepository.save(new Fruit("Cherry"));
+        Fruit apple = fruitRepository.save(new Fruit("Apple"));
         requestSpecification()
-                .get(String.valueOf(cherry.getId()))
+                .get(String.valueOf(apple.getId()))
                 .then()
                 .statusCode(200)
-                .body("id", is(cherry.getId()))
-                .body("name", is(cherry.getName()));
+                .body("id", is(apple.getId()))
+                .body("name", is(apple.getName()));
     }
 
     @Test
@@ -99,12 +99,12 @@ public class BoosterApplicationIT {
     public void testPost() {
         requestSpecification()
                 .contentType(ContentType.JSON)
-                .body(Collections.singletonMap("name", "Cherry"))
+                .body(Collections.singletonMap("name", "Apple"))
                 .post()
                 .then()
                 .statusCode(201)
                 .body("id", not(isEmptyString()))
-                .body("name", is("Cherry"));
+                .body("name", is("Apple"));
     }
 
     @Test
@@ -140,15 +140,15 @@ public class BoosterApplicationIT {
 
     @Test
     public void testPut() {
-        Fruit cherry = fruitRepository.save(new Fruit("Cherry"));
+        Fruit apple = fruitRepository.save(new Fruit("Apple"));
         requestSpecification()
                 .contentType(ContentType.JSON)
                 .body(Collections.singletonMap("name", "Lemon"))
                 .when()
-                .put(String.valueOf(cherry.getId()))
+                .put(String.valueOf(apple.getId()))
                 .then()
                 .statusCode(200)
-                .body("id", is(cherry.getId()))
+                .body("id", is(apple.getId()))
                 .body("name", is("Lemon"));
 
     }
@@ -166,46 +166,46 @@ public class BoosterApplicationIT {
 
     @Test
     public void testPutWithWrongPayload() {
-        Fruit cherry = fruitRepository.save(new Fruit("Cherry"));
+        Fruit apple = fruitRepository.save(new Fruit("Apple"));
         requestSpecification()
                 .contentType(ContentType.JSON)
                 .body(Collections.singletonMap("id", 0))
                 .when()
-                .put(String.valueOf(cherry.getId()))
+                .put(String.valueOf(apple.getId()))
                 .then()
                 .statusCode(422);
     }
 
     @Test
     public void testPutWithNonJsonPayload() {
-        Fruit cherry = fruitRepository.save(new Fruit("Cherry"));
+        Fruit apple = fruitRepository.save(new Fruit("Apple"));
         requestSpecification()
                 .contentType(ContentType.XML)
                 .when()
-                .put(String.valueOf(cherry.getId()))
+                .put(String.valueOf(apple.getId()))
                 .then()
                 .statusCode(415);
     }
 
     @Test
     public void testPutWithEmptyPayload() {
-        Fruit cherry = fruitRepository.save(new Fruit("Cherry"));
+        Fruit apple = fruitRepository.save(new Fruit("Apple"));
         requestSpecification()
                 .contentType(ContentType.JSON)
                 .when()
-                .put(String.valueOf(cherry.getId()))
+                .put(String.valueOf(apple.getId()))
                 .then()
                 .statusCode(415);
     }
 
     @Test
     public void testDelete() {
-        Fruit cherry = fruitRepository.save(new Fruit("Cherry"));
+        Fruit apple = fruitRepository.save(new Fruit("Apple"));
         requestSpecification()
-                .delete(String.valueOf(cherry.getId()))
+                .delete(String.valueOf(apple.getId()))
                 .then()
                 .statusCode(204);
-        assertFalse(fruitRepository.exists(cherry.getId()));
+        assertFalse(fruitRepository.exists(apple.getId()));
     }
 
     @Test
