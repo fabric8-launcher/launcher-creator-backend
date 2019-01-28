@@ -13,7 +13,9 @@ export function waitForProject() {
     // Then we wait for the deployment to spin up our application
     waitForDeployment();
     // And finally we wait a bit longer because if we don't we still often fail *sigh*
-    sleep(5000);
+    if (!isDryRun()) {
+        sleep(5000);
+    }
 }
 
 function waitForBuild() {
