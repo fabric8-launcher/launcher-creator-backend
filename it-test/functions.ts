@@ -52,8 +52,22 @@ export function deployment(runtime: string, capabilities: Capability[]) {
     };
 }
 
+function args() {
+    return _.takeRightWhile(process.argv, i => i.startsWith('--'));
+}
+
 export function isDryRun() {
-    return process.argv.slice(-1)[0] === '--dry-run';
+    return args().includes('--dry-run');
+}
+
+export function getRuntimeOverrides() {
+    const runtimesArg = args().find(i => i.startsWith('--runtimes='));
+    if (!!runtimesArg) {
+        const runtimes = runtimesArg.substr(11).split(',');
+        return runtimes;
+    } else {
+        return null;
+    }
 }
 
 export function run(cmd, ...args: string[]) {
@@ -81,7 +95,9 @@ export function runAt(cwd, cmd, ...args: string[]) {
 }
 
 export function getRuntimes(tier: string) {
+    const rtOverrides = getRuntimeOverrides();
     return listEnums()['runtime.name']
         .filter(e => _.get(e, 'metadata.categories', []).includes(tier))
-        .map(e => e.id);
+        .map(e => e.id)
+        .filter(r => !rtOverrides || rtOverrides.includes(r));
 }
