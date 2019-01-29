@@ -1,0 +1,5 @@
+{
+  "type": "generator",
+  "name": "Go CRUD Database",
+  "description": "Go-based CRUD implementation for a database."
+}

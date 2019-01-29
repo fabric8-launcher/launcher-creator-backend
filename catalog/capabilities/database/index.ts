@@ -10,6 +10,7 @@ import DatabaseCrudNodejs from 'generators/database-crud-nodejs';
 import DatabaseCrudThorntail from 'generators/database-crud-thorntail';
 import DatabaseCrudWildfly from 'generators/database-crud-wildfly';
 import DatabaseCrudQuarkus from 'generators/database-crud-quarkus';
+import DatabaseCrudGo from 'generators/database-crud-go';
 
 // Returns the corresponding database generator depending on the given database type
 function databaseByType(type) {
@@ -30,6 +31,7 @@ function runtimeByType(rt: Runtime) {
         case 'thorntail' :  return DatabaseCrudThorntail;
         case 'vertx': return DatabaseCrudVertx;
         case 'wildfly' : return DatabaseCrudWildfly;
+        case 'go' : return DatabaseCrudGo;
         default:
             throw new Error(`Unsupported runtime type: ${rt.name}`);
     }

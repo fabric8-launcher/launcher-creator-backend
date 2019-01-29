@@ -1,0 +1,5 @@
+{
+  "type": "generator",
+  "name": "Go REST",
+  "description": "Go based REST application."
+}

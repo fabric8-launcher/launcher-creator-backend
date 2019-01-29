@@ -1,0 +1,24 @@
+#!/bin/bash
+
+set -e
+
+echo "Assembling GOPATH..."
+PACKAGE_NAME="github.com/golang-starters/golang-http-crud"
+export GOPATH=`realpath $HOME/go`
+echo "Assembling GOPATH... DONE"
+
+mkdir -p $GOPATH/src/$PACKAGE_NAME
+mv /tmp/src/* $GOPATH/src/$PACKAGE_NAME
+cd $GOPATH/src/$PACKAGE_NAME
+
+# Replace local imports
+sed -i "s|./crud|$PACKAGE_NAME/crud|g" main.go
+sed -i "s|./rest|$PACKAGE_NAME/rest|g" main.go
+
+echo "Resolving dependencies..."
+go get -v
+echo "Resolving dependencies... DONE"
+
+echo "Building..."
+go build -o /tmp/gobinary main.go
+echo "Building... DONE"

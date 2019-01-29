@@ -2,6 +2,7 @@ import { BaseCapability, Runtime } from 'core/catalog/types';
 
 import RestVertx from 'generators/rest-vertx';
 import RestSpring from 'generators/rest-springboot';
+import RestGo from 'generators/rest-go';
 import RestNodejs from 'generators/rest-nodejs';
 import RestThorntail from 'generators/rest-thorntail';
 import RestWildfly from 'generators/rest-wildfly';
@@ -16,6 +17,7 @@ function runtimeByType(rt: Runtime) {
         case 'thorntail' :  return RestThorntail;
         case 'vertx': return RestVertx;
         case 'wildfly' : return RestWildfly;
+        case 'go' : return RestGo;
         default:
             throw new Error(`Unsupported runtime type: ${rt.name}`);
     }

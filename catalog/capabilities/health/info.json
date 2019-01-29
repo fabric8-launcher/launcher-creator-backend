@@ -23,6 +23,7 @@
           "shared": true,
           "type": "enum",
           "values": [
+            "go",
             "nodejs",
             "springboot",
             "thorntail",

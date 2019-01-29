@@ -1,0 +1,5 @@
+{
+  "type": "generator",
+  "name": "Go Base Platform",
+  "description": "Basic project for Go runtime."
+}

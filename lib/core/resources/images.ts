@@ -5,6 +5,7 @@ export const BUILDER_JAVA = 'registry.access.redhat.com/redhat-openjdk-18/openjd
 export const BUILDER_JAVAEE = 'openshift/wildfly:latest';
 export const BUILDER_NODEJS_APP = 'nodeshift/centos7-s2i-nodejs';
 export const BUILDER_NODEJS_WEB = 'nodeshift/centos7-s2i-web-app';
+export const BUILDER_GOLANG = 'centos/go-toolset-7-centos7';
 
 export const IMAGE_MYSQL = 'mysql';
 export const IMAGE_POSTGRESQL = 'postgresql';
@@ -49,6 +50,14 @@ export const builderImages: BuilderImage[] = [
         'name': 'Generic Node.js Code Builder',
         'metadata': {
             'language': 'nodejs',
+            'isBuilder': true
+        }
+    },
+    {
+        'id': BUILDER_GOLANG,
+        'name': 'Go Code Builder',
+        'metadata': {
+            'language': 'go',
             'isBuilder': true
         }
     }

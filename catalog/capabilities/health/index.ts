@@ -1,6 +1,7 @@
 
 import { BaseCapability, Runtime } from 'core/catalog/types';
 
+import PlatformGo from 'generators/platform-go';
 import PlatformNodejs from 'generators/platform-nodejs';
 import PlatformSpringBoot from 'generators/platform-springboot';
 import PlatformThorntail from 'generators/platform-thorntail';
@@ -17,6 +18,7 @@ function runtimeByType(rt: Runtime) {
         case 'thorntail' :  return PlatformThorntail;
         case 'vertx': return PlatformVertx;
         case 'wildfly' : return PlatformWildfly;
+        case 'go' : return PlatformGo;
         default:
             throw new Error(`Unsupported runtime type: ${rt.name}`);
     }
