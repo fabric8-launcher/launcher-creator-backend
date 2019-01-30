@@ -22,6 +22,7 @@ export default class DatabaseCrudNodejs extends BaseGenerator {
         if (!await this.filesCopied()) {
             const pprops = {
                 'application': props.application,
+                'subFolderName': props.subFolderName,
                 'serviceName': props.serviceName,
                 'routeName': props.routeName,
                 'runtime': props.runtime,
