@@ -532,3 +532,33 @@ export async function newRoute(res: Resources,
     });
     return res;
 }
+
+export async function newService(res: Resources,
+                                 appName: string,
+                                 appLabel: string|object,
+                                 serviceName: string): Promise<Resources> {
+    const lbls = (typeof appLabel === 'string') ? { 'app': appLabel } : appLabel;
+    res.add({
+        'kind': 'Service',
+        'apiVersion': 'v1',
+        'metadata': {
+            'name': serviceName,
+            'labels': lbls
+        },
+        'spec': {
+            'ports': [
+                {
+                    'name': '8080-tcp',
+                    'protocol': 'TCP',
+                    'port': 8080,
+                    'targetPort': 8080
+                }
+            ],
+            'selector': {
+                ...lbls,
+                'deploymentconfig': appName
+            }
+        }
+    });
+    return res;
+}
