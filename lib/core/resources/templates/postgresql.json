@@ -5,7 +5,7 @@
   "objects": [
     {
       "kind": "ImageStreamTag",
-      "apiVersion": "v1",
+      "apiVersion": "image.openshift.io/v1",
       "metadata": {
         "name": "placeholder-app-name-730040e0c873453f877c10cd07912d1f:10",
         "creationTimestamp": null,
@@ -34,20 +34,13 @@
         "metadata": {
           "creationTimestamp": null
         },
-        "dockerImageMetadata": {
-          "kind": "DockerImage",
-          "apiVersion": "1.0",
-          "Id": "",
-          "Created": null,
-          "ContainerConfig": {}
-        },
-        "dockerImageMetadataVersion": "1.0",
+        "dockerImageMetadata": null,
         "dockerImageLayers": null
       }
     },
     {
       "kind": "DeploymentConfig",
-      "apiVersion": "v1",
+      "apiVersion": "apps.openshift.io/v1",
       "metadata": {
         "name": "placeholder-app-name-730040e0c873453f877c10cd07912d1f",
         "creationTimestamp": null,
