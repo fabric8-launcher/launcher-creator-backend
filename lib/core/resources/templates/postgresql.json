@@ -18,7 +18,7 @@
         "annotations": null,
         "from": {
           "kind": "DockerImage",
-          "name": "172.30.1.1:5000/openshift/postgresql:10"
+          "name": "docker-registry.default.svc:5000/openshift/postgresql:10"
         },
         "generation": null,
         "importPolicy": {},
@@ -95,7 +95,7 @@
             "containers": [
               {
                 "name": "placeholder-app-name-730040e0c873453f877c10cd07912d1f",
-                "image": "172.30.1.1:5000/openshift/postgresql:10",
+                "image": "docker-registry.default.svc:5000/openshift/postgresql:10",
                 "ports": [
                   {
                     "containerPort": 5432,
