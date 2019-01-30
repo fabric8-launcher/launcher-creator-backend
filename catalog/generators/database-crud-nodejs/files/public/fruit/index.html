@@ -81,7 +81,7 @@
       //In case of edit fruits, populate form with fruit data
       $scope.edit = function (fruit) {
         $scope.form.name = fruit.name;
-        $scope.form.stock = parseInt(fruit.stock);
+        $scope.form.stock = fruit.stock;
         $scope.form.id = fruit.id;
       };
 

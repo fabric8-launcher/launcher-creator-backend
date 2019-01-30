@@ -42,7 +42,7 @@ function runTests (route) {
         t.equal(Array.isArray(response.body), false, 'not an array returned');
         t.equal(response.body.id, 1, 'id is 1');
         t.equal(response.body.name, 'Apple', 'name is Apple');
-        t.equal(response.body.stock, '10', 'stock is 10');
+        t.equal(response.body.stock, 10, 'stock is 10');
         t.end();
       });
   });
@@ -65,7 +65,7 @@ function runTests (route) {
     t.plan(4);
     const fruitData = {
       name: 'Banana',
-      stock: '10'
+      stock: 10
     };
 
     supertest(route)
@@ -87,7 +87,7 @@ function runTests (route) {
 
   // POST a fruit
   test('POST /api/fruit/ - send non json', t => {
-    const fruitData = '{name: \'Banana\', stock: \'10\'}';
+    const fruitData = '{name: \'Banana\', stock: 10}';
 
     supertest(route)
       .post('/api/fruits')
@@ -103,7 +103,7 @@ function runTests (route) {
   test('PUT /api/fruit/:id', t => {
     const fruitData = {
       name: 'put fruit',
-      stock: '10'
+      stock: 10
     };
 
     // First create the new fruit
@@ -116,7 +116,7 @@ function runTests (route) {
 
         const updatedFruit = {
           name: response.body.name,
-          stock: '20'
+          stock: 20
         };
 
         supertest(route)

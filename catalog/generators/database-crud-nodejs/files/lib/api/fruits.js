@@ -26,7 +26,7 @@ function update (options = {}) {
   //{{if .databaseType==mysql}}
   return db.query('UPDATE products SET name = ?, stock = ? WHERE id = ?', [options.name, options.stock, options.id]);
   //{{else if .databaseType==postgresql}}
-  //return db.query('UPDATE products SET name = $1, stock = $2 WHERE id = $3', [options.name, options.stock, options.id]);
+  //return db.query('UPDATE products SET name = $1, stock = $2 WHERE id = $3 RETURNING *', [options.name, options.stock, options.id]);
   //{{end}}
 }
 

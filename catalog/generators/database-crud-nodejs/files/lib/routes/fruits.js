@@ -28,26 +28,35 @@ router.get('/fruits', (request, response) => {
   });
 });
 
-router.post('/fruits', validations.validateCreateUpdateRequest, (request, response) => {
+router.post('/fruits', validations.validateCreateRequest, (request, response) => {
   const {name, stock} = request.body;
   return fruits.create(name, stock).then(result => {
     response.status(201);
-    return response.send(result.rows[0]);
+    //{{if .databaseType==mysql}}
+    return response.send({name, stock, 'id': result.insertId});
+    //{{else if .databaseType==postgresql}}
+    //return response.send(result.rows[0]);
+    //{{end}}
   }).catch(err => {
     response.status(400);
     response.send(err);
   });
 });
 
-router.put('/fruits/:id', validations.validateCreateUpdateRequest, (request, response) => {
+router.put('/fruits/:id', validations.validateUpdateRequest, (request, response) => {
   const {name, stock} = request.body;
-  const {id} = request.params;
+  const id = parseInt(request.params.id);
   fruits.update({name, stock, id}).then(result => {
     if (result.rowCount === 0) {
       response.status(404);
       return response.send(`Unknown item ${id}`);
     }
-    return response.sendStatus(204);
+    response.status(200);
+    //{{if .databaseType==mysql}}
+    return response.send({name, stock, id});
+    //{{else if .databaseType==postgresql}}
+    //return response.send(result.rows[0]);
+    //{{end}}
   }).catch(err => {
     response.status(400);
     response.send(err);

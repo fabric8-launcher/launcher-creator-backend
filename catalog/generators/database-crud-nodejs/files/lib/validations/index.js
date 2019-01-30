@@ -1,6 +1,6 @@
 'use strict';
 
-function validateCreateUpdateRequest (request, response, next) {
+function validateCreateRequest (request, response, next) {
   if (Object.keys(request.body).length === 0) {
     response.status(415);
     return response.send('Invalid payload!');
@@ -26,6 +26,33 @@ function validateCreateUpdateRequest (request, response, next) {
   next();
 }
 
+function validateUpdateRequest(request, response, next) {
+  if (Object.keys(request.body).length === 0) {
+    response.status(415);
+    return response.send('Invalid payload!');
+  }
+  // No need to check for no body, express will make body an empty object
+  const {name, stock, id} = request.body;
+
+  if (!name && !stock) {
+    response.status(422);
+    return response.send('Data should have at least a name or a stock value!');
+  }
+
+  if (!!stock && (isNaN(stock) || stock < 0)) {
+    response.status(422);
+    return response.send('The stock must be greater or equal to 0!');
+  }
+
+  if (id && id !== request.params.id) {
+    response.status(422);
+    return response.send('Id was invalidly set on request.');
+  }
+
+  next();
+}
+
 module.exports = {
-  validateCreateUpdateRequest
+  validateCreateRequest,
+  validateUpdateRequest
 };
