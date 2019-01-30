@@ -14,6 +14,12 @@ export interface CapabilityDef {
 
 export type Capability = string | CapabilityDef;
 
+export interface Part {
+    runtime?: string;
+    folder?: string;
+    capabilities: Capability[];
+}
+
 export function capName(cap: Capability): string {
     if (typeof cap === 'string') {
         return cap as string;
@@ -30,8 +36,8 @@ export function capOpts(cap: Capability): object {
     }
 }
 
-export function deployment(runtime: string, capabilities: Capability[]) {
-    const caps = capabilities.map(cap => {
+export function deployment(part: Part) {
+    const caps = part.capabilities.map(cap => {
         if (typeof cap === 'string') {
             return { 'module': cap };
         } else {
@@ -43,8 +49,9 @@ export function deployment(runtime: string, capabilities: Capability[]) {
         'applications': [{
             'application': 'ittest',
             'parts': [{
+                'subFolderName': part.folder,
                 'shared': {
-                    'runtime': toRuntime(runtime)
+                    'runtime': toRuntime(part.runtime)
                 },
                 'capabilities': caps
             }]
@@ -52,16 +59,20 @@ export function deployment(runtime: string, capabilities: Capability[]) {
     };
 }
 
-function args() {
+export function getServiceName(part: Part) {
+    return (!!part.folder) ? `ittest-${part.folder}` : 'ittest';
+}
+
+function procArgs() {
     return _.takeRightWhile(process.argv, i => i.startsWith('--'));
 }
 
 export function isDryRun() {
-    return args().includes('--dry-run');
+    return procArgs().includes('--dry-run');
 }
 
 export function getRuntimeOverrides() {
-    const runtimesArg = args().find(i => i.startsWith('--runtimes='));
+    const runtimesArg = procArgs().find(i => i.startsWith('--runtimes='));
     if (!!runtimesArg) {
         const runtimes = runtimesArg.substr(11).split(',');
         return runtimes;

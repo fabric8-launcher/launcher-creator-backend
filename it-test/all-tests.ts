@@ -3,16 +3,31 @@ import * as path from 'path';
 import { dirSync } from 'tmp';
 import { existsSync, readdirSync } from 'fs';
 import { applyDeployment } from 'core/deploy';
-import { run, isDryRun, getRuntimes, Capability, capName, deployment, Context, runAt } from './functions';
+import {
+    run,
+    isDryRun,
+    getRuntimes,
+    Capability,
+    capName,
+    deployment,
+    Context,
+    runAt,
+    Part,
+    getServiceName
+} from './functions';
 import { getRouteHost, waitForProject } from './ochelpers';
 
+// Array of all the backend capabilities to be tested
+// Each entry is itself an array of all the different options to be tested for that particular capability
 const backendcaps: Capability[][] = [
-    [ 'rest', 'database', 'welcome' ],
-    [ 'rest', { 'name': 'database', 'opts': { 'databaseType': 'mysql' } }, 'welcome' ],
+    ['rest'],
+    ['database', { 'name': 'database', 'opts': { 'databaseType': 'mysql' } }],
 ];
 
+// Array of all the frontend capabilities to be tested
+// Each entry is itself an array of all the different options to be tested for that particular capability
 const frontendcaps: Capability[][] = [
-    [ 'web-app' ]
+    ['web-app']
 ];
 
 before(function() {
@@ -24,26 +39,39 @@ before(function() {
 });
 
 describe('Backends', function() {
-    testRuntimesCapsSet(getRuntimes('backend'), backendcaps);
+    testRuntimesCaps(getRuntimes('backend'), backendcaps);
 });
 
 describe('Frontends', function() {
-    testRuntimesCapsSet(getRuntimes('frontend'), frontendcaps);
+    testRuntimesCaps(getRuntimes('frontend'), frontendcaps);
 });
 
-function testRuntimesCapsSet(runtimes: string[], capsset: Capability[][]) {
+function testRuntimesCaps(runtimes: string[], caps: Capability[][]) {
     runtimes.forEach(function(runtime) {
-        testRuntimeCapsSet(runtime, capsset);
+        const parts = listParts(runtime, caps);
+        if (parts.length > 0) {
+            testParts(parts);
+        }
     });
 }
 
-function testRuntimeCapsSet(runtimes: string, capsset: Capability[][]) {
-    capsset.forEach(function(caps) {
-        testRuntimeCaps(runtimes, caps);
+function listParts(runtime: string, caps: Capability[][]): Part[] {
+    const parts: Part[] = [];
+    const maxAlt = caps.reduce((acc, cur) => Math.max(acc, cur.length), 0);
+    for (let i = 0; i < maxAlt; i++) {
+        parts.push({ runtime, 'capabilities': [ ...caps.map(cap => cap[i % cap.length]), 'welcome' ] });
+    }
+    parts.push({ runtime, 'folder': 'test', 'capabilities': caps.map(cap => cap[0])});
+    return parts;
+}
+
+function testParts(parts: Part[]) {
+    parts.forEach(function(part) {
+        testPart(part);
     });
 }
 
-function testRuntimeCaps(runtime: string, capabilities: Capability[]) {
+function testPart(part: Part) {
     let targetDir, projectName;
 
     function cleanup() {
@@ -57,14 +85,14 @@ function testRuntimeCaps(runtime: string, capabilities: Capability[]) {
         }
     }
 
-    describe(`Runtime ${runtime} with ${capabilities.map(capName)}`, function() {
+    describe(`Runtime ${part.runtime} with ${part.capabilities.map(capName)}${!!part.folder ? ' in folder ' + part.folder : ''}`, function() {
         const context: Context = {};
         before('setup', async function() {
             this.timeout(0);
             console.log('      Creating project...');
             targetDir = dirSync({ 'unsafeCleanup': true });
             if (!isDryRun()) {
-                await applyDeployment(targetDir.name, deployment(runtime, capabilities));
+                await applyDeployment(targetDir.name, deployment(part));
                 projectName = path.basename(targetDir.name).toLowerCase();
             }
             run('oc', 'new-project', projectName);
@@ -74,12 +102,12 @@ function testRuntimeCaps(runtime: string, capabilities: Capability[]) {
             runAt(targetDir.name, './gap', 'build');
             console.log('      Pushing project...');
             runAt(targetDir.name, './gap', 'push');
-            waitForProject();
-            context.routeHost = getRouteHost('ittest');
+            waitForProject(part);
+            context.routeHost = getRouteHost(getServiceName(part));
         });
         describe('Testing capabilities...', function() {
-            capabilities.forEach(function(cap) {
-                testRuntimeCap(runtime, cap, context);
+            part.capabilities.forEach(function(cap) {
+                testRuntimeCap(part.runtime, cap, context);
             });
         });
         after('cleanup', function() {
