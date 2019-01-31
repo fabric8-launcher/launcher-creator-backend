@@ -54,8 +54,14 @@ public class FruitResource {
     @GET
     @Path("/{id}")
     @Produces("application/json")
-    public Fruit getSingle(@PathParam("id") Integer id) {
-        return em.find(Fruit.class, id);
+    public Response getSingle(@PathParam("id") Integer id) {
+        Fruit entity = em.find(Fruit.class, id);
+
+        if (entity == null) {
+            return error(404, "Fruit with id of " + id + " does not exist.");
+        }
+
+        return Response.ok(entity).status(200).build();
     }
 
 
@@ -70,6 +76,10 @@ public class FruitResource {
 
         if (fruit.getName() == null || fruit.getName().trim().length() == 0) {
             return error(422, "The name is required!");
+        }
+
+        if (fruit.getStock() == null || fruit.getStock() < 0) {
+            return error(422, "The stock must be greater or equal to 0!");
         }
 
         if (fruit.getId() != null) {
@@ -98,6 +108,10 @@ public class FruitResource {
             return error(422, "The name is required!");
         }
 
+        if (fruit.getStock() == null || fruit.getStock() < 0) {
+            return error(422, "The stock must be greater or equal to 0!");
+        }
+
         try {
             Fruit entity = em.find(Fruit.class, id);
 
@@ -106,6 +120,7 @@ public class FruitResource {
             }
 
             entity.setName(fruit.getName());
+            entity.setStock(fruit.getStock());
             em.merge(entity);
 
             return Response.ok(entity).status(200).build();
@@ -122,6 +137,11 @@ public class FruitResource {
     public Response delete(@PathParam("id") Integer id) {
         try {
             Fruit entity = em.find(Fruit.class, id);
+
+            if (entity == null) {
+                return error(404, "Fruit with id of " + id + " does not exist.");
+            }
+
             em.remove(entity);
         } catch (Exception e) {
             return error(500, e.getMessage());
