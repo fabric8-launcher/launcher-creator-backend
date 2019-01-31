@@ -3,6 +3,9 @@ import * as path from 'path';
 import { dirSync } from 'tmp';
 import { existsSync, readdirSync } from 'fs';
 import { applyDeployment } from 'core/deploy';
+import { getRouteHost, waitForProject } from './ochelpers';
+import { findPropertyWithValue, ModuleInfoDef } from 'core/info';
+import { listEnums } from 'core/catalog';
 import {
     run,
     isDryRun,
@@ -13,22 +16,21 @@ import {
     Context,
     runAt,
     Part,
-    getServiceName
+    getServiceName,
+    getCapabilities,
+    CapabilityOptions
 } from './functions';
-import { getRouteHost, waitForProject } from './ochelpers';
 
-// Array of all the backend capabilities to be tested
-// Each entry is itself an array of all the different options to be tested for that particular capability
-const backendcaps: Capability[][] = [
-    ['rest'],
-    ['database', { 'name': 'database', 'opts': { 'databaseType': 'mysql' } }],
-];
+// Put any capabilities here that need special options for testing.
+// Each set of options in the array will be used in a separate test run
+const capabilityOptions: CapabilityOptions = {
+    'database': [
+        { 'databaseType': 'postgresql' },
+        { 'databaseType': 'mysql' }
+    ]
+};
 
-// Array of all the frontend capabilities to be tested
-// Each entry is itself an array of all the different options to be tested for that particular capability
-const frontendcaps: Capability[][] = [
-    ['web-app']
-];
+let currProject;
 
 before(function() {
     try {
@@ -43,8 +45,6 @@ before(function() {
     }
 });
 
-let currProject;
-
 after(function() {
     if (!!currProject) {
         // Try to restore the original project
@@ -57,29 +57,43 @@ after(function() {
 });
 
 describe('Backends', function() {
-    testRuntimesCaps(getRuntimes('backend'), backendcaps);
+    testRuntimesCaps(getRuntimes('backend'), getCapabilities('backend'));
 });
 
 describe('Frontends', function() {
-    testRuntimesCaps(getRuntimes('frontend'), frontendcaps);
+    testRuntimesCaps(getRuntimes('frontend'), getCapabilities('frontend'));
 });
 
-function testRuntimesCaps(runtimes: string[], caps: Capability[][]) {
+function testRuntimesCaps(runtimes: string[], capInfos: ModuleInfoDef[]) {
     runtimes.forEach(function(runtime) {
-        const parts = listParts(runtime, caps);
+        const parts = listParts(runtime, capInfos);
         if (parts.length > 0) {
             testParts(parts);
         }
     });
 }
 
-function listParts(runtime: string, caps: Capability[][]): Part[] {
+function listParts(runtime: string, capInfos: ModuleInfoDef[]): Part[] {
     const parts: Part[] = [];
-    const maxAlt = caps.reduce((acc, cur) => Math.max(acc, cur.length), 0);
-    for (let i = 0; i < maxAlt; i++) {
-        parts.push({ runtime, 'capabilities': [ ...caps.map(cap => cap[i % cap.length]), 'welcome' ] });
+    const rtCaps = capInfos.filter(d => !!findPropertyWithValue(d, 'runtime.name', runtime, listEnums()));
+    const caps = rtCaps.map(c => c.module);
+
+    function actualCaps(idx: number) {
+        return caps.map(c => {
+            const co = capabilityOptions[c];
+            if (!!co) {
+                return { 'name': c, 'opts': co[idx % co.length] };
+            } else {
+                return c;
+            }
+        });
     }
-    parts.push({ runtime, 'folder': 'test', 'capabilities': caps.map(cap => cap[0])});
+
+    const maxAlt = Object.values(capabilityOptions).reduce((acc, cur) => Math.max(acc, cur.length), 0);
+    for (let i = 0; i < maxAlt; i++) {
+        parts.push({ runtime, 'capabilities': [...actualCaps(i), 'welcome'] });
+    }
+    parts.push({ runtime, 'folder': 'test', 'capabilities': actualCaps(0) });
     return parts;
 }
 

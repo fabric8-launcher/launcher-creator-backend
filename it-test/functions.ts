@@ -1,5 +1,5 @@
 import { spawnSync, SpawnSyncOptions } from 'child_process';
-import { listEnums } from 'core/catalog';
+import { listCapabilityInfos, listEnums } from 'core/catalog';
 import { toRuntime } from 'core/catalog/types';
 import * as _ from 'lodash';
 
@@ -13,6 +13,12 @@ export interface CapabilityDef {
 }
 
 export type Capability = string | CapabilityDef;
+
+type CapabilityOption = object[] | (() => object[]);
+
+export interface CapabilityOptions {
+    [key: string]: CapabilityOption;
+}
 
 export interface Part {
     runtime?: string;
@@ -85,6 +91,16 @@ export function getRuntimeOverrides() {
     }
 }
 
+export function getCapabilityOverrides() {
+    const capsArg = procArgs().find(i => i.startsWith('--capabilities='));
+    if (!!capsArg) {
+        const caps = capsArg.substr(15).split(',');
+        return caps;
+    } else {
+        return null;
+    }
+}
+
 export function run(cmd, ...args: string[]) {
     return runAt(null, cmd, ...args);
 }
@@ -117,4 +133,12 @@ export function getRuntimes(tier: string) {
         .filter(e => _.get(e, 'metadata.categories', []).includes(tier))
         .map(e => e.id)
         .filter(r => !rtOverrides || rtOverrides.includes(r));
+}
+
+export function getCapabilities(tier: string) {
+    const cOverrides = getCapabilityOverrides();
+    const cis = listCapabilityInfos();
+    return cis
+        .filter(ci => _.get(ci, 'metadata.category', '') === tier)
+        .filter(ci => !cOverrides || cOverrides.includes(ci.module));
 }
