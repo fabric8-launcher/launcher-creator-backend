@@ -21,11 +21,14 @@ interface EnumPropertyDef extends PropertyDef {
     values?: any[];
 }
 
-interface ObjectPropertyDef extends PropertyDef {
+interface PropertiesDef {
     props: PropertyDef[];
 }
 
-export interface InfoDef {
+interface ObjectPropertyDef extends PropertyDef, PropertiesDef {
+}
+
+export interface InfoDef extends PropertiesDef {
     type: string;
     name: string;
     description?: string;
@@ -33,7 +36,10 @@ export interface InfoDef {
         category: string;
         icon?: string;
     };
-    props: PropertyDef[];
+}
+
+export interface ModuleInfoDef extends InfoDef {
+    module: string;
 }
 
 class ValidationError extends Error {
@@ -52,6 +58,38 @@ class DefinitionError extends Error {
         super(msg);
         this.msg = msg;
     }
+}
+
+export function findProperty(pdef: PropertiesDef, path: string): PropertyDef {
+    const elems = path.split('.');
+    const res = elems.reduce((acc, cur) => {
+        if (!!acc && !!acc.props) {
+            return acc.props.find(p => p.id === cur) as ObjectPropertyDef;
+        } else {
+            return null;
+        }
+    }, pdef);
+    return res as ObjectPropertyDef;
+}
+
+export function findPropertyValues(pdef: PropertiesDef, path: string, enums: Enums): any[] {
+    const p = findProperty(pdef, path) as EnumPropertyDef;
+    if (!!p && !!p.values) {
+        return getValues(path, p, enums);
+    } else {
+        return [];
+    }
+}
+
+export function findPropertyWithValue(pdef: PropertiesDef, path: string, value: any, enums: Enums): EnumPropertyDef {
+    const p = findProperty(pdef, path) as EnumPropertyDef;
+    if (!!p && !!p.values) {
+        const values = getValues(path, p, enums);
+        if (values.includes(value)) {
+            return p;
+        }
+    }
+    return null;
 }
 
 function validateRequired(id: string, def: PropertyDef, enums: Enums, props: object) {

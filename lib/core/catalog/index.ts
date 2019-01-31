@@ -2,7 +2,7 @@
 import { readdir, statSync, pathExistsSync } from 'fs-extra';
 import { join } from 'path';
 import { Enum, Enums } from 'core/catalog/types';
-import { InfoDef } from 'core/info';
+import { InfoDef, ModuleInfoDef } from 'core/info';
 
 function catalogModuleFolder() {
     if (!!process.env['LAUNCHER_CREATOR_CATALOG']) {
@@ -43,8 +43,9 @@ async function listCapabilities() {
 
 export async function listCapabilityInfos() {
     const caps = await listCapabilities();
-    return caps
+    const cis: ModuleInfoDef[] = caps
         .map(([f, c]) => ({ 'module': f, ...info(c) }));
+    return cis;
 }
 
 export function getGeneratorModule(generator) {
