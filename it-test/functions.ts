@@ -71,6 +71,10 @@ export function isDryRun() {
     return procArgs().includes('--dry-run');
 }
 
+export function isVerbose() {
+    return procArgs().includes('--verbose');
+}
+
 export function getRuntimeOverrides() {
     const runtimesArg = procArgs().find(i => i.startsWith('--runtimes='));
     if (!!runtimesArg) {
@@ -91,6 +95,9 @@ export function runAt(cwd, cmd, ...args: string[]) {
         opts.cwd = cwd;
     }
     // const opts = { 'stdio': [ 'ignore', 1, 2 ] } as SpawnSyncOptions;
+    if (isVerbose()) {
+        console.log(`      Run '${cmd} ${args.join(' ')}'`);
+    }
     if (!isDryRun()) {
         const proc = spawnSync(cmd, args, opts);
         if (!!proc.error) {
@@ -100,7 +107,6 @@ export function runAt(cwd, cmd, ...args: string[]) {
         }
         return proc.stdout.toString();
     } else {
-        console.log(`      Run '${cmd} ${args.join(' ')}'`);
         return '';
     }
 }
