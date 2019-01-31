@@ -105,5 +105,9 @@ while [[ $# > 0 ]]; do
             echo "   delete  - Deletes the application from OpenShift"
         ;;
     esac
+    RES=$?
+    if [[ $RES > 0 ]]; then
+        exit $RES
+    fi
 done
 

@@ -31,7 +31,11 @@ if [[ $# > 0 && $OK == 1 ]]; then
             echo "Part '$DIR'..."
             pushd >/dev/null "$DIR"
             $file "$@"
+            RES=$?
             popd >/dev/null
+            if [[ $RES > 0 ]]; then
+                exit $RES
+            fi
         done
     fi
 else
