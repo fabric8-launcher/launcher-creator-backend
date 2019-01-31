@@ -64,7 +64,7 @@ export function test(ctx: Context) {
     });
 
     it('DatabaseUpdateIllegalPayload', function () {
-        const url = `http://${ctx.routeHost}/api/fruits/42`;
+        const url = `http://${ctx.routeHost}/api/fruits/1`;
         return put({ url, 'json': { 'foo': 'Cherry', 'bar': 15 } }).then(res => {
             assert.strictEqual(res.statusCode, HttpStatus.UNPROCESSABLE_ENTITY);
         });
