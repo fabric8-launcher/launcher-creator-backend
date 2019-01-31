@@ -96,7 +96,7 @@ export function runAt(cwd, cmd, ...args: string[]) {
         if (!!proc.error) {
             console.log(proc.error);
         } else if (proc.status !== 0) {
-            throw new Error(`Command '${cmd} ${args.join()}' failed with error code: ${proc.status}`);
+            throw new Error(`Command '${cmd} ${args.join(' ')}' failed with error code: ${proc.status}`);
         }
         return proc.stdout.toString();
     } else {

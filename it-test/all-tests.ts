@@ -36,6 +36,24 @@ before(function() {
     } catch (e) {
         throw new Error('You must be logged in to an OpenShift server to run the tests');
     }
+    try {
+        currProject = run('oc', 'project', '-q').trim();
+    } catch (e) {
+        // Ignore any errors
+    }
+});
+
+let currProject;
+
+after(function() {
+    if (!!currProject) {
+        // Try to restore the original project
+        try {
+            run('oc', 'project', currProject);
+        } catch (e) {
+            // Ignore any errors
+        }
+    }
 });
 
 describe('Backends', function() {
