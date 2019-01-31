@@ -157,6 +157,7 @@ function testPart(part: Part) {
 function testRuntimeCap(runtime: string, capability: Capability, context: Context) {
     const name = capName(capability);
     describe(`Capability ${name}`, function() {
+        this.timeout(10000);
         const capDir = `./it-test/${name}`;
         if (existsSync(capDir)) {
             const files = readdirSync(capDir);
