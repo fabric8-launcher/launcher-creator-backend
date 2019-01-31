@@ -93,7 +93,7 @@ function testPart(part: Part) {
             targetDir = dirSync({ 'unsafeCleanup': true });
             if (!isDryRun()) {
                 await applyDeployment(targetDir.name, deployment(part));
-                projectName = path.basename(targetDir.name).toLowerCase();
+                projectName = path.basename(targetDir.name).toLowerCase().replace(/[^A-Za-z0-9]/g, '');
             }
             run('oc', 'new-project', projectName);
             console.log('      Deploying project...');
