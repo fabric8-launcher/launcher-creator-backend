@@ -18,7 +18,7 @@ import {
     Part,
     getServiceName,
     getCapabilities,
-    CapabilityOptions
+    CapabilityOptions, getCapabilityOverrides
 } from './functions';
 
 // Put any capabilities here that need special options for testing.
@@ -77,6 +77,7 @@ function listParts(runtime: string, capInfos: ModuleInfoDef[]): Part[] {
     const parts: Part[] = [];
     const rtCaps = capInfos.filter(d => !!findPropertyWithValue(d, 'runtime.name', runtime, listEnums()));
     const caps = rtCaps.map(c => c.module);
+    const cOverrides = getCapabilityOverrides();
 
     function actualCaps(idx: number) {
         return caps.map(c => {
@@ -91,7 +92,11 @@ function listParts(runtime: string, capInfos: ModuleInfoDef[]): Part[] {
 
     const maxAlt = Object.values(capabilityOptions).reduce((acc, cur) => Math.max(acc, cur.length), 0);
     for (let i = 0; i < maxAlt; i++) {
-        parts.push({ runtime, 'capabilities': [...actualCaps(i), 'welcome'] });
+        if (!cOverrides || cOverrides.includes('welcome')) {
+            parts.push({ runtime, 'capabilities': [...actualCaps(i), 'welcome'] });
+        } else {
+            parts.push({ runtime, 'capabilities': actualCaps(i) });
+        }
     }
     parts.push({ runtime, 'folder': 'test', 'capabilities': actualCaps(0) });
     return parts;
