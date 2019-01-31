@@ -2,11 +2,11 @@
 CREATE TABLE IF NOT EXISTS products (
   id        SERIAL PRIMARY KEY,
   name      VARCHAR(40) NOT NULL,
-  stock     BIGINT
+  stock     INT
 );
 
 DELETE FROM products;
 
-INSERT INTO products (id, name, stock) values (1, 'Apple', 10);
-INSERT INTO products (id, name, stock) values (2, 'Orange', 10);
-INSERT INTO products (id, name, stock) values (3, 'Pear', 10);
+INSERT INTO products (name, stock) values ('Apple', 10);
+INSERT INTO products (name, stock) values ('Orange', 10);
+INSERT INTO products (name, stock) values ('Pear', 10);

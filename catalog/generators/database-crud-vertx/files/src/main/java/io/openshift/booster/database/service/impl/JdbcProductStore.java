@@ -20,13 +20,13 @@ import java.util.Optional;
  */
 public class JdbcProductStore implements Store {
 
-  private static final String INSERT = "INSERT INTO products (name, stock) VALUES (?, ?::BIGINT)";
+  private static final String INSERT = "INSERT INTO products (name, stock) VALUES (?, ?)";
 
   private static final String SELECT_ONE = "SELECT * FROM products WHERE id = ?";
 
   private static final String SELECT_ALL = "SELECT * FROM products";
 
-  private static final String UPDATE = "UPDATE products SET name = ?, stock = ?::BIGINT WHERE id = ?";
+  private static final String UPDATE = "UPDATE products SET name = ?, stock = ? WHERE id = ?";
 
   private static final String DELETE = "DELETE FROM products WHERE id = ?";
 
