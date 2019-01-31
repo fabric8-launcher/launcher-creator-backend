@@ -48,15 +48,13 @@ router.use('/health', (req, res) => {
 router.use('/openapi', express.static('./openapi.yaml'));
 
 router.get('/capabilities', (req, res, next) => {
-    catalog.listCapabilityInfos()
-        .then(caps => res.status(HttpStatus.OK).send(caps))
-        .catch(next);
+    const caps = catalog.listCapabilityInfos();
+    res.status(HttpStatus.OK).send(caps);
 });
 
-router.get('/generators', (req, res, next) => {
-    catalog.listGeneratorInfos()
-        .then(caps => res.status(HttpStatus.OK).send(caps))
-        .catch(next);
+router.get('/generators', (req, res) => {
+    const gens = catalog.listGeneratorInfos();
+    res.status(HttpStatus.OK).send(gens);
 });
 
 router.get('/enums', (req, res) => {

@@ -1,5 +1,5 @@
 
-import { readdir, statSync, pathExistsSync } from 'fs-extra';
+import { readdirSync, statSync, pathExistsSync } from 'fs-extra';
 import { join } from 'path';
 import { Enum, Enums } from 'core/catalog/types';
 import { InfoDef, ModuleInfoDef } from 'core/info';
@@ -34,15 +34,15 @@ export function getCapabilityModule(capability) {
     return require(join(catalogModuleFolder(), 'capabilities', capability)).default;
 }
 
-async function listCapabilities() {
-    const files = await readdir(join(catalogFileFolder(), 'capabilities'));
+function listCapabilities() {
+    const files = readdirSync(join(catalogFileFolder(), 'capabilities'));
     return files
         .filter(f => statSync(join(catalogFileFolder(), 'capabilities', f)).isDirectory())
         .map(f => [f, getCapabilityModule(f)]);
 }
 
-export async function listCapabilityInfos() {
-    const caps = await listCapabilities();
+export function listCapabilityInfos() {
+    const caps = listCapabilities();
     const cis: ModuleInfoDef[] = caps
         .map(([f, c]) => ({ 'module': f, ...info(c) }));
     return cis;
@@ -52,15 +52,15 @@ export function getGeneratorModule(generator) {
     return require(join(catalogModuleFolder(), 'generators', generator)).default;
 }
 
-async function listGenerators() {
-    const files = await readdir(join(catalogFileFolder(), 'generators'));
+function listGenerators() {
+    const files = readdirSync(join(catalogFileFolder(), 'generators'));
     return files
         .filter(f => statSync(join(catalogFileFolder(), 'generators', f)).isDirectory())
         .map(f => [f, getGeneratorModule(f)]);
 }
 
-export async function listGeneratorInfos() {
-    const gens = await listGenerators();
+export function listGeneratorInfos() {
+    const gens = listGenerators();
     return gens
         .map(([f, g]) => ({'module': f, ...info(g)}));
 }

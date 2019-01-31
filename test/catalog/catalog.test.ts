@@ -5,7 +5,8 @@ import * as catalog from 'core/catalog';
 test('catalog list capabilities', (t) => {
     t.plan(1);
 
-    catalog.listCapabilityInfos().then(caps => t.ok(caps.length > 0));
+    const caps = catalog.listCapabilityInfos();
+    t.ok(caps.length > 0);
 });
 
 test('catalog get capability', (t) => {
@@ -17,7 +18,8 @@ test('catalog get capability', (t) => {
 test('catalog list generators', (t) => {
     t.plan(1);
 
-    catalog.listGeneratorInfos().then(caps => t.ok(caps.length > 0));
+    const gens = catalog.listGeneratorInfos();
+    t.ok(gens.length > 0);
 });
 
 test('catalog get generator', (t) => {

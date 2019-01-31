@@ -32,7 +32,8 @@ async function main() {
         });
     } else if (args.length === 1 && args[0] === 'capabilities') {
         process.stdout.write('Available capabilities:\n');
-        listCapabilityInfos().then(caps => caps.forEach(c => process.stdout.write(`    ${c.module.padEnd(15)} - ${c.description}\n`)));
+        const caps = listCapabilityInfos();
+        caps.forEach(c => process.stdout.write(`    ${c.module.padEnd(15)} - ${c.description}\n`));
     } else if (args.length === 2 && args[1] === '--help') {
         const CAP = args[0];
         console.log(`yarn run -s apply <project_dir> <app_name> ${CAP} [<json_props>] ...`);
