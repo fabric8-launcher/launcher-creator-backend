@@ -8,36 +8,11 @@ export function waitForProject(part: Part) {
     } catch (e) {
         // Ignore any errors
     }
-    // Then we wait for the second build to complete or fail
-    waitForBuild(part);
     // Then we wait for the deployment to spin up our application
     waitForDeployment(part);
     // And finally we wait a bit longer because if we don't we still often fail *sigh*
     if (!isDryRun()) {
         sleep(5000);
-    }
-}
-
-function waitForBuild(part: Part) {
-    process.stdout.write('      Waiting for build');
-    for (let i = 0; i < 60; i++) {
-        const out = run('oc', 'get', 'build', getServiceName(part) + '-2', '--template', '{{.status.phase}}').toLowerCase();
-        if (out.startsWith('new')) {
-            process.stdout.write('N');
-            sleep(15000);
-        } else if (out.startsWith('pending')) {
-            process.stdout.write('P');
-            sleep(15000);
-        } else if (out.startsWith('running')) {
-            process.stdout.write('.');
-            sleep(15000);
-        } else if (out.startsWith('complete') || isDryRun()) {
-            process.stdout.write(' ok\n');
-            break;
-        } else {
-            process.stdout.write(' failed\n');
-            throw new Error('Unexpected status while waiting for build');
-        }
     }
 }
 

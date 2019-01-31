@@ -138,7 +138,7 @@ function testPart(part: Part) {
             console.log('      Building project...');
             runAt(targetDir.name, './gap', 'build');
             console.log('      Pushing project...');
-            runAt(targetDir.name, './gap', 'push');
+            runAt(targetDir.name, './gap', 'push', '--wait');
             waitForProject(part);
             context.routeHost = getRouteHost(getServiceName(part));
         });
