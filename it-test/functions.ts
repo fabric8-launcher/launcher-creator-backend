@@ -117,7 +117,7 @@ export function runAt(cwd, cmd, ...args: string[]) {
     if (!isDryRun()) {
         const proc = spawnSync(cmd, args, opts);
         if (!!proc.error) {
-            console.log(proc.error);
+            throw proc.error;
         } else if (proc.status !== 0) {
             throw new Error(`Command '${cmd} ${args.join(' ')}' failed with error code: ${proc.status}`);
         }
