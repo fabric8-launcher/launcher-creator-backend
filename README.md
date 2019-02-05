@@ -1,6 +1,6 @@
 # launcher-creator-backend
 
-[![Build Status](https://travis-ci.org/fabric8-launcher/launcher-creator-backend.svg?branch=master)](https://travis-ci.org/fabric8-launcher/launcher-creator-backend)
+[![Build Status](https://travis-ci.com/fabric8-launcher/launcher-creator-backend.svg?branch=master)](https://travis-ci.com/fabric8-launcher/launcher-creator-backend)
 
 This is the _engine_ to perform the actual code generation. It has command line tools that can generate code locally and a REST service that
 can either return a ZIP file or pass the generated code to the Launcher Backend for publishing on GitHub and OpenShift.
