@@ -1,4 +1,4 @@
-import { push } from '.';
+import { push } from 'core/deploy';
 
 const args = process.argv.slice(2);
 

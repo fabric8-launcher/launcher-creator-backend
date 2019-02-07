@@ -1,7 +1,7 @@
 
 import { printUsage } from 'core/info';
 import { listCapabilityInfos, getCapabilityModule, info, listEnums } from 'core/catalog';
-import { applyDeployment, readDeployment } from '.';
+import { applyDeployment, readDeployment } from 'core/deploy';
 import {
     ApplicationDescriptor,
     CapabilityDescriptor,

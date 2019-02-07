@@ -1,4 +1,4 @@
-import { zip } from '.';
+import { zip } from 'core/deploy';
 
 const args = process.argv.slice(2);
 
