@@ -6,6 +6,7 @@ import * as _ from 'lodash';
 import { newApp } from 'core/oc';
 import { resources, Resources } from 'core/resources';
 import { filterObject } from 'core/utils';
+import { images } from 'core/resources/images';
 
 const dummyName = 'placeholder-app-name-730040e0c873453f877c10cd07912d1f';
 const dummyLabel = 'placeholder-app-label-d46881878f594a2dadfd963843452aab';
@@ -51,8 +52,9 @@ function templateFileName(img: string) {
 }
 
 export function generate() {
-    const images = require('./images.json');
-    images.forEach(async ({image, isBuilder}) => {
+    images.forEach(async ({id, metadata}) => {
+        const image = id;
+        const isBuilder = (metadata && metadata['isBuilder']) || false;
         try {
             const srcUri = isBuilder ? dummyGitUrl : null;
             const res = await newApp(dummyName, dummyLabel, image, srcUri, {});
