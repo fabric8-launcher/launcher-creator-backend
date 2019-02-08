@@ -14,6 +14,7 @@ import { enumItem } from 'core/catalog';
 import { BaseGenerator, BaseGeneratorProps, BasePlatformExtra, NodejsCoords } from 'core/catalog/types';
 
 import PlatformBaseSupport from 'generators/platform-base-support';
+import LanguageNodejs from 'generators/language-nodejs';
 
 export interface PlatformAngularProps extends BaseGeneratorProps {
     nodejs: NodejsCoords;
@@ -43,7 +44,8 @@ export default class PlatformAngular extends BaseGenerator {
         if (!resources.service(props.serviceName)) {
             await this.generator(PlatformBaseSupport).apply(resources, props, extra);
             await this.copy();
-            await this.transform(['angular.json', 'package.json', 'src/index.html', 'src/**/*.ts', 'e2e/**/*.ts', 'gap'], cases(props));
+            await this.transform(['angular.json', 'package.json', 'src/index.html', 'src/**/*.ts', 'e2e/**/*.ts'], cases(props));
+            await this.generator(LanguageNodejs).apply(resources, props, extra);
             const res = await newApp(
                 props.serviceName,
                 props.application,

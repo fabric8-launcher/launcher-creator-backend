@@ -15,6 +15,7 @@ import { BaseGenerator, BaseGeneratorProps, BasePlatformExtra, Runtime } from 'c
 
 import MavenSetup, { MavenSetupProps } from 'generators/maven-setup';
 import PlatformBaseSupport from 'generators/platform-base-support';
+import LanguageJava from 'generators/language-java';
 
 export interface PlatformVertxProps extends BaseGeneratorProps, MavenSetupProps {
     runtime: Runtime;
@@ -41,7 +42,7 @@ export default class PlatformVertx extends BaseGenerator {
         if (!resources.service(props.serviceName)) {
             await this.generator(PlatformBaseSupport).apply(resources, props, extra);
             await this.copy();
-            await this.transform('gap', cases(props));
+            await this.generator(LanguageJava).apply(resources, props, extra);
             await this.generator(MavenSetup).apply(resources, props, extra);
             const res = await newApp(
                 props.serviceName,

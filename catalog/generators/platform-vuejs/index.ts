@@ -14,6 +14,7 @@ import { enumItem } from 'core/catalog';
 import { BaseGenerator, BaseGeneratorProps, BasePlatformExtra, NodejsCoords } from 'core/catalog/types';
 
 import PlatformBaseSupport from 'generators/platform-base-support';
+import LanguageNodejs from 'generators/language-nodejs';
 
 export interface PlatformVueJSProps extends BaseGeneratorProps {
     nodejs: NodejsCoords;
@@ -43,7 +44,8 @@ export default class PlatformVueJS extends BaseGenerator {
         if (!resources.service(props.serviceName)) {
             await this.generator(PlatformBaseSupport).apply(resources, props, extra);
             await this.copy();
-            await this.transform(['package.json', 'gap'], cases(props));
+            await this.transform(['package.json'], cases(props));
+            await this.generator(LanguageNodejs).apply(resources, props, extra);
             const res = await newApp(
                 props.serviceName,
                 props.application,

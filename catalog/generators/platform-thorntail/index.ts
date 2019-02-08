@@ -14,6 +14,7 @@ import { BaseGenerator, BaseGeneratorProps, BasePlatformExtra } from 'core/catal
 
 import MavenSetup, {MavenSetupProps} from 'generators/maven-setup';
 import PlatformBaseSupport from 'generators/platform-base-support';
+import LanguageJava from 'generators/language-java';
 
 export interface PlatformThorntailProps extends BaseGeneratorProps, MavenSetupProps {
     env?: object;
@@ -39,7 +40,7 @@ export default class PlatformThorntail extends BaseGenerator {
         if (!resources.service(props.serviceName)) {
             await this.generator(PlatformBaseSupport).apply(resources, props, extra);
             await this.copy();
-            await this.transform('gap', cases(props));
+            await this.generator(LanguageJava).apply(resources, props, extra);
             await this.generator(MavenSetup).apply(resources, props, extra);
             const res = await newApp(
                 props.serviceName,
