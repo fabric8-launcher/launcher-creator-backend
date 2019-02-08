@@ -1,16 +1,48 @@
 
 import { cases } from 'core/template/transformers/cases';
-import { BaseGenerator, BaseGeneratorProps } from 'core/catalog/types';
+import {
+    newApp,
+    newRoute,
+    setBuildContextDir,
+    setBuildEnv,
+    setDefaultHealthChecks, setDeploymentEnv,
+    setMemoryResources
+} from 'core/resources';
+
+import { BaseGenerator, BaseGeneratorProps, Runtime } from 'core/catalog/types';
+import MavenSetup, { MavenSetupProps } from 'generators/maven-setup';
+
+export interface JavaLanguageProps extends BaseGeneratorProps, MavenSetupProps {
+    image: string;
+    jarName?: string;
+    env?: object;
+}
 
 export default class LanguageJava extends BaseGenerator {
     public static readonly sourceDir: string = __dirname;
 
-    public async apply(resources, props: BaseGeneratorProps, extra: any = {}) {
-        // Check if the gap file already exists, so we don't copy it twice
-        if (!await this.filesCopied()) {
+    public async apply(resources, props: JavaLanguageProps, extra: any = {}) {
+        const jarName = props.jarName || props.maven.artifactId + '-' + props.maven.version + '.jar';
+        // Check if the service already exists, so we don't create it twice
+        if (!resources.service(props.serviceName)) {
+            await this.generator(MavenSetup).apply(resources, props, extra);
             await this.copy();
-            await this.transform('gap', cases(props));
+            await this.transform('gap', cases({ ...props, jarName }));
+            const res = await newApp(
+                props.serviceName,
+                props.application,
+                props.image,
+                null,
+                props.env || {});
+            setBuildContextDir(res, props.subFolderName);
+            setMemoryResources(res, { 'limit': '2G' });
+            setDefaultHealthChecks(res);
+            resources.add(res);
+            return await newRoute(resources, props.routeName, props.application, props.serviceName);
+        } else {
+            setBuildEnv(resources, props.env, props.serviceName);
+            setDeploymentEnv(resources, props.env, props.serviceName);
+            return resources;
         }
-        return resources;
     }
 }

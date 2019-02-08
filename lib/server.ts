@@ -1,17 +1,18 @@
+
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
 import * as cors from 'cors';
-import * as tmp from 'tmp';
+import * as tmp from 'tmp-promise';
 import * as request from 'request';
 import * as NodeCache from 'node-cache';
 import * as shortid from 'shortid';
 import * as fs from 'fs';
 import * as HttpStatus from 'http-status-codes';
+import * as Sentry from 'raven';
 
 import * as catalog from 'core/catalog';
 import * as deploy from 'core/deploy';
 import {zipFolder} from 'core/utils';
-import * as Sentry from 'raven';
 import { ApplicationDescriptor, DeploymentDescriptor } from 'core/catalog/types';
 
 tmp.setGracefulCleanup();
@@ -100,33 +101,32 @@ interface ZipRequest {
     project: ApplicationDescriptor;  // All applications that are part of the deployment
 }
 
-router.post('/zip', (req, res, next) => {
+router.post('/zip', async (req, res, next) => {
     // Make sure we have all the required inputs
     if (!validateGenerationRequest(req, res)) {
         return;
     }
-    // Create temp dir
-    tmp.dir({'unsafeCleanup': true}, async (err, tempDir, cleanTempDir) => {
+    try {
+        // Create temp dir
+        const td = await tmp.dir({ 'unsafeCleanup': true });
         // Generate contents
-        const projectDir = `${tempDir}/project`;
+        const projectDir = `${td.path}/project`;
         fs.mkdirSync(projectDir);
-        const projectZip = `${tempDir}/project.zip`;
+        const projectZip = `${td.path}/project.zip`;
         const out = fs.createWriteStream(projectZip);
-        try {
-            const zreq = req.body as ZipRequest;
-            const deployment: DeploymentDescriptor = {
-                'applications': [ zreq.project ]
-            };
-            await deploy.applyDeployment(projectDir, deployment);
-            await zipFolder(out, projectDir, zreq.project.application);
-            const id = shortid.generate();
-            zipCache.set(id, { 'file': projectZip, 'name': `${zreq.project.application}.zip`, cleanTempDir }, 600);
-            res.status(HttpStatus.OK).send({ id });
-        } catch (ex) {
-            // TODO: Call catch(next)
-            sendReply(res, HttpStatus.INTERNAL_SERVER_ERROR, ex);
-        }
-    });
+        const zreq = req.body as ZipRequest;
+        const deployment: DeploymentDescriptor = {
+            'applications': [ zreq.project ]
+        };
+        await deploy.applyDeployment(projectDir, deployment);
+        await zipFolder(out, projectDir, zreq.project.application);
+        const id = shortid.generate();
+        zipCache.set(id, { 'file': projectZip, 'name': `${zreq.project.application}.zip`, 'cleanTempDir': td.cleanup }, 600);
+        res.status(HttpStatus.OK).send({ id });
+    } catch (ex) {
+        // TODO: Call catch(next)
+        sendReply(res, HttpStatus.INTERNAL_SERVER_ERROR, ex);
+    }
 });
 
 interface LaunchRequest {
@@ -137,7 +137,7 @@ interface LaunchRequest {
     clusterId?: string;
 }
 
-router.post('/launch', (req, res, next) => {
+router.post('/launch', async (req, res, next) => {
     // Make sure we're autenticated
     if (!req.get('Authorization')) {
         sendReply(res, HttpStatus.UNAUTHORIZED, 'Unauthorized');
@@ -147,65 +147,64 @@ router.post('/launch', (req, res, next) => {
     if (!validateGenerationRequest(req, res)) {
         return;
     }
-    // Create temp dir
-    tmp.dir({'unsafeCleanup': true}, async (err, tempDir, cleanTempDir) => {
+    try {
+        // Create temp dir
+        const td = await tmp.dir({ 'unsafeCleanup': true });
         // Generate contents
-        const projectDir = `${tempDir}/project`;
+        const projectDir = `${td.path}/project`;
         fs.mkdirSync(projectDir);
-        const projectZip = `${tempDir}/project.zip`;
+        const projectZip = `${td.path}/project.zip`;
         const out = fs.createWriteStream(projectZip);
-        try {
-            const lreq = req.body as LaunchRequest;
-            const deployment: DeploymentDescriptor = {
-                'applications': [ lreq.project ]
+        const lreq = req.body as LaunchRequest;
+        const deployment: DeploymentDescriptor = {
+            'applications': [ lreq.project ]
+        };
+        await deploy.applyDeployment(projectDir, deployment);
+        zipFolder(out, projectDir, lreq.project.application);
+        out.on('finish', () => {
+            // Prepare to post
+            const ins = fs.createReadStream(projectZip);
+            const formData = {
+                'projectName': lreq.projectName,
+                'gitRepository': lreq.gitRepository,
+                'file': ins
             };
-            await deploy.applyDeployment(projectDir, deployment);
-            zipFolder(out, projectDir, lreq.project.application);
-            out.on('finish', () => {
-                // Prepare to post
-                const ins = fs.createReadStream(projectZip);
-                const formData = {
-                    'projectName': lreq.projectName,
-                    'gitRepository': lreq.gitRepository,
-                    'file': ins
-                };
-                if (lreq.gitOrganization) {
-                    formData['gitOrganization'] = lreq.gitOrganization;
+            if (lreq.gitOrganization) {
+                formData['gitOrganization'] = lreq.gitOrganization;
+            }
+            const auth = {
+                'bearer': req.get('Authorization').slice(7)
+            };
+            const headers = {};
+            if (lreq.clusterId) {
+                headers['X-OpenShift-Cluster'] = lreq.clusterId;
+            }
+            const backendUrl = process.env.LAUNCHER_BACKEND_URL || 'http://localhost:8080/api';
+            const options = {
+                'url': backendUrl + '/launcher/upload',
+                formData,
+                auth,
+                headers
+            };
+            request.post(options, (err2, res2, body) => {
+                console.info(`Pushed project "${lreq.project.application}" to ${backendUrl} - ${res2.statusCode}`);
+                let json = null;
+                try {
+                    json = JSON.parse(body);
+                } catch (e) { /* ignore parse errors */
                 }
-                const auth = {
-                    'bearer': req.get('Authorization').slice(7)
-                };
-                const headers = {};
-                if (lreq.clusterId) {
-                    headers['X-OpenShift-Cluster'] = lreq.clusterId;
+                if (!err2 && res2.statusCode === HttpStatus.OK) {
+                    sendReply(res, HttpStatus.OK, json || body);
+                } else {
+                    sendReply(res, res2.statusCode, json || err2 || res2.statusMessage);
                 }
-                const backendUrl = process.env.LAUNCHER_BACKEND_URL || 'http://localhost:8080/api';
-                const options = {
-                    'url': backendUrl + '/launcher/upload',
-                    formData,
-                    auth,
-                    headers
-                };
-                request.post(options, (err2, res2, body) => {
-                    console.info(`Pushed project "${lreq.project.application}" to ${backendUrl} - ${res2.statusCode}`);
-                    let json = null;
-                    try {
-                        json = JSON.parse(body);
-                    } catch (e) { /* ignore parse errors */
-                    }
-                    if (!err2 && res2.statusCode === HttpStatus.OK) {
-                        sendReply(res, HttpStatus.OK, json || body);
-                    } else {
-                        sendReply(res, res2.statusCode, json || err2 || res2.statusMessage);
-                    }
-                    cleanTempDir();
-                });
+                td.cleanup();
             });
-        } catch (ex) {
-            // TODO: Call next
-            sendReply(res, HttpStatus.INTERNAL_SERVER_ERROR, ex);
-        }
-    });
+        });
+    } catch (ex) {
+        // TODO: Call next
+        sendReply(res, HttpStatus.INTERNAL_SERVER_ERROR, ex);
+    }
 });
 
 app.use('/', router);

@@ -2,7 +2,7 @@
 
 APP_NAME={{.application}}
 SERVICE_NAME={{.serviceName}}
-JAR_NAME={{.maven.artifactId}}-{{.maven.version}}-thorntail.jar
+JAR_NAME={{.jarName}}
 #OPENSHIFT_CONSOLE_URL=Set to your OpenShift cluster's Console URL
 
 SCRIPT_DIR=$(cd "$(dirname "$BASH_SOURCE")" ; pwd -P)
