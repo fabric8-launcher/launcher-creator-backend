@@ -37,8 +37,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Enumerations'
-        '404':
-          description: Not Found
   /enums/{id}:
     get:
       parameters:
@@ -60,8 +58,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Enumeration'
-        '404':
-          description: Not Found
   /capabilities:
     get:
       summary: Returns the available Capabilities
@@ -77,8 +73,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Capabilities'
-        '404':
-          description: Not Found
   /zip:
     post:
       summary: Create ZIP containing a generated project and returns and id to download it
@@ -104,8 +98,8 @@ paths:
                   id:
                     description: The id to download the zip
                     type: string
-        '404':
-          description: Not Found
+        '400':
+          description: Bad Request
   /download:
     get:
       summary: Returns a ZIP containing a generated project for the specified id
@@ -146,8 +140,28 @@ paths:
       responses:
         '200':
           description: OK
-        '404':
-          description: Not Found
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+  /import/analyze:
+    get:
+      summary: Analyzes the given Git repository and returns what S2I builder image to use
+      description: >-
+        Takes a Git repositor URL and looks at the code inside it to determine what OpenShift
+        S2I builder could be used to compile and run it
+      tags:
+        - import
+      parameters:
+        - name: gitImportUrl
+          in: query
+          required: true
+          schema:
+            type: string
+          description: The URL to the Git repository to analyze
+      responses:
+        '200':
+          description: OK
 
 components:
   schemas:

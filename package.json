@@ -18,6 +18,7 @@
     "zip": "NODE_PATH=lib:catalog ts-node ./lib/cli/zip.ts",
     "push": "NODE_PATH=lib:catalog ts-node ./lib/cli/push.ts",
     "delete": "NODE_PATH=lib:catalog ts-node ./lib/cli/delete.ts",
+    "analyze": "NODE_PATH=lib:catalog ts-node ./lib/cli/analyze.ts",
     "generate": "NODE_PATH=lib:catalog ts-node ./lib/cli/generate.ts",
     "debug": "NODE_PATH=lib:catalog node --inspect-brk ./node_modules/.bin/ts-node --transpile-only lib/server.ts 8081",
     "debug-apply": "NODE_PATH=lib:catalog node --inspect-brk ./node_modules/.bin/ts-node --transpile-only lib/core/deploy/apply.ts",
@@ -41,6 +42,7 @@
     "raven": "2.6.4",
     "request": "2.88.0",
     "shortid": "2.2.14",
+    "simple-git": "^1.107.0",
     "stream-to-string": "1.1.0",
     "tmp-promise": "^1.0.5"
   },
