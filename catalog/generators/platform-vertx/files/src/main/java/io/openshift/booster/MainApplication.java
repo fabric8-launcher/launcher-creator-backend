@@ -12,7 +12,7 @@ import rx.Observable;
 public class MainApplication extends AbstractVerticle {
 
   @Override
-  public void start(final Future future) {
+  public void start(final Future<Void> future) {
     // Create Router
     Router router = createRouter();
 
@@ -27,7 +27,7 @@ public class MainApplication extends AbstractVerticle {
       .doOnError(future::fail)
       .subscribe(() ->
                    vertx.createHttpServer()
-                     .requestHandler(router::accept)
+                     .requestHandler(router)
                      .rxListen(config().getInteger("http.port", 8080))
                      .subscribe(httpServer ->
                                   System.out.println("Server started on port " + httpServer.actualPort()))
