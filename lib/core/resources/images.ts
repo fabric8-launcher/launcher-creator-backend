@@ -5,7 +5,14 @@ export const BUILDER_JAVA = 'registry.access.redhat.com/redhat-openjdk-18/openjd
 export const BUILDER_NODEJS_APP = 'nodeshift/centos7-s2i-nodejs';
 export const BUILDER_NODEJS_WEB = 'nodeshift/centos7-s2i-web-app';
 
-export const builderImages: Enum[] = [
+export interface BuilderImage extends Enum {
+    'metadata'?: {
+        'language': string,
+        'isBuilder': boolean
+    };
+}
+
+export const builderImages: BuilderImage[] = [
     {
         'id': BUILDER_JAVA,
         'name': 'Java Code Builder',
@@ -32,7 +39,7 @@ export const builderImages: Enum[] = [
     }
 ];
 
-export const databaseImages: Enum[] = [
+export const databaseImages: BuilderImage[] = [
     {
         'id': 'mysql',
         'name': 'MySQL Database'
@@ -43,7 +50,11 @@ export const databaseImages: Enum[] = [
     }
 ];
 
-export const images: Enum[] = [
+export const images: BuilderImage[] = [
     ...databaseImages,
     ...builderImages
 ];
+
+export function builderById(builderId: string): BuilderImage {
+    return builderImages.find(e => e.id === builderId);
+}
