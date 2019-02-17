@@ -301,12 +301,12 @@ export function applyDeployment(targetDir: string, deployment: DeploymentDescrip
         .then(() => applyApplication(targetDir, cur)), p);
 }
 
-export function deploy(targetDir) {
+export function deploy(targetDir: string) {
     const rf = resourcesFileName(targetDir);
     return applyFromFile(rf);
 }
 
-export function zip(targetDir, zipFileName) {
+export function zip(targetDir: string, zipFileName: string) {
     const archiveFolderName = 'app';
     const out = createWriteStream(zipFileName);
     return zipFolder(out, targetDir, archiveFolderName);
