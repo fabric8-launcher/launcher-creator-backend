@@ -29,7 +29,7 @@ export default class PlatformReact extends BaseGenerator {
         _.set(extra, 'shared.runtimeInfo', exProps);
 
         const env = { ...(props.env || {}), 'OUTPUT_DIR': 'dist/' + props.application };
-        const lprops: NodejsLanguageProps = { ...props, env, 'image': BUILDER_NODEJS_WEB };
+        const lprops: NodejsLanguageProps = { ...props, env, 'builderImage': BUILDER_NODEJS_WEB };
 
         // Check if the service already exists, so we don't create it twice
         if (!resources.service(props.serviceName)) {

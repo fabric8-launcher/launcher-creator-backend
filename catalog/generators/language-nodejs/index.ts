@@ -12,7 +12,7 @@ import {
 import { BUILDER_NODEJS_APP } from 'core/resources/images';
 
 export interface NodejsLanguageProps extends BaseGeneratorProps {
-    image: string;
+    builderImage: string;
     env?: object;
 }
 

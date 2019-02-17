@@ -13,7 +13,7 @@ import { BaseGenerator, BaseGeneratorProps, Runtime } from 'core/catalog/types';
 import MavenSetup, { MavenSetupProps } from 'generators/maven-setup';
 
 export interface JavaLanguageProps extends BaseGeneratorProps, MavenSetupProps {
-    image: string;
+    builderImage: string;
     jarName?: string;
     env?: object;
 }
@@ -31,7 +31,7 @@ export default class LanguageJava extends BaseGenerator {
             const res = await newApp(
                 props.serviceName,
                 props.application,
-                props.image,
+                props.builderImage,
                 null,
                 props.env || {});
             setBuildContextDir(res, props.subFolderName);

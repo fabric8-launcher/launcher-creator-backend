@@ -26,7 +26,7 @@ export default class PlatformSpringBoot extends BaseGenerator {
         };
         _.set(extra, 'shared.runtimeInfo', exProps);
 
-        const lprops: JavaLanguageProps = { ...props, 'image': BUILDER_JAVA };
+        const lprops: JavaLanguageProps = { ...props, 'builderImage': BUILDER_JAVA };
 
         // Check if the service already exists, so we don't create it twice
         if (!resources.service(props.serviceName)) {

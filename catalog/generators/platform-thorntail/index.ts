@@ -27,7 +27,7 @@ export default class PlatformThorntail extends BaseGenerator {
         _.set(extra, 'shared.runtimeInfo', exProps);
 
         const jarName = props.maven.artifactId + '-' + props.maven.version + '-thorntail.jar';
-        const lprops: JavaLanguageProps = { ...props, jarName, 'image': BUILDER_JAVA };
+        const lprops: JavaLanguageProps = { ...props, jarName, 'builderImage': BUILDER_JAVA };
 
         // Check if the service already exists, so we don't create it twice
         if (!resources.service(props.serviceName)) {
