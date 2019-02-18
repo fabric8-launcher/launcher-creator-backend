@@ -58,3 +58,7 @@ export const images: BuilderImage[] = [
 export function builderById(builderId: string): BuilderImage {
     return builderImages.find(e => e.id === builderId);
 }
+
+export function builderByLanguage(language: string): BuilderImage {
+    return builderImages.find(e => e.metadata.language === language);
+}

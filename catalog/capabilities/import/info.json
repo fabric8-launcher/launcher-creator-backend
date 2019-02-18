@@ -1,0 +1,29 @@
+{
+  "type": "capability",
+  "name": "Import",
+  "description": "Imports an existing codebase",
+  "metadata": {
+    "category": "import"
+  },
+  "props": [
+    {
+      "id": "gitImportUrl",
+      "name": "Git Repository URL",
+      "description": "The URL of the Git repository to import",
+      "required": true,
+      "type": "string"
+    },
+    {
+      "id": "builderImage",
+      "name": "Builder Image",
+      "description": "The S2I builder image to use for building and running the imported code",
+      "type": "string"
+    },
+    {
+      "id": "builderLanguage",
+      "name": "Builder Language",
+      "description": "The language that should be used for building and running the imported code",
+      "type": "string"
+    }
+  ]
+}
