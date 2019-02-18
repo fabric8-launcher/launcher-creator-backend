@@ -2,4 +2,64 @@ sudo: false
 language: node_js
 cache:
   yarn: true
+matrix:
+  include:
+    - env: OC_CLUSTER_UP=true OC_VERSION="v3.9.0" COMMIT_ID="191fece"
+services:
+  - docker
+addons:
+  apt:
+    sources:
+      - git-core
+    packages:
+      - git
 
+install:
+  - |
+    if [ ${OC_CLUSTER_UP} ]; then
+      tmp=`mktemp`
+      echo 'DOCKER_OPTS="$DOCKER_OPTS --insecure-registry 172.30.0.0/16"' > ${tmp}
+      sudo mv ${tmp} /etc/default/docker
+      sudo mount --make-shared /
+      sudo service docker restart
+      curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl && \
+          chmod +x kubectl && sudo mv kubectl /usr/local/bin/
+      client_tools="openshift-origin-client-tools-${OC_VERSION}-${COMMIT_ID}-linux-64bit" && curl -LO https://github.com/openshift/origin/releases/download/${OC_VERSION}/${client_tools}.tar.gz && \
+        tar -xvzf ${client_tools}.tar.gz && sudo mv $PWD/${client_tools}/oc /usr/local/bin/ && rm -rf ${client_tools}.tar.gz
+      oc cluster up --version=${OC_VERSION} --routing-suffix="127.0.0.1.${OC_DOMAIN:-nip.io}"
+      sleep 10
+      oc login -u system:admin
+      oc get event --all-namespaces
+
+      # Expose the docker-registry as a Route
+      # This is done in order for some of the tests that assume an existing Route to work
+      oc expose service docker-registry -n default
+    fi
+  - yarn install
+
+after_success:
+  - |
+    if [ ${OC_CLUSTER_UP} ]; then
+      echo "oc get pods --all-namespaces"
+      oc get pods --all-namespaces
+      echo "oc get event --all-namespaces"
+      oc get event --all-namespaces
+    fi
+
+after_error:
+  - |
+    if [ ${OC_CLUSTER_UP} ]; then
+      echo "oc get pods --all-namespaces"
+      oc get pods --all-namespaces
+      echo "oc get event --all-namespaces"
+      oc get event --all-namespaces
+    fi
+
+after_failure:
+  - |
+    if [ ${OC_CLUSTER_UP} ]; then
+      echo "oc get pods --all-namespaces"
+      oc get pods --all-namespaces
+      echo "oc get event --all-namespaces"
+      oc get event --all-namespaces
+    fi
