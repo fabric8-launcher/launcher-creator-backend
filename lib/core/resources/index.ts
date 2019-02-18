@@ -437,7 +437,7 @@ export function setHealthProbe(res: Resources, probeName: string, probe: object,
     return res;
 }
 
-// Sets the deault health checks for the DeploymentConfig selected by 'dcName'.
+// Sets the default health checks for the DeploymentConfig selected by 'dcName'.
 // Both the readiness and the liveness check will use `/health`.
 export function setPathHealthChecks(res: Resources,
                                     readinessPath: string,
@@ -468,7 +468,7 @@ export function setPathHealthChecks(res: Resources,
     return res;
 }
 
-// Sets the deault health checks for the DeploymentConfig selected by 'dcName'.
+// Sets the default health checks for the DeploymentConfig selected by 'dcName'.
 // Both the readiness and the liveness check will use `/health`.
 export function setDefaultHealthChecks(res: Resources, dcName?: any): Resources {
     return setPathHealthChecks(res, '/health', '/health');
