@@ -38,26 +38,20 @@ script:
 after_success:
   - |
     if [ ${OC_CLUSTER_UP} ]; then
-      echo "oc get pods --all-namespaces"
-      oc get pods --all-namespaces
-      echo "oc get event --all-namespaces"
-      oc get event --all-namespaces
+      echo "oc get pods --all-namespaces" && oc get pods --all-namespaces
+      echo "oc get event --all-namespaces" && oc get event --all-namespaces
     fi
 
 after_error:
   - |
     if [ ${OC_CLUSTER_UP} ]; then
-      echo "oc get pods --all-namespaces"
-      oc get pods --all-namespaces
-      echo "oc get event --all-namespaces"
-      oc get event --all-namespaces
+      echo "oc get pods --all-namespaces" && oc get pods --all-namespaces
+      echo "oc get event --all-namespaces" && oc get event --all-namespaces
     fi
 
 after_failure:
   - |
     if [ ${OC_CLUSTER_UP} ]; then
-      echo "oc get pods --all-namespaces"
-      oc get pods --all-namespaces
-      echo "oc get event --all-namespaces"
-      oc get event --all-namespaces
+      echo "oc get pods --all-namespaces" &&  oc get pods --all-namespaces
+      echo "oc get event --all-namespaces" && oc get event --all-namespaces
     fi
