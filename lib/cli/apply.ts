@@ -103,15 +103,27 @@ async function main() {
 
         while (i < args.length) {
             const cap: CapabilityDescriptor = {
-                'module': args[i]
+                'module': args[i++]
             };
-            const PROPS = args[i + 1] || '';
-            if (i < args.length - 1 && PROPS.trim().startsWith('{')) {
-                cap.props = JSON.parse(PROPS);
+            // First check for a JSON argument to use for properties
+            if (i < args.length && args[i].trim().startsWith('{')) {
+                cap.props = JSON.parse(args[i]);
                 i++;
+            } else {
+                cap.props = {};
+            }
+            // Now see if there are flags we can use to create a properties object
+            while (i < args.length && args[i].trim().startsWith('--')) {
+                const opt = args[i++];
+                const p = opt.indexOf('=');
+                if (p < 0) {
+                    throw new Error(`Missing value for option ${opt}`);
+                }
+                const optName = opt.slice(2, p);
+                const optValue = opt.slice(p + 1);
+                cap.props[optName] = optValue;
             }
             part.capabilities = [...part.capabilities, cap];
-            i++;
         }
 
         await apply(TARGET_DIR, deployment);
