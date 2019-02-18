@@ -4,13 +4,16 @@ cache:
   yarn: true
 matrix:
   include:
+    # Run unit tests
+    - env: OC_CLUSTER_UP=false
+    # Run integration tests
     - env: OC_CLUSTER_UP=true OC_VERSION="v3.11.0" COMMIT_ID="0cbc58b"
 services:
   - docker
 
-install:
+before_install:
   - |
-    if [ ${OC_CLUSTER_UP} ]; then
+    if [[ ${OC_CLUSTER_UP} ]]; then
       tmp=`mktemp`
       echo 'DOCKER_OPTS="$DOCKER_OPTS --insecure-registry 172.30.0.0/16"' > ${tmp}
       sudo mv ${tmp} /etc/default/docker
@@ -29,35 +32,34 @@ install:
       # This is done in order for some of the tests that assume an existing Route to work
       oc expose service docker-registry -n default
     fi
-  - yarn install
 
 script:
-  - yarn test
-  - yarn ittest
+  - |
+    if [[ ! ${OC_CLUSTER_UP} ]]; then
+      yarn test
+    fi
+  - |
+    if [[ ${OC_CLUSTER_UP} ]]; then
+      yarn ittest
+    fi
 
 after_success:
   - |
-    if [ ${OC_CLUSTER_UP} ]; then
-      echo "oc get pods --all-namespaces"
-      oc get pods --all-namespaces
-      echo "oc get event --all-namespaces"
-      oc get event --all-namespaces
+    if [[ ${OC_CLUSTER_UP} ]]; then
+      echo "oc get pods --all-namespaces" && oc get pods --all-namespaces
+      echo "oc get event --all-namespaces" && oc get event --all-namespaces
     fi
 
 after_error:
   - |
-    if [ ${OC_CLUSTER_UP} ]; then
-      echo "oc get pods --all-namespaces"
-      oc get pods --all-namespaces
-      echo "oc get event --all-namespaces"
-      oc get event --all-namespaces
+    if [[ ${OC_CLUSTER_UP} ]]; then
+      echo "oc get pods --all-namespaces" && oc get pods --all-namespaces
+      echo "oc get event --all-namespaces" && oc get event --all-namespaces
     fi
 
 after_failure:
   - |
-    if [ ${OC_CLUSTER_UP} ]; then
-      echo "oc get pods --all-namespaces"
-      oc get pods --all-namespaces
-      echo "oc get event --all-namespaces"
-      oc get event --all-namespaces
+    if [[ ${OC_CLUSTER_UP} ]]; then
+      echo "oc get pods --all-namespaces" && oc get pods --all-namespaces
+      echo "oc get event --all-namespaces" && oc get event --all-namespaces
     fi
