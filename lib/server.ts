@@ -8,14 +8,13 @@ import * as NodeCache from 'node-cache';
 import * as shortid from 'shortid';
 import * as fs from 'fs';
 import * as HttpStatus from 'http-status-codes';
-import * as git from 'simple-git/promise';
 import * as Sentry from 'raven';
 
 import * as catalog from 'core/catalog';
 import * as deploy from 'core/deploy';
 import { zipFolder } from 'core/utils';
 import { ApplicationDescriptor, DeploymentDescriptor } from 'core/catalog/types';
-import { determineBuilderImage } from 'core/analysis';
+import { determineBuilderImageFromGit } from 'core/analysis';
 
 tmp.setGracefulCleanup();
 const app = express();
@@ -216,14 +215,8 @@ router.get('/import/analyze', async (req, res, next) => {
         return false;
     }
     try {
-        // Create temp dir
-        const td = await tmp.dir({ 'unsafeCleanup': true });
-        // Shallow-clone the repository
-        await git()
-            .env('GIT_TERMINAL_PROMPT', '0')
-            .clone(req.query.gitImportUrl, td.path, [ '--depth', '1' ]);
         // From the code we determine the builder image to use
-        const image = await determineBuilderImage(td.path);
+        const image = await determineBuilderImageFromGit(req.query.gitImportUrl);
         res.status(HttpStatus.OK).send(image);
     } catch (ex) {
         // TODO: Call catch(next)

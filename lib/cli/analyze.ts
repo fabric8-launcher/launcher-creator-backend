@@ -1,8 +1,5 @@
 
-import * as tmp from 'tmp-promise';
-import * as git from 'simple-git/promise';
-
-import { determineBuilderImage } from 'core/analysis';
+import { determineBuilderImage, determineBuilderImageFromGit } from 'core/analysis';
 
 const args = process.argv.slice(2);
 
@@ -19,13 +16,7 @@ let p;
 if (GIT_DIR_OR_URL.startsWith('http:') || GIT_DIR_OR_URL.startsWith('https:') || GIT_DIR_OR_URL.startsWith('git@')) {
     const url = GIT_DIR_OR_URL;
     // Create temp dir
-    p = tmp.dir({ 'unsafeCleanup': true }).then(td => {
-        // Shallow-clone the repository
-        return git().clone(url, td.path, ['--depth', '1']).then(() => {
-            // From the code we determine the builder image to use
-            return determineBuilderImage(td.path).then(image => console.log(image));
-        });
-    });
+    p = determineBuilderImageFromGit(url).then(image => console.log(image));
 } else {
     const dir = GIT_DIR_OR_URL;
     p = determineBuilderImage(dir)
