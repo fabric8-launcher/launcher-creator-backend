@@ -162,6 +162,38 @@ paths:
       responses:
         '200':
           description: OK
+  /import/launch:
+    post:
+      tags:
+        - import
+      summary: Deploys an existing codebase on OpenShift
+      description: Deploys an existing codebase on OpenShift
+      parameters:
+        - name: applicationName
+          in: query
+          description: The name of the application to be created
+          required: true
+          schema:
+            type: string
+        - name: gitImportUrl
+          in: query
+          description: A URL to the git repository to import
+          required: true
+          schema:
+            type: string
+        - name: builderImage
+          in: query
+          description: The name of the image to use for building and running the code
+          schema:
+            type: string
+        - name: builderLanguage
+          in: query
+          description: The language to use for building and running the code
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
 
 components:
   schemas:

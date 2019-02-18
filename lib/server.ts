@@ -130,16 +130,12 @@ router.post('/zip', async (req, res, next) => {
     }
 });
 
-interface LaunchRequest {
+interface LaunchRequest extends DeployRequest {
     project: ApplicationDescriptor;  // All applications that are part of the deployment
-    projectName: string;
-    gitRepository: string;
-    gitOrganization?: string;
-    clusterId?: string;
 }
 
 router.post('/launch', async (req, res, next) => {
-    // Make sure we're autenticated
+    // Make sure we're authenticated
     if (!req.get('Authorization')) {
         sendReply(res, HttpStatus.UNAUTHORIZED, 'Unauthorized');
         return;
@@ -148,64 +144,11 @@ router.post('/launch', async (req, res, next) => {
     if (!validateGenerationRequest(req, res)) {
         return;
     }
-    try {
-        // Create temp dir
-        const td = await tmp.dir({ 'unsafeCleanup': true });
-        // Generate contents
-        const projectDir = `${td.path}/project`;
-        fs.mkdirSync(projectDir);
-        const projectZip = `${td.path}/project.zip`;
-        const out = fs.createWriteStream(projectZip);
-        const lreq = req.body as LaunchRequest;
-        const deployment: DeploymentDescriptor = {
-            'applications': [ lreq.project ]
-        };
-        await deploy.applyDeployment(projectDir, deployment);
-        zipFolder(out, projectDir, lreq.project.application);
-        out.on('finish', () => {
-            // Prepare to post
-            const ins = fs.createReadStream(projectZip);
-            const formData = {
-                'projectName': lreq.projectName,
-                'gitRepository': lreq.gitRepository,
-                'file': ins
-            };
-            if (lreq.gitOrganization) {
-                formData['gitOrganization'] = lreq.gitOrganization;
-            }
-            const auth = {
-                'bearer': req.get('Authorization').slice(7)
-            };
-            const headers = {};
-            if (lreq.clusterId) {
-                headers['X-OpenShift-Cluster'] = lreq.clusterId;
-            }
-            const backendUrl = process.env.LAUNCHER_BACKEND_URL || 'http://localhost:8080/api';
-            const options = {
-                'url': backendUrl + '/launcher/upload',
-                formData,
-                auth,
-                headers
-            };
-            request.post(options, (err2, res2, body) => {
-                console.info(`Pushed project "${lreq.project.application}" to ${backendUrl} - ${res2.statusCode}`);
-                let json = null;
-                try {
-                    json = JSON.parse(body);
-                } catch (e) { /* ignore parse errors */
-                }
-                if (!err2 && res2.statusCode === HttpStatus.OK) {
-                    sendReply(res, HttpStatus.OK, json || body);
-                } else {
-                    sendReply(res, res2.statusCode, json || err2 || res2.statusMessage);
-                }
-                td.cleanup();
-            });
-        });
-    } catch (ex) {
-        // TODO: Call next
-        sendReply(res, HttpStatus.INTERNAL_SERVER_ERROR, ex);
-    }
+    const lreq = req.body as LaunchRequest;
+    const deployment: DeploymentDescriptor = {
+        'applications': [lreq.project]
+    };
+    await performLaunch(req, res, lreq, deployment);
 });
 
 router.get('/import/analyze', async (req, res, next) => {
@@ -222,6 +165,53 @@ router.get('/import/analyze', async (req, res, next) => {
         // TODO: Call catch(next)
         sendReply(res, HttpStatus.INTERNAL_SERVER_ERROR, ex);
     }
+});
+
+interface ImportLaunchRequest extends DeployRequest {
+    applicationName: string,
+    gitImportUrl: string;
+    builderImage?: string;
+}
+
+router.post('/import/launch', async (req, res, next) => {
+    // Make sure we're authenticated
+    if (!req.get('Authorization')) {
+        sendReply(res, HttpStatus.UNAUTHORIZED, 'Unauthorized');
+        return;
+    }
+    // Make sure we have all the required inputs
+    if (!req.body.applicationName) {
+        sendReply(res, HttpStatus.BAD_REQUEST, 'Malformed request, missing applicationName');
+        return false;
+    }
+    if (!req.body.gitImportUrl) {
+        sendReply(res, HttpStatus.BAD_REQUEST, 'Malformed request, missing gitImportUrl');
+        return false;
+    }
+    const ilreq = req.body as ImportLaunchRequest;
+    const deployment: DeploymentDescriptor = {
+        'applications': [
+            {
+                'application': ilreq.applicationName,
+                'parts': [
+                    {
+                        'capabilities': [
+                            {
+                                'module': 'import',
+                                'props': {
+                                    'gitImportUrl': ilreq.gitImportUrl
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    };
+    if (!!ilreq.builderImage) {
+        deployment.applications[0].parts[0].capabilities[0].props['builderImage'] = ilreq.builderImage;
+    }
+    await performLaunch(req, res, ilreq, deployment);
 });
 
 app.use('/', router);
@@ -263,6 +253,70 @@ function validateGenerationRequest(req, res) {
         }
     }
     return true;
+}
+
+interface DeployRequest {
+    projectName: string;
+    gitRepository: string;
+    gitOrganization?: string;
+    clusterId?: string;
+}
+
+async function performLaunch(req, res, dreq: DeployRequest, deployment: DeploymentDescriptor) {
+    try {
+        // Create temp dir
+        const td = await tmp.dir({ 'unsafeCleanup': true });
+        // Generate contents
+        const projectDir = `${td.path}/project`;
+        fs.mkdirSync(projectDir);
+        const projectZip = `${td.path}/project.zip`;
+        const out = fs.createWriteStream(projectZip);
+        await deploy.applyDeployment(projectDir, deployment);
+        zipFolder(out, projectDir, deployment.applications[0].application);
+        out.on('finish', () => {
+            // Prepare to post
+            const ins = fs.createReadStream(projectZip);
+            const formData = {
+                'projectName': dreq.projectName,
+                'gitRepository': dreq.gitRepository,
+                'file': ins
+            };
+            if (dreq.gitOrganization) {
+                formData['gitOrganization'] = dreq.gitOrganization;
+            }
+            const auth = {
+                'bearer': req.get('Authorization').slice(7)
+            };
+            const headers = {};
+            if (dreq.clusterId) {
+                headers['X-OpenShift-Cluster'] = dreq.clusterId;
+            }
+            const backendUrl = process.env.LAUNCHER_BACKEND_URL || 'http://localhost:8080/api';
+            const options = {
+                'url': backendUrl + '/launcher/upload',
+                formData,
+                auth,
+                headers
+            };
+            request.post(options, (err2, res2, body) => {
+                console.info(`Pushed project "${deployment.applications[0].application}" to ${backendUrl} - ${res2.statusCode}`);
+                let json = null;
+                try {
+                    json = JSON.parse(body);
+                } catch (e) { /* ignore parse errors */
+                }
+                if (!err2 && res2.statusCode === HttpStatus.OK) {
+                    sendReply(res, HttpStatus.OK, json || body);
+                } else {
+                    sendReply(res, res2.statusCode, json || err2 || res2.statusMessage);
+                }
+                td.cleanup();
+            });
+        });
+    } catch (ex) {
+        // TODO: Call next
+        sendReply(res, HttpStatus.INTERNAL_SERVER_ERROR, ex);
+    }
 }
 
 function onListening(): void {
