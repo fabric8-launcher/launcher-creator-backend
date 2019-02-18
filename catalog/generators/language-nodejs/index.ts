@@ -11,7 +11,7 @@ import {
 } from 'core/resources';
 import { BUILDER_NODEJS_APP } from 'core/resources/images';
 
-export interface NodejsLanguageProps extends BaseGeneratorProps {
+export interface LanguageNodejsProps extends BaseGeneratorProps {
     builderImage: string;
     env?: object;
 }
@@ -19,7 +19,7 @@ export interface NodejsLanguageProps extends BaseGeneratorProps {
 export default class LanguageNodejs extends BaseGenerator {
     public static readonly sourceDir: string = __dirname;
 
-    public async apply(resources, props: NodejsLanguageProps, extra: any = {}) {
+    public async apply(resources, props: LanguageNodejsProps, extra: any = {}) {
         // Check if the gap file already exists, so we don't copy it twice
         if (!await this.filesCopied()) {
             await this.copy();

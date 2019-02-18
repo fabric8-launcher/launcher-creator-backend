@@ -7,7 +7,7 @@ import { BaseGenerator, BaseGeneratorProps, BasePlatformExtra, NodejsCoords, Run
 import { BUILDER_NODEJS_APP, BUILDER_NODEJS_WEB } from 'core/resources/images';
 
 import PlatformBaseSupport from 'generators/platform-base-support';
-import LanguageNodejs, { NodejsLanguageProps } from 'generators/language-nodejs';
+import LanguageNodejs, { LanguageNodejsProps } from 'generators/language-nodejs';
 
 export interface PlatformNodejsProps extends BaseGeneratorProps {
     runtime: Runtime;
@@ -30,7 +30,7 @@ export default class PlatformNodejs extends BaseGenerator {
         };
         _.set(extra, 'shared.runtimeInfo', exProps);
 
-        const lprops: NodejsLanguageProps = { ...props, 'builderImage': BUILDER_NODEJS_WEB };
+        const lprops: LanguageNodejsProps = { ...props, 'builderImage': BUILDER_NODEJS_WEB };
 
         // Check if the service already exists, so we don't create it twice
         if (!resources.service(props.serviceName)) {

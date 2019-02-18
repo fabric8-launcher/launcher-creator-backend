@@ -12,7 +12,7 @@ import {
 import { BaseGenerator, BaseGeneratorProps, Runtime } from 'core/catalog/types';
 import MavenSetup, { MavenSetupProps } from 'generators/maven-setup';
 
-export interface JavaLanguageProps extends BaseGeneratorProps, MavenSetupProps {
+export interface LanguageJavaProps extends BaseGeneratorProps, MavenSetupProps {
     builderImage: string;
     jarName?: string;
     env?: object;
@@ -21,7 +21,7 @@ export interface JavaLanguageProps extends BaseGeneratorProps, MavenSetupProps {
 export default class LanguageJava extends BaseGenerator {
     public static readonly sourceDir: string = __dirname;
 
-    public async apply(resources, props: JavaLanguageProps, extra: any = {}) {
+    public async apply(resources, props: LanguageJavaProps, extra: any = {}) {
         const jarName = props.jarName || props.maven.artifactId + '-' + props.maven.version + '.jar';
         // Check if the service already exists, so we don't create it twice
         if (!resources.service(props.serviceName)) {

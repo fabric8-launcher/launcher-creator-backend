@@ -6,9 +6,9 @@ import { BaseGenerator, BasePlatformExtra } from 'core/catalog/types';
 import { BUILDER_JAVA } from 'core/resources/images';
 
 import PlatformBaseSupport from 'generators/platform-base-support';
-import LanguageJava, { JavaLanguageProps } from 'generators/language-java';
+import LanguageJava, { LanguageJavaProps } from 'generators/language-java';
 
-export interface PlatformSpringBootProps extends JavaLanguageProps {
+export interface PlatformSpringBootProps extends LanguageJavaProps {
 }
 
 export interface PlatformSpringBootExtra extends BasePlatformExtra {
@@ -26,7 +26,7 @@ export default class PlatformSpringBoot extends BaseGenerator {
         };
         _.set(extra, 'shared.runtimeInfo', exProps);
 
-        const lprops: JavaLanguageProps = { ...props, 'builderImage': BUILDER_JAVA };
+        const lprops: LanguageJavaProps = { ...props, 'builderImage': BUILDER_JAVA };
 
         // Check if the service already exists, so we don't create it twice
         if (!resources.service(props.serviceName)) {
