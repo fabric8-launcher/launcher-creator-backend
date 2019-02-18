@@ -31,6 +31,10 @@ install:
     fi
   - yarn install
 
+script:
+  - yarn test
+  - yarn ittest
+
 after_success:
   - |
     if [ ${OC_CLUSTER_UP} ]; then
