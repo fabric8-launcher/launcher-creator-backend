@@ -161,3 +161,9 @@ Simply run the integration test script like this:
 ```
 $ yarn ittest
 ```
+
+You can also run the integration tests for a subset of runtimes using the `--runtimes` parameter: 
+
+```
+$ yarn ittest --runtimes=thorntail,nodejs
+```
