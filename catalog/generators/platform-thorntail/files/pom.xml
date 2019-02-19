@@ -24,7 +24,7 @@
   </parent>
 
   <groupId>io.openshift.boosters</groupId>
-  <artifactId>thorntail-plattform</artifactId>
+  <artifactId>thorntail-platform</artifactId>
   <version>1-SNAPSHOT</version>
   <packaging>war</packaging>
 
