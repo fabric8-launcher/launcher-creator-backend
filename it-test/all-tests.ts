@@ -90,7 +90,9 @@ function listParts(runtime: string, capInfos: ModuleInfoDef[]): Part[] {
         });
     }
 
-    const maxAlt = Object.values(capabilityOptions).reduce((acc, cur) => Math.max(acc, cur.length), 0);
+    const maxAlt = Object.entries(capabilityOptions)
+        .filter(([key, val]) => caps.includes(key))
+        .reduce((acc, [key, val]) => Math.max(acc, val.length), 1);
     for (let i = 0; i < maxAlt; i++) {
         if (!cOverrides || cOverrides.includes('welcome')) {
             parts.push({ runtime, 'capabilities': [...actualCaps(i), 'welcome'] });
