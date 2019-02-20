@@ -30,7 +30,7 @@ export default class PlatformNodejs extends BaseGenerator {
         };
         _.set(extra, 'shared.runtimeInfo', exProps);
 
-        const lprops: LanguageNodejsProps = { ...props, 'builderImage': BUILDER_NODEJS_WEB };
+        const lprops: LanguageNodejsProps = { ...props, 'builderImage': BUILDER_NODEJS_APP };
 
         // Check if the service already exists, so we don't create it twice
         if (!resources.service(props.serviceName)) {
