@@ -5,6 +5,9 @@ export const BUILDER_JAVA = 'registry.access.redhat.com/redhat-openjdk-18/openjd
 export const BUILDER_NODEJS_APP = 'nodeshift/centos7-s2i-nodejs';
 export const BUILDER_NODEJS_WEB = 'nodeshift/centos7-s2i-web-app';
 
+export const IMAGE_MYSQL = 'mysql';
+export const IMAGE_POSTGRESQL = 'postgresql';
+
 export interface BuilderImage extends Enum {
     'metadata'?: {
         'language': string,
@@ -41,11 +44,11 @@ export const builderImages: BuilderImage[] = [
 
 export const databaseImages: BuilderImage[] = [
     {
-        'id': 'mysql',
+        'id': IMAGE_MYSQL,
         'name': 'MySQL Database'
     },
     {
-        'id': 'postgresql',
+        'id': IMAGE_POSTGRESQL,
         'name': 'PostgreSQL Database'
     }
 ];

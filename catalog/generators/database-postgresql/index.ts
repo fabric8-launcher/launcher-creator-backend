@@ -2,6 +2,7 @@
 import { newApp, setHealthProbe, setMemoryResources } from 'core/resources';
 import { BaseGenerator, BaseGeneratorExtra, BaseGeneratorProps } from 'core/catalog/types';
 import { DatabaseSecretRef } from 'generators/database-secret';
+import { IMAGE_POSTGRESQL } from 'core/resources/images';
 
 export interface DatabasePostgresqlProps extends BaseGeneratorProps, DatabaseSecretRef {
 }
@@ -32,9 +33,8 @@ export default class DatabasePostgresql extends BaseGenerator {
     public static readonly sourceDir: string = __dirname;
 
     public async apply(resources, props: DatabasePostgresqlProps, extra: any = {}) {
-        const dbImage = 'postgresql';
         const exProps: DatabasePostgresqlExtra = {
-            'image': dbImage,
+            'image': IMAGE_POSTGRESQL,
             'service': props.secretName
         };
         extra.databaseInfo = exProps;
@@ -42,7 +42,7 @@ export default class DatabasePostgresql extends BaseGenerator {
         // Check that the database doesn't already exist
         if (!resources.service(props.serviceName)) {
             // Create the database resource definitions
-            const res = await newApp(props.serviceName, props.application, dbImage, null, {
+            const res = await newApp(props.serviceName, props.application, IMAGE_POSTGRESQL, null, {
                 'POSTGRESQL_DATABASE': { 'secret': props.secretName, 'key': 'database' },
                 'POSTGRESQL_USER': { 'secret': props.secretName, 'key': 'user' },
                 'POSTGRESQL_PASSWORD': { 'secret': props.secretName, 'key': 'password' }
