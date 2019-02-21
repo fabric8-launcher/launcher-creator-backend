@@ -25,7 +25,8 @@
             "nodejs",
             "springboot",
             "thorntail",
-            "vertx"
+            "vertx",
+            "wildfly"
           ]
         },
         {
@@ -49,7 +50,8 @@
         "equals": [
           "vertx",
           "springboot",
-          "thorntail"
+          "thorntail",
+          "wildfly"
         ]
       },
       "type": "object",

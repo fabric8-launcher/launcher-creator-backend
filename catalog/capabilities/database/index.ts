@@ -8,6 +8,7 @@ import DatabaseCrudVertx from 'generators/database-crud-vertx';
 import DatabaseCrudSpringBoot from 'generators/database-crud-springboot';
 import DatabaseCrudNodejs from 'generators/database-crud-nodejs';
 import DatabaseCrudThorntail from 'generators/database-crud-thorntail';
+import DatabaseCrudWildfly from 'generators/database-crud-wildfly';
 
 // Returns the corresponding database generator depending on the given database type
 function databaseByType(type) {
@@ -30,6 +31,8 @@ function runtimeByType(rt: Runtime) {
         return DatabaseCrudThorntail;
     } else if (rt.name === 'springboot') {
         return DatabaseCrudSpringBoot;
+    } else if (rt.name === 'wildfly') {
+        return DatabaseCrudWildfly;
     } else {
         throw new Error(`Unsupported runtime type: ${rt.name}`);
     }

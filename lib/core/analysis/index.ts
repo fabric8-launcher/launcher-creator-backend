@@ -1,10 +1,17 @@
 
-import { pathExists } from 'fs-extra';
+import {pathExists, readFile} from 'fs-extra';
 import { join } from 'path';
 import * as tmp from 'tmp-promise';
 import * as git from 'simple-git/promise';
 
-import { BUILDER_JAVA, BUILDER_NODEJS_APP, builderById, BuilderImage, builderImages } from 'core/resources/images';
+import {
+    BUILDER_JAVA,
+    BUILDER_JAVAEE,
+    BUILDER_NODEJS_APP,
+    builderById,
+    BuilderImage,
+    builderImages
+} from 'core/resources/images';
 
 export function listBuilderImages(): BuilderImage[] {
     return builderImages;
@@ -15,6 +22,9 @@ export async function determineBuilderImage(dir: string): Promise<BuilderImage> 
         throw new Error('Directory doesn\'t exist');
     }
     if (await pathExists(join(dir, 'pom.xml'))) {
+        if(isJavaee(await readFile(join(dir, 'pom.xml'), 'utf8')) ) {
+            return builderById(BUILDER_JAVAEE);
+        }
         return builderById(BUILDER_JAVA);
     } else if (await pathExists(join(dir, 'package.json'))) {
         return builderById(BUILDER_NODEJS_APP);
@@ -22,6 +32,10 @@ export async function determineBuilderImage(dir: string): Promise<BuilderImage> 
         return null;
     }
 }
+export function isJavaee(pom: string): Boolean {
+    return pom.indexOf('<packaging>war</packaging>') >= 0 && pom.indexOf('thorntail') < 0;
+}
+
 
 export async function determineBuilderImageFromGit(gitRepoUrl: string): Promise<BuilderImage> {
     // Create temp dir
