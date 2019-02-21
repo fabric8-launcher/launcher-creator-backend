@@ -5,6 +5,7 @@ import RestVertx from 'generators/rest-vertx';
 import RestSpring from 'generators/rest-springboot';
 import RestNodejs from 'generators/rest-nodejs';
 import RestThorntail from 'generators/rest-thorntail';
+import RestWildfly from "generators/rest-wildfly";
 
 // Returns the corresponding runtime generator depending on the given runtime type
 function runtimeByType(rt: Runtime) {
@@ -16,6 +17,8 @@ function runtimeByType(rt: Runtime) {
         return RestSpring;
     } else if (rt.name === 'thorntail') {
         return RestThorntail;
+    } else if (rt.name === 'wildfly') {
+        return RestWildfly;
     } else {
         throw new Error(`Unsupported runtime type: ${rt.name}`);
     }

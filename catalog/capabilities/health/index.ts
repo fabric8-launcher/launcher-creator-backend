@@ -5,6 +5,7 @@ import PlatformNodejs from 'generators/platform-nodejs';
 import PlatformSpringBoot from 'generators/platform-springboot';
 import PlatformThorntail from 'generators/platform-thorntail';
 import PlatformVertx from 'generators/platform-vertx';
+import PlatformWildfly from "generators/platform-wildfly";
 
 // Returns the corresponding runtime generator depending on the given runtime type
 function runtimeByType(rt: Runtime) {
@@ -16,6 +17,8 @@ function runtimeByType(rt: Runtime) {
         return PlatformThorntail;
     } else if (rt.name === 'vertx') {
         return PlatformVertx;
+    } else if (rt.name === 'wildfly') {
+        return PlatformWildfly;
     } else {
         throw new Error(`Unsupported runtime type: ${rt.name}`);
     }
