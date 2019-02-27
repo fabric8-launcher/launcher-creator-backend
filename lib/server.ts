@@ -15,6 +15,7 @@ import * as deploy from 'core/deploy';
 import { zipFolder } from 'core/utils';
 import { ApplicationDescriptor, DeploymentDescriptor } from 'core/catalog/types';
 import { determineBuilderImageFromGit } from 'core/analysis';
+import { builderImages } from "core/resources/images";
 
 tmp.setGracefulCleanup();
 const app = express();
@@ -160,7 +161,11 @@ router.get('/import/analyze', async (req, res, next) => {
     try {
         // From the code we determine the builder image to use
         const image = await determineBuilderImageFromGit(req.query.gitImportUrl);
-        res.status(HttpStatus.OK).send(image);
+        const result = {
+            'image': image.id,
+            'builderImages': builderImages
+        };
+        res.status(HttpStatus.OK).send(result);
     } catch (ex) {
         // TODO: Call catch(next)
         sendReply(res, HttpStatus.INTERNAL_SERVER_ERROR, ex);

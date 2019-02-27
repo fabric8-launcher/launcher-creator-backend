@@ -162,6 +162,10 @@ paths:
       responses:
         '200':
           description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnalysisResult'
   /import/launch:
     post:
       tags:
@@ -325,6 +329,16 @@ components:
       required:
       - application
       - parts
+
+    AnalysisResult:
+      type: object
+      properties:
+        image:
+          type: string
+        builderImages:
+          type: array
+          items:
+            $ref: '#/components/schemas/Enumeration'
 
   securitySchemes:
     bearerAuth:            # arbitrary name for the security scheme
