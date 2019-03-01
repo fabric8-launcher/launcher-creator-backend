@@ -43,6 +43,10 @@ export async function determineBuilderImageFromGit(gitRepoUrl: string): Promise<
     // Shallow-clone the repository
     await git()
         .env('GIT_TERMINAL_PROMPT', '0')
+        // Work-around for problem in older Gits
+        // https://github.com/git/git/commit/92bcbb9b338dd27f0fd4245525093c4bce867f3d
+        .env('GIT_COMMITTER_NAME', 'dummy')
+        .env('GIT_COMMITTER_EMAIL', 'dummy')
         .clone(gitRepoUrl, td.path, ['--depth', '1']);
     // From the code we determine the builder image to use
     return await determineBuilderImage(td.path);
