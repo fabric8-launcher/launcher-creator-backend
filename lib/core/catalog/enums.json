@@ -39,7 +39,8 @@
       "description": "A classic approach to packaging and running Java EE applications.",
       "metadata": {
         "categories": [ "backend" ],
-        "language": "java"
+        "language": "java",
+        "website": "https://wildfly.org"
       }
     },
     {
