@@ -2,7 +2,7 @@
 import {pathExists, readFile} from 'fs-extra';
 import { join } from 'path';
 import * as tmp from 'tmp-promise';
-import * as git from 'simple-git/promise';
+import { spawn } from 'child-process-promise';
 
 import {
     BUILDER_JAVA,
@@ -41,13 +41,11 @@ export async function determineBuilderImageFromGit(gitRepoUrl: string): Promise<
     // Create temp dir
     const td = await tmp.dir({ 'unsafeCleanup': true });
     // Shallow-clone the repository
-    await git()
-        .env('GIT_TERMINAL_PROMPT', '0')
-        // Work-around for problem in older Gits
-        // https://github.com/git/git/commit/92bcbb9b338dd27f0fd4245525093c4bce867f3d
-        .env('GIT_COMMITTER_NAME', 'dummy')
-        .env('GIT_COMMITTER_EMAIL', 'dummy')
-        .clone(gitRepoUrl, td.path, ['--depth', '1']);
+    await spawn('git', ['clone', gitRepoUrl, '--depth=1', td.path.toString()])
+        .catch((error) => {
+            console.error(`Spawn error: ${error}`);
+            throw error;
+        });
     // From the code we determine the builder image to use
     return await determineBuilderImage(td.path);
 }
