@@ -17,10 +17,6 @@ RUN curl -sSL https://github.com/redhat-developer/odo/releases/download/v0.0.15/
 
 USER 1001
 
-ENV GIT_TERMINAL_PROMPT=0
-ENV GIT_COMMITTER_NAME=dummy
-ENV GIT_COMMITTER_EMAIL=dummy
-
 COPY dist/ /opt/app-root/src/dist/
 COPY node_modules/ /opt/app-root/src/node_modules/
 COPY package.json /opt/app-root/src/
