@@ -15,7 +15,7 @@ import * as deploy from 'core/deploy';
 import { zipFolder } from 'core/utils';
 import { ApplicationDescriptor, DeploymentDescriptor } from 'core/catalog/types';
 import { determineBuilderImageFromGit } from 'core/analysis';
-import { builderImages } from "core/resources/images";
+import { builderImages } from 'core/resources/images';
 
 tmp.setGracefulCleanup();
 const app = express();
@@ -23,7 +23,7 @@ const router = express.Router();
 
 const sentryEnabled = !!process.env.SENTRY_DSN;
 
-console.log('Sentry Enabled:', sentryEnabled);
+console.log(timestamp(), 'Sentry Enabled:', sentryEnabled);
 
 const zipCache = new NodeCache({'checkperiod': 60});
 
@@ -96,7 +96,7 @@ router.get('/download', (req, res, next) => {
 
 zipCache.on('del', (key, value) => {
     value.cleanTempDir();
-    console.info(`Cleaning zip cache key: ${key}`);
+    console.info(timestamp(), 'Cleaning zip cache key:', key);
 });
 
 interface ZipRequest {
@@ -173,7 +173,7 @@ router.get('/import/analyze', async (req, res, next) => {
 });
 
 interface ImportLaunchRequest extends DeployRequest {
-    applicationName: string,
+    applicationName: string;
     gitImportUrl: string;
     builderImage?: string;
 }
@@ -304,7 +304,7 @@ async function performLaunch(req, res, dreq: DeployRequest, deployment: Deployme
                 headers
             };
             request.post(options, (err2, res2, body) => {
-                console.info(`Pushed project "${deployment.applications[0].application}" to ${backendUrl} - ${res2.statusCode}`);
+                console.info(`${timestamp()} Pushed project "${deployment.applications[0].application}" to ${backendUrl} - ${res2.statusCode}`);
                 let json = null;
                 try {
                     json = JSON.parse(body);
@@ -327,7 +327,7 @@ async function performLaunch(req, res, dreq: DeployRequest, deployment: Deployme
 function onListening(): void {
     const address = server.address();
     const bind = (typeof address === 'string') ? `pipe ${address}` : `port ${address.port}`;
-    console.log(`Listening on ${bind}`);
+    console.log(timestamp(), 'Listening on', bind);
 }
 
 function sendReply(res, statusCode, msg, sentryId?) {
@@ -350,6 +350,10 @@ function sendReply(res, statusCode, msg, sentryId?) {
     }
     res.status(statusCode).send(obj);
     if (statusCode !== HttpStatus.OK) {
-        console.error('SERVER ERROR', statusCode, msg);
+        console.error(timestamp(), 'SERVER ERROR', statusCode, msg);
     }
+}
+
+function timestamp() {
+    return (new Date()).toISOString();
 }
