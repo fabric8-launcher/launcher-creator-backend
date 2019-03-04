@@ -9,13 +9,8 @@ import {
     BUILDER_JAVAEE,
     BUILDER_NODEJS_APP,
     builderById,
-    BuilderImage,
-    builderImages
+    BuilderImage
 } from 'core/resources/images';
-
-export function listBuilderImages(): BuilderImage[] {
-    return builderImages;
-}
 
 export async function determineBuilderImage(dir: string): Promise<BuilderImage> {
     if (!pathExists(dir)) {
