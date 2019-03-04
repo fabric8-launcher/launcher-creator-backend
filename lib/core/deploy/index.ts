@@ -283,6 +283,9 @@ async function applyPart(targetDir: string, appName: string, part: PartDescripto
     const res = await readOrCreateResources(resourcesFileName(genTargetDir));
     const generator = getGeneratorConstructorWrapper(genTargetDir);
     const p = Promise.resolve(emptyDeploymentDescriptor());
+    if (!part.capabilities) {
+        throw new Error(`Missing 'capabilities' in part descriptor`);
+    }
     return part.capabilities.reduce((acc, cur) => acc
         .then(() => applyCapability(generator, res, targetDir, appName, part.subFolderName, part.shared, cur)), p);
 }
@@ -290,6 +293,9 @@ async function applyPart(targetDir: string, appName: string, part: PartDescripto
 // Calls `applyPart()` on all the parts in the given application descriptor
 export function applyApplication(targetDir: string, application: ApplicationDescriptor): Promise<DeploymentDescriptor> {
     const p = Promise.resolve(emptyDeploymentDescriptor());
+    if (!application.parts) {
+        throw new Error(`Missing 'parts' in application descriptor`);
+    }
     return application.parts.reduce((acc, cur) => acc
         .then(() => applyPart(targetDir, application.application, cur)), p);
 }
@@ -297,6 +303,9 @@ export function applyApplication(targetDir: string, application: ApplicationDesc
 // Calls `applyApplication()` on all the applications in the given deployment descriptor
 export function applyDeployment(targetDir: string, deployment: DeploymentDescriptor): Promise<DeploymentDescriptor> {
     const p = Promise.resolve(emptyDeploymentDescriptor());
+    if (!deployment.applications) {
+        throw new Error(`Missing 'applications' in deployment descriptor`);
+    }
     return deployment.applications.reduce((acc, cur) => acc
         .then(() => applyApplication(targetDir, cur)), p);
 }
