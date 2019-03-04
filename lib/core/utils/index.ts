@@ -46,11 +46,13 @@ export const pipe2 = (...funcs) => value =>
 // Returns an object with only those key/value pairs that matched the filter
 export function filterObject(obj: object, filter: (key: string, value: any) => boolean): any {
     const res = {};
-    Object.entries(obj).forEach(([key, value]) => {
-        if (filter(key, value)) {
-            res[key] = value;
-        }
-    });
+    if (!!obj) {
+        Object.entries(obj).forEach(([key, value]) => {
+            if (filter(key, value)) {
+                res[key] = value;
+            }
+        });
+    }
     return res;
 }
 
