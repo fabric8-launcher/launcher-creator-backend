@@ -36,9 +36,6 @@ export async function determineBuilderImageFromGit(gitRepoUrl: string): Promise<
     // Create temp dir
     const td = await tmp.dir({ 'unsafeCleanup': true });
     // Shallow-clone the repository
-    const env = {
-        'GIT_TERMINAL_PROMPT': '0'
-    };
     await spawn('git',
         [
             'clone',
@@ -46,10 +43,12 @@ export async function determineBuilderImageFromGit(gitRepoUrl: string): Promise<
             // https://github.com/git/git/commit/92bcbb9b338dd27f0fd4245525093c4bce867f3d
             '-cuser.name=dummy',
             '-cuser.email=dummy',
+            // Work-around to force Git never to ask for passwords
+            '-ccore.askPass',
             gitRepoUrl,
             '--depth=1',
             td.path.toString()
-        ], { env })
+        ])
         .catch((error) => {
             console.error(`Spawn error: ${error}`);
             throw error;
