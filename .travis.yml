@@ -1,5 +1,0 @@
-sudo: false
-language: node_js
-cache:
-  yarn: true
-
