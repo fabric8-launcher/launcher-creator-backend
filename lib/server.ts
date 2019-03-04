@@ -161,6 +161,10 @@ router.get('/import/analyze', async (req, res, next) => {
     try {
         // From the code we determine the builder image to use
         const image = await determineBuilderImageFromGit(req.query.gitImportUrl);
+        if (!image) {
+            sendReply(res, HttpStatus.NOT_FOUND, 'Builder image was not found');
+            return false;
+        }
         const result = {
             'image': image.id,
             'builderImages': builderImages
