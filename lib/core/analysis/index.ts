@@ -37,13 +37,19 @@ export async function determineBuilderImageFromGit(gitRepoUrl: string): Promise<
     const td = await tmp.dir({ 'unsafeCleanup': true });
     // Shallow-clone the repository
     const env = {
-        'GIT_TERMINAL_PROMPT': '0',
-        // Work-around for problem in older Gits
-        // https://github.com/git/git/commit/92bcbb9b338dd27f0fd4245525093c4bce867f3d
-        'GIT_COMMITTER_NAME': 'dummy',
-        'GIT_COMMITTER_EMAIL': 'dummy'
+        'GIT_TERMINAL_PROMPT': '0'
     };
-    await spawn('git', ['clone', gitRepoUrl, '--depth=1', td.path.toString()], { env })
+    await spawn('git',
+        [
+            'clone',
+            // Work-around for problem in older Gits
+            // https://github.com/git/git/commit/92bcbb9b338dd27f0fd4245525093c4bce867f3d
+            '-cuser.name=dummy',
+            '-cuser.email=dummy',
+            gitRepoUrl,
+            '--depth=1',
+            td.path.toString()
+        ], { env })
         .catch((error) => {
             console.error(`Spawn error: ${error}`);
             throw error;
