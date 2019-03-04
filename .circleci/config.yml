@@ -6,7 +6,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: nodeshift/centos7-s2i-nodejs:10.x
+      - image: circleci/node:10
 
     steps:
       - checkout
