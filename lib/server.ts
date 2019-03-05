@@ -168,7 +168,7 @@ router.get('/import/analyze', async (req, res, next) => {
         res.status(HttpStatus.OK).send(result);
     } catch (ex) {
         // TODO: Call catch(next)
-        sendReply(res, HttpStatus.INTERNAL_SERVER_ERROR, ex);
+        sendReply(res, HttpStatus.INTERNAL_SERVER_ERROR, `Error analyzing repository '${req.query.gitImportUrl}'`);
     }
 });
 
