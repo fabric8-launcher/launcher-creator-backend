@@ -35,7 +35,8 @@ jobs:
       - checkout
       - ike/docker_insecure_registry
       - ike/install_maistra
-      - run: circleci-install nvm
+      - run: sudo -H -i -u ${CIRCLECI_USER} nvm install 10.10
+  
 #
 #          name: Update BASH_ENV
 #          commands: |
