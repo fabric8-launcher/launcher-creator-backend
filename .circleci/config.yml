@@ -43,10 +43,10 @@ jobs:
 #           echo 'export NVM_DIR=$HOME/.nvm' >> $BASH_ENV
 #           echo 'source $NVM_DIR/nvm.sh' >> $BASH_ENV
 #           source $BASH_ENV
-      - run: npm install yarn -g
-      - run: yarn install
+      - run: sudo -H -i -u circleci npm install yarn -g
+      - run: sudo -H -i -u circleci yarn install
       - run: oc cluster up
-      - run: yarn itests
+      - run: sudo -H -i -u circleci yarn itests
 
 
 workflows:
