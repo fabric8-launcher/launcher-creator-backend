@@ -35,12 +35,12 @@ jobs:
       - checkout
       - ike/docker_insecure_registry
       - ike/install_maistra
-      - run: sudo nvm install 10.10
-      - run: sudo nvm use 10.10
-      - run: sudo npm install yarn -g
-      - run: sudo yarn install
+      - run: sudo -H -i -u circleci nvm install 10.10
+      - run: sudo -H -i -u circleci nvm use 10.10
+      - run: sudo -H -i -u circleci npm install yarn -g
+      - run: sudo -H -i -u circleci yarn install
       - run: oc cluster up
-      - run: sudo yarn itests
+      - run: sudo -H -i -u circleci yarn itests
 
 
 workflows:
