@@ -94,7 +94,7 @@ objects:
               memory: "8M"
             limits:
               cpu: "50m"
-              memory: "80Mi"
+              memory: "100Mi"
           env:
             - name: WELCOME_APP_CONFIG
               value: '${WELCOME_APP_CONFIG}'
