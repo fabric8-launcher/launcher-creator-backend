@@ -47,9 +47,11 @@ export default class DatabaseCrudQuarkus extends BaseGenerator {
             await this.generator(PlatformQuarkus).apply(resources, pprops, extra);
             await this.copy();
             await this.mergePoms(`merge/pom.${props.databaseType}.xml`);
+            // TODO: Merge properties
             await this.transform('src/**/*.java', cases(props));
         }
-        extra['sourceMapping'] = { 'dbEndpoint': this.join(props.subFolderName, 'src/main/java/io/openshift/booster/database/FruitResource.java') };
+        extra['sourceMapping'] = { 'dbEndpoint': this.join(props.subFolderName,
+                'src/main/java/io/openshift/booster/database/FruitResource.java') };
         return resources;
     }
 }

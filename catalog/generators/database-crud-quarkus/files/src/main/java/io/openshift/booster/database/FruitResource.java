@@ -39,7 +39,7 @@ import javax.ws.rs.core.Response;
 @ApplicationScoped
 public class FruitResource {
 
-    @PersistenceContext(unitName = "MyPU")
+    @PersistenceContext
     EntityManager em;
 
     @GET
