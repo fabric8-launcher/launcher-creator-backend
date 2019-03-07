@@ -28,6 +28,10 @@ export default class PlatformQuarkus extends BaseGenerator {
         const jarName = props.maven.artifactId + '-runner.jar';
         const lprops: LanguageJavaProps = { ...props, jarName, 'builderImage': BUILDER_JAVA };
 
+        // TODO: Add the following to the BuildConfig
+        // 'JAVA_APP_JAR' : jarName
+        // 'ARTIFACT_COPY_ARGS': '-p -r lib/ '+jarName
+
         // Check if the service already exists, so we don't create it twice
         if (!resources.service(props.serviceName)) {
             await this.generator(PlatformBaseSupport).apply(resources, props, extra);
