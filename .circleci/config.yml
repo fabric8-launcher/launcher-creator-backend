@@ -35,6 +35,13 @@ jobs:
       - checkout
       - ike/docker_insecure_registry
       - ike/install_maistra
+      - run: circleci-install nvm
+#
+#          name: Update BASH_ENV
+#          commands: |
+#           echo 'export NVM_DIR=$HOME/.nvm' >> $BASH_ENV
+#           echo 'source $NVM_DIR/nvm.sh' >> $BASH_ENV
+#           source $BASH_ENV
       - run: nvm install 10.10
       - run: npm install yarn -g
       - run: yarn install
