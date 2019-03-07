@@ -1,7 +1,7 @@
 
 import * as path from 'path';
 import * as Archiver from 'archiver';
-import { readdir, statSync, Stats } from 'fs-extra';
+import { createReadStream, createWriteStream, readdir, statSync, Stats } from 'fs-extra';
 
 function log(res, ...args) {
     console.log(...args);
@@ -91,4 +91,16 @@ async function _walk(start: string, dir: string, callback: (info: FileInfo) => a
 
 export function walk(start: string, callback: (info: FileInfo) => void): Promise<boolean> {
     return _walk(start, null, callback);
+}
+
+export function appendFile(to: string, from: string) {
+    const outs = createWriteStream(to, { 'flags': 'a' });
+    const ins = createReadStream(from);
+
+    return new Promise((resolve, reject) => {
+        ins.pipe(outs);
+        outs.on('close', function() {
+            resolve(to);
+        });
+    });
 }
