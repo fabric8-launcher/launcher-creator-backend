@@ -43,7 +43,6 @@ jobs:
 #           echo 'export NVM_DIR=$HOME/.nvm' >> $BASH_ENV
 #           echo 'source $NVM_DIR/nvm.sh' >> $BASH_ENV
 #           source $BASH_ENV
-      - run: nvm install 10.10
       - run: npm install yarn -g
       - run: yarn install
       - run: oc cluster up
