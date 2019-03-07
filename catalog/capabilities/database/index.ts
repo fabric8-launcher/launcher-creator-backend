@@ -10,12 +10,6 @@ import DatabaseCrudNodejs from 'generators/database-crud-nodejs';
 import DatabaseCrudThorntail from 'generators/database-crud-thorntail';
 import DatabaseCrudWildfly from 'generators/database-crud-wildfly';
 import DatabaseCrudQuarkus from 'generators/database-crud-quarkus';
-import PlatformNodejs from 'generators/platform-nodejs';
-import PlatformQuarkus from 'generators/platform-quarkus';
-import PlatformSpringBoot from 'generators/platform-springboot';
-import PlatformThorntail from 'generators/platform-thorntail';
-import PlatformVertx from 'generators/platform-vertx';
-import PlatformWildfly from 'generators/platform-wildfly';
 
 // Returns the corresponding database generator depending on the given database type
 function databaseByType(type) {
