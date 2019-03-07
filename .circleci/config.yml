@@ -2,7 +2,9 @@
 #
 # Check https://circleci.com/docs/2.0/language-javascript/ for more details
 #
-version: 2
+version: 2.1
+orbs:
+  ike: bartoszmajsak/ike@0.0.1
 jobs:
   build:
     docker:
@@ -25,3 +27,26 @@ jobs:
 
       # run tests!
       - run: yarn test
+
+  e2e_tests:
+    machine:
+      image: circleci/classic:201808-01
+    steps:
+      - checkout
+      - ike/docker_insecure_registry
+      - ike/install_maistra
+      - run: nvm install 10.10
+      - run: npm install yarn -g
+      - run: yarn install
+      - run: oc cluster up
+      - run: yarn itests
+
+
+workflows:
+  version: 2.1
+  circleci_build:
+    jobs:
+      - build
+  circleci_e2e_tests:
+    jobs:
+      - e2e_tests
