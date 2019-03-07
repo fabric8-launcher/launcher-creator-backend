@@ -7,14 +7,12 @@ import PlatformVueJS from 'generators/platform-vuejs';
 
 // Returns the corresponding runtime generator depending on the given runtime type
 function runtimeByType(type) {
-    if (type.name === 'react') {
-        return PlatformReact;
-    } else if (type.name === 'angular') {
-        return PlatformAngular;
-    } else if (type.name === 'vuejs') {
-        return PlatformVueJS;
-    } else {
-        throw new Error(`Unsupported runtime type: ${type.name}`);
+    switch (type.name) {
+        case 'angular': return PlatformAngular;
+        case 'react': return PlatformReact;
+        case 'vuejs': return PlatformVueJS;
+        default:
+            throw new Error(`Unsupported runtime type: ${type.name}`);
     }
 }
 

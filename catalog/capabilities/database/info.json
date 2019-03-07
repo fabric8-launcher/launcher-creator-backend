@@ -36,6 +36,7 @@
           "type": "enum",
           "values": [
             "nodejs",
+            "quarkus",
             "springboot",
             "thorntail",
             "vertx",
@@ -64,7 +65,8 @@
           "vertx",
           "springboot",
           "thorntail",
-          "wildfly"
+          "wildfly",
+          "quarkus"
         ]
       },
       "type": "object",

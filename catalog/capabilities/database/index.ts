@@ -9,32 +9,29 @@ import DatabaseCrudSpringBoot from 'generators/database-crud-springboot';
 import DatabaseCrudNodejs from 'generators/database-crud-nodejs';
 import DatabaseCrudThorntail from 'generators/database-crud-thorntail';
 import DatabaseCrudWildfly from 'generators/database-crud-wildfly';
+import DatabaseCrudQuarkus from 'generators/database-crud-quarkus';
 
 // Returns the corresponding database generator depending on the given database type
 function databaseByType(type) {
-    if (type === 'postgresql') {
-        return DatabasePostgresql;
-    } else if (type === 'mysql') {
-        return DatabaseMysql;
-    } else {
-        throw new Error(`Unsupported database type: ${type}`);
+    switch (type) {
+        case 'postgresql': return DatabasePostgresql;
+        case 'mysql': return DatabaseMysql;
+        default:
+            throw new Error(`Unsupported database type: ${type}`);
     }
 }
 
 // Returns the corresponding runtime generator depending on the given runtime type
 function runtimeByType(rt: Runtime) {
-    if (rt.name === 'vertx') {
-        return DatabaseCrudVertx;
-    } else if (rt.name === 'nodejs') {
-        return DatabaseCrudNodejs;
-    } else if (rt.name === 'thorntail') {
-        return DatabaseCrudThorntail;
-    } else if (rt.name === 'springboot') {
-        return DatabaseCrudSpringBoot;
-    } else if (rt.name === 'wildfly') {
-        return DatabaseCrudWildfly;
-    } else {
-        throw new Error(`Unsupported runtime type: ${rt.name}`);
+    switch (rt.name) {
+        case 'nodejs': return DatabaseCrudNodejs;
+        case 'quarkus': return DatabaseCrudQuarkus;
+        case 'springboot': return DatabaseCrudSpringBoot;
+        case 'thorntail' :  return DatabaseCrudThorntail;
+        case 'vertx': return DatabaseCrudVertx;
+        case 'wildfly' : return DatabaseCrudWildfly;
+        default:
+            throw new Error(`Unsupported runtime type: ${rt.name}`);
     }
 }
 
