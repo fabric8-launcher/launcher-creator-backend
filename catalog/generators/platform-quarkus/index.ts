@@ -28,7 +28,7 @@ export default class PlatformQuarkus extends BaseGenerator {
         const lprops: LanguageJavaProps = { ...props, jarName, 'builderImage': BUILDER_JAVA,
             'env' : {
                 'JAVA_APP_JAR': jarName,
-                'ARTIFACT_COPY_ARGS': '-p -r lib/ ' + jarName
+                'ARTIFACT_COPY_ARGS': `-p -r lib/ ${jarName}`
             }
         };
 
