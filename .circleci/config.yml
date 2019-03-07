@@ -35,18 +35,12 @@ jobs:
       - checkout
       - ike/docker_insecure_registry
       - ike/install_maistra
-      - run: sudo -H -i -u circleci nvm install 10.10
-
-#
-#          name: Update BASH_ENV
-#          commands: |
-#           echo 'export NVM_DIR=$HOME/.nvm' >> $BASH_ENV
-#           echo 'source $NVM_DIR/nvm.sh' >> $BASH_ENV
-#           source $BASH_ENV
-      - run: sudo -H -i -u circleci npm install yarn -g
-      - run: sudo -H -i -u circleci yarn install
+      - run: sudo nvm install 10.10
+      - run: sudo nvm use 10.10
+      - run: sudo npm install yarn -g
+      - run: sudo yarn install
       - run: oc cluster up
-      - run: sudo -H -i -u circleci yarn itests
+      - run: sudo yarn itests
 
 
 workflows:
