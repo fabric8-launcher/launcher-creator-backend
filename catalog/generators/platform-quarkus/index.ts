@@ -1,4 +1,3 @@
-
 import * as _ from 'lodash';
 import { enumItem } from 'core/catalog';
 import { BaseGenerator, BasePlatformExtra } from 'core/catalog/types';
@@ -17,6 +16,7 @@ export default class PlatformQuarkus extends BaseGenerator {
     public static readonly sourceDir: string = __dirname;
 
     public async apply(resources, props: PlatformQuarkusProps, extra: any = {}) {
+        const jarName = props.maven.artifactId + '-runner.jar';
         const exProps: PlatformQuarkusExtra = {
             'image': BUILDER_JAVA,
             'enumInfo': enumItem('runtime.name', 'quarkus'),
@@ -25,12 +25,12 @@ export default class PlatformQuarkus extends BaseGenerator {
         };
         _.set(extra, 'shared.runtimeInfo', exProps);
 
-        const jarName = props.maven.artifactId + '-runner.jar';
-        const lprops: LanguageJavaProps = { ...props, jarName, 'builderImage': BUILDER_JAVA };
-
-        // TODO: Add the following to the BuildConfig
-        // 'JAVA_APP_JAR' : jarName
-        // 'ARTIFACT_COPY_ARGS': '-p -r lib/ '+jarName
+        const lprops: LanguageJavaProps = { ...props, jarName, 'builderImage': BUILDER_JAVA,
+            'env' : {
+                'JAVA_APP_JAR': jarName,
+                'ARTIFACT_COPY_ARGS': '-p -r lib/ ' + jarName
+            }
+        };
 
         // Check if the service already exists, so we don't create it twice
         if (!resources.service(props.serviceName)) {

@@ -40,7 +40,7 @@ import javax.ws.rs.core.Response;
 public class FruitResource {
 
     @PersistenceContext(unitName = "MyPU")
-    private EntityManager em;
+    EntityManager em;
 
     @GET
     @Produces("application/json")
