@@ -36,7 +36,7 @@
           "type": "enum",
           "values": [
             "nodejs",
-            //"quarkus",
+            "quarkus",
             "springboot",
             "thorntail",
             "vertx",

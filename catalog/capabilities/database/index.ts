@@ -31,7 +31,7 @@ function databaseByType(type) {
 function runtimeByType(rt: Runtime) {
     switch (rt.name) {
         case 'nodejs': return DatabaseCrudNodejs;
-        // case 'quarkus': return DatabaseCrudQuarkus;
+        case 'quarkus': return DatabaseCrudQuarkus;
         case 'springboot': return DatabaseCrudSpringBoot;
         case 'thorntail' :  return DatabaseCrudThorntail;
         case 'vertx': return DatabaseCrudVertx;
