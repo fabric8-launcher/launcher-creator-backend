@@ -129,7 +129,7 @@ abstract class BaseCatalogItem implements CatalogItem {
     }
 
     protected appendFile(targetFile: string, sourceFile?: string) {
-        const srcFile = !!sourceFile ? sourceFile : path.join('append', sourceFile);
+        const srcFile = !!sourceFile ? sourceFile : path.join('merge', sourceFile);
         return _appendFile(path.join(this.targetDir, targetFile), path.join(this.sourceDir, srcFile));
     }
 
