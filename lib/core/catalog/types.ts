@@ -3,7 +3,7 @@ import * as path from 'path';
 import { copy } from 'fs-extra';
 import { accessSync } from 'fs';
 
-import { walk } from 'core/utils';
+import { appendFile as _appendFile, walk } from 'core/utils';
 import { transformFiles } from 'core/template';
 import { mergePoms, updateGav, updateMetadata } from 'core/maven';
 import { mergePackageJson } from 'core/nodejs';
@@ -126,6 +126,11 @@ abstract class BaseCatalogItem implements CatalogItem {
             pattern2 = pattern.map(p => path.join(this.targetDir, p));
         }
         return transformFiles(pattern2, transformLine);
+    }
+
+    protected appendFile(targetFile: string, sourceFile?: string) {
+        const srcFile = !!sourceFile ? sourceFile : path.join('append', sourceFile);
+        return _appendFile(path.join(this.targetDir, targetFile), path.join(this.sourceDir, srcFile));
     }
 
     protected updatePom(appName, groupId, artifactId, version, pomFile = 'pom.xml') {
