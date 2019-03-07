@@ -25,7 +25,7 @@ export default class PlatformQuarkus extends BaseGenerator {
         };
         _.set(extra, 'shared.runtimeInfo', exProps);
 
-        const jarName = props.maven.artifactId + '-' + props.maven.version + '-runner.jar';
+        const jarName = props.maven.artifactId + '-runner.jar';
         const lprops: LanguageJavaProps = { ...props, jarName, 'builderImage': BUILDER_JAVA };
 
         // Check if the service already exists, so we don't create it twice
