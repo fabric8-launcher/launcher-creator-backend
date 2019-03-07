@@ -48,6 +48,7 @@ export default class DatabaseCrudQuarkus extends BaseGenerator {
             await this.copy();
             await this.mergePoms(`merge/pom.${props.databaseType}.xml`);
             // TODO: Merge properties
+
             await this.transform('src/**/*.java', cases(props));
         }
         extra['sourceMapping'] = { 'dbEndpoint': this.join(props.subFolderName,
