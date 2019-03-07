@@ -1,26 +1,23 @@
-
 import { BaseCapability, Runtime } from 'core/catalog/types';
 
 import RestVertx from 'generators/rest-vertx';
 import RestSpring from 'generators/rest-springboot';
 import RestNodejs from 'generators/rest-nodejs';
 import RestThorntail from 'generators/rest-thorntail';
-import RestWildfly from "generators/rest-wildfly";
+import RestWildfly from 'generators/rest-wildfly';
+import RestQuarkus from 'generators/rest-quarkus';
 
 // Returns the corresponding runtime generator depending on the given runtime type
 function runtimeByType(rt: Runtime) {
-    if (rt.name === 'vertx') {
-        return RestVertx;
-    } else if (rt.name === 'nodejs') {
-        return RestNodejs;
-    } else if (rt.name === 'springboot') {
-        return RestSpring;
-    } else if (rt.name === 'thorntail') {
-        return RestThorntail;
-    } else if (rt.name === 'wildfly') {
-        return RestWildfly;
-    } else {
-        throw new Error(`Unsupported runtime type: ${rt.name}`);
+    switch (rt.name) {
+        case 'nodejs': return RestNodejs;
+        case 'quarkus': return RestQuarkus;
+        case 'springboot': return RestSpring;
+        case 'thorntail' :  return RestThorntail;
+        case 'vertx': return RestVertx;
+        case 'wildfly' : return RestWildfly;
+        default:
+            throw new Error(`Unsupported runtime type: ${rt.name}`);
     }
 }
 

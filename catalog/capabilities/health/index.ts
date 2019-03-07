@@ -6,21 +6,19 @@ import PlatformSpringBoot from 'generators/platform-springboot';
 import PlatformThorntail from 'generators/platform-thorntail';
 import PlatformVertx from 'generators/platform-vertx';
 import PlatformWildfly from "generators/platform-wildfly";
+import PlatformQuarkus from 'generators/platform-quarkus';
 
 // Returns the corresponding runtime generator depending on the given runtime type
 function runtimeByType(rt: Runtime) {
-    if (rt.name === 'nodejs') {
-        return PlatformNodejs;
-    } else if (rt.name === 'springboot') {
-        return PlatformSpringBoot;
-    } else if (rt.name === 'thorntail') {
-        return PlatformThorntail;
-    } else if (rt.name === 'vertx') {
-        return PlatformVertx;
-    } else if (rt.name === 'wildfly') {
-        return PlatformWildfly;
-    } else {
-        throw new Error(`Unsupported runtime type: ${rt.name}`);
+    switch (rt.name) {
+        case 'nodejs': return PlatformNodejs;
+        case 'quarkus': return PlatformQuarkus;
+        case 'springboot': return PlatformSpringBoot;
+        case 'thorntail' :  return PlatformThorntail;
+        case 'vertx': return PlatformVertx;
+        case 'wildfly' : return PlatformWildfly;
+        default:
+            throw new Error(`Unsupported runtime type: ${rt.name}`);
     }
 }
 
