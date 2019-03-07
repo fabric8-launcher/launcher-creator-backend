@@ -2,18 +2,16 @@
 import * as _ from 'lodash';
 import { cases } from 'core/template/transformers/cases';
 import { enumItem } from 'core/catalog';
-import { BaseGenerator, BaseGeneratorProps, BasePlatformExtra, NodejsCoords } from 'core/catalog/types';
+import { BaseGenerator } from 'core/catalog/types';
 import { BUILDER_NODEJS_WEB } from 'core/resources/images';
 
 import PlatformBaseSupport from 'generators/platform-base-support';
-import LanguageNodejs, { LanguageNodejsProps } from 'generators/language-nodejs';
+import LanguageNodejs, { LanguageNodejsExtra, LanguageNodejsProps } from 'generators/language-nodejs';
 
-export interface PlatformAngularProps extends BaseGeneratorProps {
-    nodejs: NodejsCoords;
-    env?: object;
+export interface PlatformAngularProps extends LanguageNodejsProps {
 }
 
-export interface PlatformAngularExtra extends BasePlatformExtra {
+export interface PlatformAngularExtra extends LanguageNodejsExtra {
 }
 
 export default class PlatformAngular extends BaseGenerator {

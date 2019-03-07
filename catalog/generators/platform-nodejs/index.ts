@@ -3,19 +3,17 @@ import * as _ from 'lodash';
 import { setMemoryResources } from 'core/resources';
 import { cases } from 'core/template/transformers/cases';
 import { enumItem } from 'core/catalog';
-import { BaseGenerator, BaseGeneratorProps, BasePlatformExtra, NodejsCoords, Runtime } from 'core/catalog/types';
-import { BUILDER_NODEJS_APP, BUILDER_NODEJS_WEB } from 'core/resources/images';
+import { BaseGenerator, Runtime } from 'core/catalog/types';
+import { BUILDER_NODEJS_APP } from 'core/resources/images';
 
 import PlatformBaseSupport from 'generators/platform-base-support';
-import LanguageNodejs, { LanguageNodejsProps } from 'generators/language-nodejs';
+import LanguageNodejs, { LanguageNodejsExtra, LanguageNodejsProps } from 'generators/language-nodejs';
 
-export interface PlatformNodejsProps extends BaseGeneratorProps {
+export interface PlatformNodejsProps extends LanguageNodejsProps {
     runtime: Runtime;
-    nodejs: NodejsCoords;
-    env?: object;
 }
 
-export interface PlatformNodejsExtra extends BasePlatformExtra {
+export interface PlatformNodejsExtra extends LanguageNodejsExtra {
 }
 
 export default class PlatformNodejs extends BaseGenerator {
