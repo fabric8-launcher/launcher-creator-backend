@@ -1,7 +1,7 @@
 
 import { BaseGenerator, BaseGeneratorProps } from 'core/catalog/types';
 import { builderById, builderByLanguage, BuilderImage } from 'core/resources/images';
-import { determineBuilderImageFromGit } from 'core/analysis';
+import { cloneGitRepo, determineBuilderImage, determineBuilderImageFromGit, removeGitFolder } from 'core/analysis';
 
 import LanguageJava from 'generators/language-java';
 import LanguageNodejs from 'generators/language-nodejs';
@@ -21,15 +21,29 @@ export interface ImportCodebaseProps extends BaseGeneratorProps {
     gitImportUrl: string;
     builderImage?: string;
     builderLanguage?: string;
+    overlayOnly: boolean;
+    keepGitFolder: boolean;
 }
 
 export default class ImportCodebase extends BaseGenerator {
     public static readonly sourceDir: string = __dirname;
 
     public async apply(resources, props: ImportCodebaseProps, extra: any = {}) {
-        const image = builderById(props.builderImage)
-            || builderByLanguage(props.builderLanguage)
-            || await determineBuilderImageFromGit(props.gitImportUrl);
+        let image = builderById(props.builderImage)
+            || builderByLanguage(props.builderLanguage);
+        if (props.overlayOnly) {
+            if (!image) {
+                image = await determineBuilderImageFromGit(props.gitImportUrl);
+            }
+        } else {
+            await cloneGitRepo(props.gitImportUrl, this.targetDir);
+            if (!image) {
+                image = await determineBuilderImage(this.targetDir);
+            }
+            if (!props.keepGitFolder) {
+                await removeGitFolder(this.targetDir);
+            }
+        }
         const lprops = {
             ...props,
             'builderImage': image.id,
