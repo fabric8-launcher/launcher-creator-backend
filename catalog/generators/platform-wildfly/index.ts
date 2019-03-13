@@ -3,12 +3,13 @@ import * as _ from 'lodash';
 import { enumItem } from 'core/catalog';
 import { BaseGenerator, BasePlatformExtra } from 'core/catalog/types';
 import { BUILDER_JAVAEE } from 'core/resources/images';
+import { setHealthProbe } from 'core/resources';
 
 import PlatformBaseSupport from 'generators/platform-base-support';
 import LanguageJava, { LanguageJavaProps } from 'generators/language-java';
-import {setHealthProbe} from "core/resources";
+import MavenSetup, { MavenSetupProps } from 'generators/maven-setup';
 
-export interface PlatformWildflyProps extends LanguageJavaProps {
+export interface PlatformWildflyProps extends LanguageJavaProps, MavenSetupProps {
 }
 
 export interface PlatformWildflyExtra extends BasePlatformExtra {
@@ -35,6 +36,7 @@ export default class PlatformWildfly extends BaseGenerator {
             await this.copy();
         }
         await this.generator(LanguageJava).apply(resources, lprops, extra);
+        await this.generator(MavenSetup).apply(resources, props, extra);
         const readinessProbe = {
             'httpGet': {
                 'path': '/health',

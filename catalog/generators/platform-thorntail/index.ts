@@ -1,14 +1,14 @@
 
 import * as _ from 'lodash';
-import { setBuildEnv, setDeploymentEnv } from 'core/resources';
 import { enumItem } from 'core/catalog';
 import { BaseGenerator, BasePlatformExtra } from 'core/catalog/types';
 import { BUILDER_JAVA } from 'core/resources/images';
 
 import PlatformBaseSupport from 'generators/platform-base-support';
 import LanguageJava, { LanguageJavaProps } from 'generators/language-java';
+import MavenSetup, { MavenSetupProps } from 'generators/maven-setup';
 
-export interface PlatformThorntailProps extends LanguageJavaProps {
+export interface PlatformThorntailProps extends LanguageJavaProps, MavenSetupProps {
 }
 
 export interface PlatformThorntailExtra extends BasePlatformExtra {
@@ -34,6 +34,7 @@ export default class PlatformThorntail extends BaseGenerator {
             await this.generator(PlatformBaseSupport).apply(resources, props, extra);
             await this.copy();
         }
-        return await this.generator(LanguageJava).apply(resources, lprops, extra);
+        await this.generator(LanguageJava).apply(resources, lprops, extra);
+        return await this.generator(MavenSetup).apply(resources, props, extra);
     }
 }

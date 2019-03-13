@@ -2,13 +2,14 @@
 import * as _ from 'lodash';
 import { cases } from 'core/template/transformers/cases';
 import { enumItem } from 'core/catalog';
-import { BaseGenerator } from 'core/catalog/types';
+import { BaseGenerator, NodejsCoords } from 'core/catalog/types';
 import { BUILDER_NODEJS_WEB } from 'core/resources/images';
 
 import PlatformBaseSupport from 'generators/platform-base-support';
 import LanguageNodejs, { LanguageNodejsExtra, LanguageNodejsProps } from 'generators/language-nodejs';
 
 export interface PlatformVueJSProps extends LanguageNodejsProps {
+    nodejs: NodejsCoords;
 }
 
 export interface PlatformVueJSExtra extends LanguageNodejsExtra {

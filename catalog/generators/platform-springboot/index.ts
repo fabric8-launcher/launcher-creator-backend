@@ -1,14 +1,14 @@
 
 import * as _ from 'lodash';
-import { setBuildEnv, setDeploymentEnv } from 'core/resources';
 import { enumItem } from 'core/catalog';
 import { BaseGenerator, BasePlatformExtra } from 'core/catalog/types';
 import { BUILDER_JAVA } from 'core/resources/images';
 
 import PlatformBaseSupport from 'generators/platform-base-support';
 import LanguageJava, { LanguageJavaProps } from 'generators/language-java';
+import MavenSetup, { MavenSetupProps } from 'generators/maven-setup';
 
-export interface PlatformSpringBootProps extends LanguageJavaProps {
+export interface PlatformSpringBootProps extends LanguageJavaProps, MavenSetupProps {
 }
 
 export interface PlatformSpringBootExtra extends BasePlatformExtra {
@@ -26,13 +26,15 @@ export default class PlatformSpringBoot extends BaseGenerator {
         };
         _.set(extra, 'shared.runtimeInfo', exProps);
 
-        const lprops: LanguageJavaProps = { ...props, 'builderImage': BUILDER_JAVA };
+        const jarName = props.maven.artifactId + '-' + props.maven.version + '.jar';
+        const lprops: LanguageJavaProps = { ...props, jarName, 'builderImage': BUILDER_JAVA };
 
         // Check if the service already exists, so we don't create it twice
         if (!resources.service(props.serviceName)) {
             await this.generator(PlatformBaseSupport).apply(resources, props, extra);
             await this.copy();
         }
-        return await this.generator(LanguageJava).apply(resources, lprops, extra);
+        await this.generator(LanguageJava).apply(resources, lprops, extra);
+        return await this.generator(MavenSetup).apply(resources, props, extra);
     }
 }

@@ -9,10 +9,9 @@ import {
     setMemoryResources
 } from 'core/resources';
 
-import { BaseGenerator, BaseGeneratorProps, Runtime } from 'core/catalog/types';
-import MavenSetup, { MavenSetupProps } from 'generators/maven-setup';
+import { BaseGenerator, BaseGeneratorProps } from 'core/catalog/types';
 
-export interface LanguageJavaProps extends BaseGeneratorProps, MavenSetupProps {
+export interface LanguageJavaProps extends BaseGeneratorProps {
     builderImage: string;
     jarName?: string;
     env?: object;
@@ -22,12 +21,10 @@ export default class LanguageJava extends BaseGenerator {
     public static readonly sourceDir: string = __dirname;
 
     public async apply(resources, props: LanguageJavaProps, extra: any = {}) {
-        const jarName = props.jarName || props.maven.artifactId + '-' + props.maven.version + '.jar';
         // Check if the service already exists, so we don't create it twice
         if (!resources.service(props.serviceName)) {
-            await this.generator(MavenSetup).apply(resources, props, extra);
             await this.copy();
-            await this.transform('gap', cases({ ...props, jarName }));
+            await this.transform('gap', cases({ ...props }));
             const res = await newApp(
                 props.serviceName,
                 props.application,

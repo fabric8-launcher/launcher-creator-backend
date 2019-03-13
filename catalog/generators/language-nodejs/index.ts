@@ -1,6 +1,6 @@
 
 import { cases } from 'core/template/transformers/cases';
-import { BaseGenerator, BaseGeneratorProps, BasePlatformExtra, NodejsCoords } from 'core/catalog/types';
+import { BaseGenerator, BaseGeneratorProps, BasePlatformExtra } from 'core/catalog/types';
 import {
     newApp,
     newRoute,
@@ -13,7 +13,6 @@ import { BUILDER_NODEJS_APP } from 'core/resources/images';
 
 export interface LanguageNodejsProps extends BaseGeneratorProps {
     builderImage: string;
-    nodejs: NodejsCoords;
     env?: object;
 }
 
