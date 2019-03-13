@@ -14,6 +14,7 @@ import { BaseGenerator, BaseGeneratorProps } from 'core/catalog/types';
 export interface LanguageJavaProps extends BaseGeneratorProps {
     builderImage: string;
     jarName?: string;
+    binaryExt?: string;
     env?: object;
 }
 

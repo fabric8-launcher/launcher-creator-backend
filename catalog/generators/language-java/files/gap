@@ -3,6 +3,7 @@
 APP_NAME={{.application}}
 SERVICE_NAME={{.serviceName}}
 JAR_NAME={{.jarName}}
+BIN_EXT={{.binaryExt}}
 #OPENSHIFT_CONSOLE_URL=Set to your OpenShift cluster's Console URL
 
 SCRIPT_DIR=$(cd "$(dirname "$BASH_SOURCE")" ; pwd -P)
@@ -41,7 +42,12 @@ function do_clean() {
 }
 
 function do_push() {
-    BINARY=${SCRIPT_DIR}/target/${JAR_NAME}
+    if [[ ${JAR_NAME} == "" ]]; then
+        bins=(target/*.${BIN_EXT})
+        BINARY=${bins[0]}
+    else
+        BINARY=${SCRIPT_DIR}/target/${JAR_NAME}
+    fi
     if [[ "$1" == "--binary" || "$1" == "-b" ]]; then
         shift
         FROM=${SCRIPT_DIR}/target/_oc_build_tmp_

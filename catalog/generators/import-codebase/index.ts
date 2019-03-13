@@ -47,6 +47,7 @@ export default class ImportCodebase extends BaseGenerator {
         const lprops = {
             ...props,
             'builderImage': image.id,
+            'binaryExt': image.metadata.binaryExt
         };
         const res = await this.generator(languageByBuilder(image)).apply(resources, lprops, extra);
         const param = res.parameter('SOURCE_REPOSITORY_URL');

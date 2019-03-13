@@ -12,6 +12,7 @@ export const IMAGE_POSTGRESQL = 'postgresql';
 export interface BuilderImage extends Enum {
     'metadata'?: {
         'language': string,
+        'binaryExt'?: string
         'isBuilder': boolean
     };
 }
@@ -22,6 +23,7 @@ export const builderImages: BuilderImage[] = [
         'name': 'Java Code Builder',
         'metadata': {
             'language': 'java',
+            'binaryExt': 'jar',
             'isBuilder': true
         }
     },
@@ -30,6 +32,7 @@ export const builderImages: BuilderImage[] = [
         'name': 'JavaEE Code Builder',
         'metadata': {
             'language': 'java',
+            'binaryExt': 'war',
             'isBuilder': true
         }
     },
