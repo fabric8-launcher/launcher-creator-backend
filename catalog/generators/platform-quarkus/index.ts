@@ -5,6 +5,7 @@ import { BUILDER_JAVA } from 'core/resources/images';
 
 import PlatformBaseSupport from 'generators/platform-base-support';
 import LanguageJava, { LanguageJavaProps } from 'generators/language-java';
+import { setMemoryResources } from 'core/resources';
 
 export interface PlatformQuarkusProps extends LanguageJavaProps {
 }
@@ -31,6 +32,7 @@ export default class PlatformQuarkus extends BaseGenerator {
         if (!resources.service(props.serviceName)) {
             await this.generator(PlatformBaseSupport).apply(resources, props, extra);
             await this.copy();
+            setMemoryResources(res, { 'limit': '512Mi' });
         }
         return await this.generator(LanguageJava).apply(resources, lprops, extra);
     }
