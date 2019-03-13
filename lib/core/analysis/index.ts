@@ -1,5 +1,5 @@
 
-import { pathExists, readFile } from 'fs-extra';
+import { pathExists, readFile, remove } from 'fs-extra';
 import { join } from 'path';
 import * as tmp from 'tmp-promise';
 import { spawn } from 'child-process-promise';
@@ -32,11 +32,9 @@ export function isJavaee(pom: string): boolean {
     return pom.indexOf('<packaging>war</packaging>') >= 0 && pom.indexOf('thorntail') < 0;
 }
 
-export async function determineBuilderImageFromGit(gitRepoUrl: string): Promise<BuilderImage> {
-    // Create temp dir
-    const td = await tmp.dir({ 'unsafeCleanup': true });
+export async function cloneGitRepo(gitRepoUrl: string, targetDir: string): Promise<any> {
     // Shallow-clone the repository
-    await spawn('git',
+    return await spawn('git',
         [
             'clone',
             // Work-around for problem in older Gits
@@ -47,12 +45,25 @@ export async function determineBuilderImageFromGit(gitRepoUrl: string): Promise<
             '-ccore.askPass',
             gitRepoUrl,
             '--depth=1',
-            td.path.toString()
+            targetDir
         ])
         .catch((error) => {
             console.error(`Spawn error: ${error}`);
             throw error;
         });
+}
+
+export async function removeGitFolder(targetDir: string): Promise<void> {
+    await remove(join(targetDir, '.git'));
+}
+
+export async function determineBuilderImageFromGit(gitRepoUrl: string): Promise<BuilderImage> {
+    // Create temp dir
+    const td = await tmp.dir({ 'unsafeCleanup': true });
+    // Shallow-clone the repository
+    await cloneGitRepo(gitRepoUrl, td.path.toString());
     // From the code we determine the builder image to use
-    return await determineBuilderImage(td.path);
+    const bi = await determineBuilderImage(td.path);
+    td.cleanup();
+    return bi;
 }
