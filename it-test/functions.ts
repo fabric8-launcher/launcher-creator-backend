@@ -119,6 +119,11 @@ export function runAt(cwd, cmd, ...args: string[]) {
         if (!!proc.error) {
             throw proc.error;
         } else if (proc.status !== 0) {
+            if (isVerbose()) {
+                console.error(`CMD: '${cmd} ${args.join(' ')}' CODE: ${proc.status}`);
+                console.error('OUT:', proc.stdout.toString());
+                console.error('ERR:', proc.stderr.toString());
+            }
             throw new Error(`Command '${cmd} ${args.join(' ')}' failed with error code: ${proc.status}`);
         }
         return proc.stdout.toString();
