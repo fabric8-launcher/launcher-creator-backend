@@ -27,7 +27,7 @@ export default class PlatformAngular extends BaseGenerator {
         };
         _.set(extra, 'shared.runtimeInfo', exProps);
 
-        const env = { ...(props.env || {}), 'OUTPUT_DIR': 'dist/' + props.application };
+        const env = { ...(props.env || {}), 'OUTPUT_DIR': 'build' };
         const lprops: LanguageNodejsProps = { ...props, env, 'builderImage': BUILDER_NODEJS_WEB };
 
         // Check if the service already exists, so we don't create it twice
