@@ -70,7 +70,7 @@ export function getServiceName(part: Part) {
 }
 
 function procArgs() {
-    return _.takeRightWhile(process.argv, i => i.startsWith('--'));
+    return _.filter(process.argv, i => i.startsWith('--'));
 }
 
 export function isDryRun() {
