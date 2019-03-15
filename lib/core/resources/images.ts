@@ -1,6 +1,7 @@
 
 import { Enum } from 'core/catalog/types';
 
+export const BUILDER_DOTNET = 'registry.access.redhat.com/dotnet/dotnet-22-rhel7';
 export const BUILDER_JAVA = 'registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift';
 export const BUILDER_JAVAEE = 'openshift/wildfly:latest';
 export const BUILDER_NODEJS_APP = 'nodeshift/centos7-s2i-nodejs';
@@ -18,6 +19,14 @@ export interface BuilderImage extends Enum {
 }
 
 export const builderImages: BuilderImage[] = [
+    {
+        'id': BUILDER_DOTNET,
+        'name': '.NET Core Code Builder',
+        'metadata': {
+            'language': 'csharp',
+            'isBuilder': true
+        }
+    },
     {
         'id': BUILDER_JAVA,
         'name': 'Java Code Builder',

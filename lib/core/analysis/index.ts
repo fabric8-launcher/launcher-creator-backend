@@ -3,8 +3,10 @@ import { pathExists, readFile, remove } from 'fs-extra';
 import { join } from 'path';
 import * as tmp from 'tmp-promise';
 import { spawn } from 'child-process-promise';
+import * as fg from 'fast-glob';
 
 import {
+    BUILDER_DOTNET,
     BUILDER_JAVA,
     BUILDER_JAVAEE,
     BUILDER_NODEJS_APP,
@@ -23,6 +25,9 @@ export async function determineBuilderImage(dir: string): Promise<BuilderImage> 
         return builderById(BUILDER_JAVA);
     } else if (await pathExists(join(dir, 'package.json'))) {
         return builderById(BUILDER_NODEJS_APP);
+    } else if (await fg(['*.csproj'], { cwd: dir })) {
+        // TODO: support sln files and other project formats (fsproj, vbproj)
+        return builderById(BUILDER_DOTNET);
     } else {
         return null;
     }

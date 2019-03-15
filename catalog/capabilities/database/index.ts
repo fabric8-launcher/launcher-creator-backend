@@ -4,6 +4,7 @@ import { BaseCapability, Runtime } from 'core/catalog/types';
 import DatabaseSecret from 'generators/database-secret';
 import DatabasePostgresql from 'generators/database-postgresql';
 import DatabaseMysql from 'generators/database-mysql';
+import DatabaseCrudDotNet from 'generators/database-crud-dotnet';
 import DatabaseCrudVertx from 'generators/database-crud-vertx';
 import DatabaseCrudSpringBoot from 'generators/database-crud-springboot';
 import DatabaseCrudNodejs from 'generators/database-crud-nodejs';
@@ -24,6 +25,7 @@ function databaseByType(type) {
 // Returns the corresponding runtime generator depending on the given runtime type
 function runtimeByType(rt: Runtime) {
     switch (rt.name) {
+        case 'dotnet': return DatabaseCrudDotNet;
         case 'nodejs': return DatabaseCrudNodejs;
         case 'quarkus': return DatabaseCrudQuarkus;
         case 'springboot': return DatabaseCrudSpringBoot;
@@ -59,6 +61,7 @@ export default class Database extends BaseCapability {
             'runtime': props.runtime,
             'maven': props.maven,
             'nodejs': props.nodejs,
+            'dotnet': props.dotnet,
             'databaseType': props.databaseType,
             'secretName': this.name(props.application, props.subFolderName, 'database-bind'),
         };
