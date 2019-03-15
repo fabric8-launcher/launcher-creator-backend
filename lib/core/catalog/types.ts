@@ -1,6 +1,6 @@
 import { Resources } from 'core/resources';
 import * as path from 'path';
-import { copy } from 'fs-extra';
+import { copy, move } from 'fs-extra';
 import { accessSync } from 'fs';
 
 import { appendFile as _appendFile, walk } from 'core/utils';
@@ -46,6 +46,11 @@ export interface Enum {
 export interface Runtime {
     name: string;
     version?: string;
+}
+
+export interface DotNetCoords {
+    namespace: string;
+    version: string;
 }
 
 export interface MavenCoords {
@@ -116,6 +121,12 @@ abstract class BaseCatalogItem implements CatalogItem {
                 }
             }));
         });
+    }
+
+    protected move(original: string, to: string): Promise<void> {
+        const original2 = path.join(this.targetDir, original);
+        const to2 = path.join(this.targetDir, to);
+        return move(original2, to2, { overwrite: true});
     }
 
     protected transform(pattern: string | string[], transformLine: (line: string) => string | string[]): Promise<number> {

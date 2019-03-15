@@ -1,5 +1,6 @@
 import { BaseCapability, Runtime } from 'core/catalog/types';
 
+import RestDotNet from 'generators/rest-dotnet';
 import RestVertx from 'generators/rest-vertx';
 import RestSpring from 'generators/rest-springboot';
 import RestNodejs from 'generators/rest-nodejs';
@@ -10,6 +11,7 @@ import RestQuarkus from 'generators/rest-quarkus';
 // Returns the corresponding runtime generator depending on the given runtime type
 function runtimeByType(rt: Runtime) {
     switch (rt.name) {
+        case 'dotnet': return RestDotNet;
         case 'nodejs': return RestNodejs;
         case 'quarkus': return RestQuarkus;
         case 'springboot': return RestSpring;
@@ -34,8 +36,9 @@ export default class Rest extends BaseCapability {
             'serviceName': rtServiceName,
             'routeName': rtRouteName,
             'runtime': props.runtime,
+            'dotnet': props.dotnet,
             'maven': props.maven,
-            'nodejs': props.nodejs
+            'nodejs': props.nodejs,
         };
         return await this.generator(runtimeByType(props.runtime)).apply(resources, rtprops, extra);
     }

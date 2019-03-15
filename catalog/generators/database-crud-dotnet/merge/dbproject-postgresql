@@ -1,0 +1,1 @@
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="2.2.0"/>
