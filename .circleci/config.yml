@@ -132,7 +132,6 @@ jobs:
             [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
             TEST_ARGS=$(git show --format=%B -s HEAD | grep "TEST_ARGS:" | cut -d\: -f2)
             yarn ittest --verbose ${TEST_ARGS}
-          no_output_timeout: 3600
 workflows:
   version: 2
   Build and Test:
