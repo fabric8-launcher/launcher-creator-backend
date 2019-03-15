@@ -4,7 +4,7 @@ APP_NAME={{.application}}
 SERVICE_NAME={{.serviceName}}
 JAR_NAME={{.jarName}}
 BIN_EXT={{.binaryExt}}
-BUILD_ARGS="{{.buildArgs}}"
+BUILD_ARGS={{.buildArgs}}
 #OPENSHIFT_CONSOLE_URL=Set to your OpenShift cluster's Console URL
 
 SCRIPT_DIR=$(cd "$(dirname "$BASH_SOURCE")" ; pwd -P)
