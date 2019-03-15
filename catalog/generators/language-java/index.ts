@@ -16,6 +16,7 @@ export interface LanguageJavaProps extends BaseGeneratorProps {
     jarName?: string;
     binaryExt?: string;
     env?: object;
+    buildArgs?: string;
 }
 
 export default class LanguageJava extends BaseGenerator {
