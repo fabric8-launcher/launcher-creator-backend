@@ -262,7 +262,7 @@ function validateGenerationRequest(req, res) {
 
 interface DeployRequest {
     projectName: string;
-    gitRepository: string;
+    gitRepository?: string;
     gitOrganization?: string;
     clusterId?: string;
 }
@@ -283,22 +283,27 @@ async function performLaunch(req, res, dreq: DeployRequest, deployment: Deployme
             const ins = fs.createReadStream(projectZip);
             const formData = {
                 'projectName': dreq.projectName,
-                'gitRepository': dreq.gitRepository,
                 'file': ins
             };
-            if (dreq.gitOrganization) {
+            if (!!dreq.gitRepository) {
+                formData['gitRepository'] = dreq.gitRepository;
+            }
+            if (!!dreq.gitOrganization) {
                 formData['gitOrganization'] = dreq.gitOrganization;
             }
             const auth = {
                 'bearer': req.get('Authorization').slice(7)
             };
             const headers = {};
-            if (dreq.clusterId) {
+            if (!!dreq.clusterId) {
                 headers['X-OpenShift-Cluster'] = dreq.clusterId;
             }
             const backendUrl = process.env.LAUNCHER_BACKEND_URL || 'http://localhost:8080/api';
+            // HACK temporary hack until we can unify the two backend endpoints
+            const endpoint = (!!dreq.gitRepository) ? '/launcher/upload' : '/launcher/import/git';
+            const url = backendUrl + endpoint;
             const options = {
-                'url': backendUrl + '/launcher/upload',
+                url,
                 formData,
                 auth,
                 headers
