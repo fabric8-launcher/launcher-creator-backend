@@ -9,6 +9,7 @@ import * as shortid from 'shortid';
 import * as fs from 'fs';
 import * as HttpStatus from 'http-status-codes';
 import * as Sentry from 'raven';
+import * as _ from 'lodash';
 
 import * as catalog from 'core/catalog';
 import * as deploy from 'core/deploy';
@@ -16,6 +17,7 @@ import { zipFolder } from 'core/utils';
 import { ApplicationDescriptor, DeploymentDescriptor } from 'core/catalog/types';
 import { determineBuilderImageFromGit } from 'core/analysis';
 import { builderImages } from 'core/resources/images';
+import { URL } from "url";
 
 tmp.setGracefulCleanup();
 const app = express();
@@ -178,6 +180,10 @@ interface ImportLaunchRequest extends DeployRequest {
     builderImage?: string;
 }
 
+function isImportLaunchRequest(obj: any): obj is ImportLaunchRequest {
+    return 'applicationName' in obj && 'gitImportUrl' in obj;
+}
+
 router.post('/import/launch', async (req, res, next) => {
     // Make sure we're authenticated
     if (!req.get('Authorization')) {
@@ -193,7 +199,20 @@ router.post('/import/launch', async (req, res, next) => {
         sendReply(res, HttpStatus.BAD_REQUEST, 'Malformed request, missing gitImportUrl');
         return false;
     }
-    const ilreq = req.body as ImportLaunchRequest;
+    const ilreq = { ...req.body } as ImportLaunchRequest;
+    // HACK temporary hack until we can unify the two backend endpoints
+    try {
+        const url = new URL(ilreq.gitImportUrl);
+        const pparts = url.pathname.split('/');
+        if (pparts.length !== 2) {
+            sendReply(res, HttpStatus.BAD_REQUEST, 'Malformed request, invalid gitImportUrl');
+        }
+        ilreq.gitOrganization = pparts[0];
+        ilreq.gitRepository = pparts[1];
+    } catch (e) {
+        sendReply(res, HttpStatus.BAD_REQUEST, 'Malformed request, invalid gitImportUrl');
+    }
+    // End HACK
     const deployment: DeploymentDescriptor = {
         'applications': [
             {
@@ -301,6 +320,7 @@ async function performLaunch(req, res, dreq: DeployRequest, deployment: Deployme
             const backendUrl = process.env.LAUNCHER_BACKEND_URL || 'http://localhost:8080/api';
             // HACK temporary hack until we can unify the two backend endpoints
             const endpoint = (!!dreq.gitRepository) ? '/launcher/upload' : '/launcher/import/git';
+            // End HACK
             const url = backendUrl + endpoint;
             const options = {
                 url,
@@ -309,7 +329,7 @@ async function performLaunch(req, res, dreq: DeployRequest, deployment: Deployme
                 headers
             };
             request.post(options, (err2, res2, body) => {
-                console.info(`${timestamp()} Pushed project "${deployment.applications[0].application}" to ${backendUrl} - ${res2.statusCode}`);
+                console.info(`${timestamp()} Pushed project "${deployment.applications[0].application}" to ${url} - ${res2.statusCode}`);
                 let json = null;
                 try {
                     json = JSON.parse(body);
