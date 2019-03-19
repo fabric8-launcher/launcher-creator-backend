@@ -43,6 +43,38 @@
       ]
     },
     {
+      "id": "dotnet",
+      "name": ".NET Core Project Setting",
+      "description": "The ids and version to use for the .NET Core project",
+      "required": true,
+      "shared": true,
+      "enabledWhen": {
+        "propId": "runtime.name",
+        "equals": [
+          "dotnet"
+        ]
+      },
+      "type": "object",
+      "props": [
+        {
+          "id": "namespace",
+          "name": "Namespace",
+          "description": "The Namespace for the code in this .NET Core project",
+          "required": true,
+          "type": "string",
+          "default": "MyApp"
+        },
+        {
+          "id": "version",
+          "name": "Version",
+          "description": "The version for the .NET Core project",
+          "required": true,
+          "type": "string",
+          "default": "1.0.0"
+        }
+      ]
+    },
+    {
       "id": "maven",
       "name": "Maven Project Setting",
       "description": "The ids and version to use for the Maven project",
