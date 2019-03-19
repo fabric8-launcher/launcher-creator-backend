@@ -66,7 +66,7 @@ export function test(ctx: Context) {
     it('DatabaseUpdateIllegalPayload', function () {
         const url = `http://${ctx.routeHost}/api/fruits/1`;
         return put({ url, 'json': { 'foo': 'Cherry', 'bar': 15 } }).then(res => {
-            assert.strictEqual(res.statusCode, HttpStatus.UNPROCESSABLE_ENTITY);
+            assert(Array.of(HttpStatus.UNPROCESSABLE_ENTITY, HttpStatus.BAD_REQUEST).includes(res.statusCode));
         });
     });
 
@@ -94,7 +94,7 @@ export function test(ctx: Context) {
     it('DatabaseInsertIllegalPayload', function () {
         const url = `http://${ctx.routeHost}/api/fruits`;
         return post({ url, 'json': { 'foo': 'Banana', 'bar': 1 } }).then(res => {
-            assert.strictEqual(res.statusCode, HttpStatus.UNPROCESSABLE_ENTITY);
+            assert(Array.of(HttpStatus.UNPROCESSABLE_ENTITY, HttpStatus.BAD_REQUEST).includes(res.statusCode));
         });
     });
 
