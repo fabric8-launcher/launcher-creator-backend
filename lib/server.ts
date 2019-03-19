@@ -318,9 +318,7 @@ async function performLaunch(req, res, dreq: DeployRequest, deployment: Deployme
                 headers['X-OpenShift-Cluster'] = dreq.clusterId;
             }
             const backendUrl = process.env.LAUNCHER_BACKEND_URL || 'http://localhost:8080/api';
-            // HACK temporary hack until we can unify the two backend endpoints
-            const endpoint = (!!dreq.gitRepository) ? '/launcher/upload' : '/launcher/import/git';
-            // End HACK
+            const endpoint = '/launcher/upload';
             const url = backendUrl + endpoint;
             const options = {
                 url,
