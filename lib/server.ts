@@ -9,7 +9,6 @@ import * as shortid from 'shortid';
 import * as fs from 'fs';
 import * as HttpStatus from 'http-status-codes';
 import * as Sentry from 'raven';
-import * as _ from 'lodash';
 
 import * as catalog from 'core/catalog';
 import * as deploy from 'core/deploy';
@@ -17,7 +16,6 @@ import { zipFolder } from 'core/utils';
 import { ApplicationDescriptor, DeploymentDescriptor } from 'core/catalog/types';
 import { determineBuilderImageFromGit } from 'core/analysis';
 import { builderImages } from 'core/resources/images';
-import { URL } from "url";
 
 tmp.setGracefulCleanup();
 const app = express();
@@ -199,20 +197,7 @@ router.post('/import/launch', async (req, res, next) => {
         sendReply(res, HttpStatus.BAD_REQUEST, 'Malformed request, missing gitImportUrl');
         return false;
     }
-    const ilreq = { ...req.body } as ImportLaunchRequest;
-    // HACK temporary hack until we can unify the two backend endpoints
-    try {
-        const url = new URL(ilreq.gitImportUrl);
-        const pparts = url.pathname.split('/');
-        if (pparts.length !== 2) {
-            sendReply(res, HttpStatus.BAD_REQUEST, 'Malformed request, invalid gitImportUrl');
-        }
-        ilreq.gitOrganization = pparts[0];
-        ilreq.gitRepository = pparts[1];
-    } catch (e) {
-        sendReply(res, HttpStatus.BAD_REQUEST, 'Malformed request, invalid gitImportUrl');
-    }
-    // End HACK
+    const ilreq = req.body as ImportLaunchRequest;
     const deployment: DeploymentDescriptor = {
         'applications': [
             {
@@ -318,8 +303,7 @@ async function performLaunch(req, res, dreq: DeployRequest, deployment: Deployme
                 headers['X-OpenShift-Cluster'] = dreq.clusterId;
             }
             const backendUrl = process.env.LAUNCHER_BACKEND_URL || 'http://localhost:8080/api';
-            const endpoint = '/launcher/upload';
-            const url = backendUrl + endpoint;
+            const url = backendUrl + '/launcher/upload';
             const options = {
                 url,
                 formData,
