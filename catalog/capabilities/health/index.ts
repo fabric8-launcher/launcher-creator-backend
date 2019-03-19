@@ -5,12 +5,14 @@ import PlatformNodejs from 'generators/platform-nodejs';
 import PlatformSpringBoot from 'generators/platform-springboot';
 import PlatformThorntail from 'generators/platform-thorntail';
 import PlatformVertx from 'generators/platform-vertx';
-import PlatformWildfly from "generators/platform-wildfly";
+import PlatformWildfly from 'generators/platform-wildfly';
 import PlatformQuarkus from 'generators/platform-quarkus';
+import PlatformDotNet from 'generators/platform-dotnet';
 
 // Returns the corresponding runtime generator depending on the given runtime type
 function runtimeByType(rt: Runtime) {
     switch (rt.name) {
+        case 'dotnet': return PlatformDotNet;
         case 'nodejs': return PlatformNodejs;
         case 'quarkus': return PlatformQuarkus;
         case 'springboot': return PlatformSpringBoot;
