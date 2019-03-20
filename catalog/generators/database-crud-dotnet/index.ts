@@ -6,6 +6,7 @@ import { BaseGenerator } from 'core/catalog/types';
 
 import PlatformDotNet, { PlatformDotNetProps } from 'generators/platform-dotnet';
 import { insertAfter, insertBefore } from 'core/template/transformers/insert';
+import { replace } from 'core/template/transformers/replace';
 
 import { cases } from 'core/template/transformers/cases';
 import { DatabaseSecretRef } from 'generators/database-secret';
@@ -50,12 +51,13 @@ export default class DatabaseCrudDotNet extends BaseGenerator {
             // Update csproj file
             let mergeFile: string;
             if (props.databaseType === 'postgresql') {
-                mergeFile = path.resolve(DatabaseCrudDotNet.sourceDir, 'merge/dbproject-postgresql');
+                mergeFile = path.resolve(DatabaseCrudDotNet.sourceDir, 'merge/csproj-postgresql');
             } else if (props.databaseType === 'mysql') {
-                mergeFile = path.resolve(DatabaseCrudDotNet.sourceDir, 'merge/dbproject-mysql');
+                mergeFile = path.resolve(DatabaseCrudDotNet.sourceDir, 'merge/csproj-mysql');
             }
             await this.transform(csprojFile,
                 insertAfter('<!-- Add additional package references here -->', await readFile(mergeFile, 'utf8')));
+
 
             // Update Startup.cs
             const efCoreFile = path.resolve(DatabaseCrudDotNet.sourceDir, 'merge/efcore');
@@ -69,6 +71,15 @@ export default class DatabaseCrudDotNet extends BaseGenerator {
             const dbInitFile = path.resolve(DatabaseCrudDotNet.sourceDir, 'merge/dbinitialize');
             await this.transform('Startup.cs',
                 insertAfter('// Optionally, initialize Db with data here', await readFile(dbInitFile, 'utf8')));
+
+            let mergeHealthcheckFile: string;
+            if (props.databaseType === 'postgresql') {
+                mergeHealthcheckFile = path.resolve(DatabaseCrudDotNet.sourceDir, 'merge/healthcheck-postgresql');
+            } else if (props.databaseType === 'mysql') {
+                mergeHealthcheckFile = path.resolve(DatabaseCrudDotNet.sourceDir, 'merge/healthcheck-mysql');
+            }
+            await this.transform('Startup.cs',
+                replace('services.AddHealthChecks()', await readFile(mergeHealthcheckFile, 'utf8')));
 
             await this.transform('**/*.cs', cases(props));
         }

@@ -28,6 +28,8 @@ namespace {{.dotnet.namespace}}
         {
             // Add any DbContext here
 
+            services.AddHealthChecks();
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
@@ -38,6 +40,8 @@ namespace {{.dotnet.namespace}}
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseHealthChecks("/health");
 
             // Optionally, initialize Db with data here
 
