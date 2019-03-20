@@ -5,6 +5,7 @@ import { cloneGitRepo, determineBuilderImage, determineBuilderImageFromGit, remo
 
 import LanguageJava from 'generators/language-java';
 import LanguageNodejs from 'generators/language-nodejs';
+import LanguageCSharp from 'generators/language-csharp';
 
 // Returns the corresponding language generator depending on the given builder image
 function languageByBuilder(builder: BuilderImage) {
@@ -12,6 +13,8 @@ function languageByBuilder(builder: BuilderImage) {
         return LanguageJava;
     } else if (builder && builder.metadata.language === 'nodejs') {
         return LanguageNodejs;
+    } else if (builder && builder.metadata.language === 'csharp') {
+        return LanguageCSharp;
     } else {
         throw new Error(`Unsupported builder: ${builder}`);
     }
