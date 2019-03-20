@@ -37,28 +37,6 @@ export default class PlatformWildfly extends BaseGenerator {
         }
         await this.generator(LanguageJava).apply(resources, lprops, extra);
         await this.generator(MavenSetup).apply(resources, props, extra);
-        const readinessProbe = {
-            'httpGet': {
-                'path': '/health',
-                'port': 8080,
-                'scheme': 'HTTP'
-            },
-            'initialDelaySeconds': 5,
-            'timeoutSeconds': 3,
-            'periodSeconds': 10,
-            'failureThreshold': 10
-        };
-        const livenessProbe = {
-            'httpGet': {
-                'path': '/health',
-                'port': 8080,
-                'scheme': 'HTTP'
-            },
-            'initialDelaySeconds': 5,
-            'timeoutSeconds': 3
-        };
-        await setHealthProbe(resources, 'readinessProbe', readinessProbe, props.serviceName);
-        await setHealthProbe(resources, 'livenessProbe', livenessProbe, props.serviceName);
         return resources;
     }
 }
