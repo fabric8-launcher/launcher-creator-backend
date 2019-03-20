@@ -1,7 +1,7 @@
 
 import { BaseCapability } from 'core/catalog/types';
 
-import WelcomeApp from 'generators/welcome-app';
+import WelcomeApp, { WelcomeAppProps } from 'generators/welcome-app';
 
 export default class Rest extends BaseCapability {
     public static readonly sourceDir: string = __dirname;
@@ -11,7 +11,7 @@ export default class Rest extends BaseCapability {
     }
 
     public async postApply(resources, props, deployment) {
-        const waprops = {
+        const waprops: WelcomeAppProps = {
             'application': props.application,
             'subFolderName': props.subFolderName,
             'serviceName': 'welcome',

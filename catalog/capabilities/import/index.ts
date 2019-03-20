@@ -1,7 +1,7 @@
 
 import { BaseCapability } from 'core/catalog/types';
 
-import ImportCodebase from 'generators/import-codebase';
+import ImportCodebase, { ImportCodebaseProps } from 'generators/import-codebase';
 
 export default class Import extends BaseCapability {
     public static readonly sourceDir: string = __dirname;
@@ -10,18 +10,20 @@ export default class Import extends BaseCapability {
         const appName = this.name(props.application, props.subFolderName);
         const rtServiceName = appName;
         const rtRouteName = appName;
-        const icprops = {
+        const icprops: ImportCodebaseProps = {
             'application': props.application,
             'subFolderName': props.subFolderName,
             'serviceName': rtServiceName,
             'routeName': rtRouteName,
-            'runtime': props.runtime,
             'maven': props.maven,
             'nodejs': props.nodejs,
             'dotnet': props.dotnet,
             'gitImportUrl': props.gitImportUrl,
             'builderImage': props.builderImage,
-            'builderLanguage': props.builderLanguage
+            'builderLanguage': props.builderLanguage,
+            'env': props.env,
+            'overlayOnly': props.overlayOnly,
+            'keepGitFolder': props.keepGitFolder
         };
         return await this.generator(ImportCodebase).apply(resources, icprops, extra);
     }

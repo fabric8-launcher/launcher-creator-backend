@@ -24,8 +24,12 @@ export interface ImportCodebaseProps extends BaseGeneratorProps {
     gitImportUrl: string;
     builderImage?: string;
     builderLanguage?: string;
+    env?: object,
     overlayOnly: boolean;
     keepGitFolder: boolean;
+    maven?: object;
+    nodejs?: object;
+    dotnet?: object;
 }
 
 export default class ImportCodebase extends BaseGenerator {

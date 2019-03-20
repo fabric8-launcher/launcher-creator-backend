@@ -15,6 +15,7 @@ export interface BuilderImage extends Enum {
         'language': string,
         'binaryExt'?: string
         'isBuilder': boolean
+        'suggestedEnv'?: object
     };
 }
 
@@ -58,7 +59,10 @@ export const builderImages: BuilderImage[] = [
         'name': 'Generic Node.js Code Builder',
         'metadata': {
             'language': 'nodejs',
-            'isBuilder': true
+            'isBuilder': true,
+            'suggestedEnv': {
+                'PORT': '8080'
+            }
         }
     }
 ];
