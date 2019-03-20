@@ -57,8 +57,8 @@ export default class PlatformWildfly extends BaseGenerator {
             'initialDelaySeconds': 5,
             'timeoutSeconds': 3
         };
-        await setHealthProbe(resources, 'readinessProbe', readinessProbe, props.application);
-        await setHealthProbe(resources, 'livenessProbe', livenessProbe, props.application);
+        await setHealthProbe(resources, 'readinessProbe', readinessProbe, props.serviceName);
+        await setHealthProbe(resources, 'livenessProbe', livenessProbe, props.serviceName);
         return resources;
     }
 }
