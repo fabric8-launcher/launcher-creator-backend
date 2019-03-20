@@ -45,32 +45,30 @@ export default class DatabaseCrudDotNet extends BaseGenerator {
             // and then copy our own over that
             await this.generator(PlatformDotNet).apply(resources, pprops, extra);
             await this.copy();
-            var csprojFile = props.application + '.csproj'
-            var mergeFile: string;
+            const csprojFile = props.application + '.csproj';
 
             // Update csproj file
-            if (props.databaseType == 'postgresql') {
+            let mergeFile: string;
+            if (props.databaseType === 'postgresql') {
                 mergeFile = path.resolve(DatabaseCrudDotNet.sourceDir, 'merge/dbproject-postgresql');
-            } else if (props.databaseType == 'mysql') {
+            } else if (props.databaseType === 'mysql') {
                 mergeFile = path.resolve(DatabaseCrudDotNet.sourceDir, 'merge/dbproject-mysql');
             }
             await this.transform(csprojFile,
                 insertAfter('<!-- Add additional package references here -->', await readFile(mergeFile, 'utf8')));
 
             // Update Startup.cs
-            mergeFile = path.resolve(DatabaseCrudDotNet.sourceDir, 'merge/efcore');
+            const efCoreFile = path.resolve(DatabaseCrudDotNet.sourceDir, 'merge/efcore');
             await this.transform('Startup.cs',
-                insertBefore('using ' + props.dotnet.namespace + '.Models;', await readFile(mergeFile, 'utf8')));
+                insertBefore('using ' + props.dotnet.namespace + '.Models;', await readFile(efCoreFile, 'utf8')));
 
-            mergeFile = path.resolve(DatabaseCrudDotNet.sourceDir, 'merge/dbcontext');
+            const dbContextFile = path.resolve(DatabaseCrudDotNet.sourceDir, 'merge/dbcontext');
             await this.transform('Startup.cs',
-                insertAfter('// Add any DbContext here', await readFile(mergeFile, 'utf8')));
+                insertAfter('// Add any DbContext here', await readFile(dbContextFile, 'utf8')));
 
-            mergeFile = path.resolve(DatabaseCrudDotNet.sourceDir, 'merge/dbinitialize');
+            const dbInitFile = path.resolve(DatabaseCrudDotNet.sourceDir, 'merge/dbinitialize');
             await this.transform('Startup.cs',
-                insertAfter('// Optionally, initialize Db with data here', await readFile(mergeFile, 'utf8')));
-
-
+                insertAfter('// Optionally, initialize Db with data here', await readFile(dbInitFile, 'utf8')));
 
             await this.transform('**/*.cs', cases(props));
         }
