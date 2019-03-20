@@ -38,7 +38,8 @@ export default class Health extends BaseCapability {
             'routeName': rtRouteName,
             'runtime': props.runtime,
             'maven': props.maven,
-            'nodejs': props.nodejs
+            'nodejs': props.nodejs,
+            'dotnet': props.dotnet
         };
         return await this.generator(runtimeByType(props.runtime)).apply(resources, rtprops, extra);
     }

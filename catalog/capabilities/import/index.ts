@@ -15,6 +15,10 @@ export default class Import extends BaseCapability {
             'subFolderName': props.subFolderName,
             'serviceName': rtServiceName,
             'routeName': rtRouteName,
+            'runtime': props.runtime,
+            'maven': props.maven,
+            'nodejs': props.nodejs,
+            'dotnet': props.dotnet,
             'gitImportUrl': props.gitImportUrl,
             'builderImage': props.builderImage,
             'builderLanguage': props.builderLanguage
