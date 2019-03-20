@@ -20,7 +20,7 @@
 
   <properties>
     <version.h2>1.4.187</version.h2>
-    <version.mysql>8.0.12</version.mysql>
+    <version.mysql>5.1.38</version.mysql>
   </properties>
   <packaging>war</packaging>
   <dependencies>
