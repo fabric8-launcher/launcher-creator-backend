@@ -34,10 +34,11 @@ export default class DatabaseCrudThorntail extends BaseGenerator {
                         'secret': props.secretName,
                         'key': 'password'
                     },
-                    'JAVA_OPTIONS': `-Dswarm.datasources.data-sources.MyDS.connection-url=jdbc:${props.databaseType}://$(DB_HOST)/my_data
-                     -Dswarm.datasources.data-sources.MyDS.user-name=$(DB_USERNAME)
-                     -Dswarm.datasources.data-sources.MyDS.password=$(DB_PASSWORD)
-                     -Dswarm.datasources.data-sources.MyDS.driver-name=${props.databaseType}`
+                    'JAVA_OPTIONS':
+                        `-Dthorntail.datasources.data-sources.MyDS.connection-url=jdbc:${props.databaseType}://$(DB_HOST)/my_data
+                     -Dthorntail.datasources.data-sources.MyDS.user-name=$(DB_USERNAME)
+                     -Dthorntail.datasources.data-sources.MyDS.password=$(DB_PASSWORD)
+                     -Dthorntail.datasources.data-sources.MyDS.driver-name=${props.databaseType}`
                     ,
                    'GC_MAX_METASPACE_SIZE': '150',
                    'KUBERNETES_NAMESPACE' : {
@@ -50,7 +51,8 @@ export default class DatabaseCrudThorntail extends BaseGenerator {
             await this.mergePoms(`merge/pom.${props.databaseType}.xml`);
             await this.transform('src/**/*.java', cases(props));
         }
-        extra['sourceMapping'] = { 'dbEndpoint': this.join(props.subFolderName, 'src/main/java/io/openshift/booster/database/FruitResource.java') };
+        extra['sourceMapping'] = { 'dbEndpoint': this.join(props.subFolderName,
+                'src/main/java/io/openshift/booster/database/FruitResource.java') };
         return resources;
     }
 }
