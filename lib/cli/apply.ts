@@ -121,7 +121,11 @@ async function main() {
                 }
                 const optName = opt.slice(2, p);
                 const optValue = opt.slice(p + 1);
-                cap.props[optName] = optValue;
+                if (optValue.trim().startsWith('{')) {
+                    cap.props[optName] = JSON.parse(optValue);
+                } else {
+                    cap.props[optName] = optValue;
+                }
             }
             part.capabilities = [...part.capabilities, cap];
         }
