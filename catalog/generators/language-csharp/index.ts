@@ -33,8 +33,7 @@ export default class LanguageCSharp extends BaseGenerator {
                 props.env || {});
             setBuildContextDir(res, props.subFolderName);
             setMemoryResources(res, { 'limit': '512M' });
-            // TODO This needs to be implemneted in a higher-level generator
-            // setDefaultHealthChecks(res);
+            setDefaultHealthChecks(res);
             resources.add(res);
             return await newRoute(resources, props.routeName, props.application, props.serviceName);
         } else {
