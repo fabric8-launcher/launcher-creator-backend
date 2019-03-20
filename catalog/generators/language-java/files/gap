@@ -35,7 +35,7 @@ function do_deploy() {
 }
 
 function do_build() {
-    mvn package ${BUILD_ARGS}
+    mvn package -Popenshift ${BUILD_ARGS}
 }
 
 function do_clean() {

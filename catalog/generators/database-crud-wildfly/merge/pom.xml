@@ -26,9 +26,6 @@
     <profiles>
         <profile>
             <id>openshift</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
             <build>
                 <plugins>
                     <plugin>
@@ -75,6 +72,9 @@
         </profile>
         <profile>
             <id>local</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <dependencies>
                 <dependency>
                     <groupId>com.h2database</groupId>
