@@ -18,7 +18,7 @@ import {
     Part,
     getServiceName,
     getCapabilities,
-    CapabilityOptions, getCapabilityOverrides
+    CapabilityOptions, getCapabilityOverrides, isNoBuild
 } from './functions';
 
 // Put any capabilities here that need special options for testing.
@@ -137,8 +137,10 @@ function testPart(part: Part) {
             run('oc', 'new-project', projectName);
             console.log('      Deploying project...');
             runAt(targetDir.name, './gap', 'deploy');
-            console.log('      Building project...');
-            runAt(targetDir.name, './gap', 'build');
+            if (!isNoBuild()) {
+                console.log('      Building project...');
+                runAt(targetDir.name, './gap', 'build');
+            }
             console.log('      Pushing project...');
             runAt(targetDir.name, './gap', 'push', '--wait');
             waitForProject(part);

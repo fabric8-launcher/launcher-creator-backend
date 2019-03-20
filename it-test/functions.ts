@@ -81,6 +81,10 @@ export function isVerbose() {
     return procArgs().includes('--verbose');
 }
 
+export function isNoBuild() {
+    return procArgs().includes('--no-build');
+}
+
 export function getRuntimeOverrides() {
     const runtimesArg = procArgs().find(i => i.startsWith('--runtimes='));
     if (!!runtimesArg) {
