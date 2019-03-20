@@ -11,6 +11,9 @@
   <profiles>
     <profile>
       <id>openshift</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
       <dependencies>
         <dependency>
           <groupId>io.quarkus</groupId>
@@ -21,9 +24,6 @@
 
     <profile>
       <id>local</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
       <dependencies>
         <dependency>
           <groupId>io.quarkus</groupId>
