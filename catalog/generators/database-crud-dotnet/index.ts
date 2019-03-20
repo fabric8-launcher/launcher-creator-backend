@@ -74,8 +74,7 @@ export default class DatabaseCrudDotNet extends BaseGenerator {
 
             await this.transform('**/*.cs', cases(props));
         }
-        // TODO what is sourceMapping for?
-        // extra['sourceMapping'] = { 'dbEndpoint': this.join(props.subFolderName, 'lib/routes/fruits.js') };
+        extra['sourceMapping'] = { 'dbEndpoint': this.join(props.subFolderName, 'Controllers/FruitsController.cs') };
         return resources;
     }
 }

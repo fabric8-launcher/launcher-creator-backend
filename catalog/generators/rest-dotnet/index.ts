@@ -26,6 +26,7 @@ export default class RestDotNet extends BaseGenerator {
             await this.copy();
             await this.transform('**/*.cs', cases(props));
         }
+        extra['sourceMapping'] = { 'greetingEndpoint': this.join(props.subFolderName, 'Controllers/GreetingController.cs') };
         return resources;
     }
 
