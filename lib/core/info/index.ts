@@ -115,16 +115,6 @@ function validateTypeEnum(id: string, def: EnumPropertyDef, enums: Enums, props:
     }
 }
 
-function validateTypeObject(id: string, def: ObjectPropertyDef, props: object) {
-    if (_.has(props, id)) {
-        const val = _.get(props, id);
-        if (typeof(val) !== 'object') {
-            throw new ValidationError(
-                `Invalid value for property '${id}': '${val}'`);
-        }
-    }
-}
-
 function getValues(id: string, def: EnumPropertyDef, enums: Enums, props?: object): any[] {
     if (!!def.values) {
         if (!Array.isArray(def.values) || def.values.length === 0) {
@@ -155,8 +145,6 @@ function replaceProps(ref: string, props?: object) {
 function validateType(id: string, def: PropertyDef, enums: Enums, props: object) {
     if (def.type === 'enum') {
         validateTypeEnum(id, def as EnumPropertyDef, enums, props);
-    } else if (def.type === 'object') {
-        validateTypeObject(id, def as ObjectPropertyDef, props)
     } else if (def.type === 'string' || !def.type) {
         // Nothing to validate here
     } else {
@@ -171,10 +159,11 @@ function validateProperty(id: string, def: PropertyDef, enums: Enums, props: obj
 
 export function validatePossibleObject(id: string, def: PropertyDef, enums: Enums, props: object) {
     if (isEnabled(id, def, props)) {
-        validateProperty(id, def, enums, props);
         if (def.type === 'object') {
             const objdef = def as ObjectPropertyDef;
-            !!objdef.props && objdef.props.forEach(def2 => validatePossibleObject(id + '.' + def2.id, def2, enums, props));
+            objdef.props.forEach(def2 => validatePossibleObject(id + '.' + def2.id, def2, enums, props));
+        } else {
+            validateProperty(id, def, enums, props);
         }
     }
 }
@@ -234,7 +223,7 @@ function printPossibleObject(id: string, def: PropertyDef, enums: Enums, indent:
     if (def.type === 'object') {
         const objdef = def as ObjectPropertyDef;
         const maxLen = Math.max(13, Math.min(20, _.max(objdef.props.map(def2 => def2.id.length))));
-        !!objdef.props && objdef.props.forEach(def2 => printPossibleObject(def2.id, def2, enums, indent + 3, maxLen));
+        objdef.props.forEach(def2 => printPossibleObject(def2.id, def2, enums, indent + 3, maxLen));
     }
 }
 
