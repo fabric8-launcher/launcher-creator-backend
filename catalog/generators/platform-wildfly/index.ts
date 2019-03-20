@@ -40,7 +40,7 @@ export default class PlatformWildfly extends BaseGenerator {
         const readinessProbe = {
             'httpGet': {
                 'path': '/health',
-                'port': 9990,
+                'port': 8080,
                 'scheme': 'HTTP'
             },
             'initialDelaySeconds': 5,
@@ -51,7 +51,7 @@ export default class PlatformWildfly extends BaseGenerator {
         const livenessProbe = {
             'httpGet': {
                 'path': '/health',
-                'port': 9990,
+                'port': 8080,
                 'scheme': 'HTTP'
             },
             'initialDelaySeconds': 5,
