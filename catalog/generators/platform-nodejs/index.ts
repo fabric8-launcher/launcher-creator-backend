@@ -1,6 +1,6 @@
 
 import * as _ from 'lodash';
-import { setMemoryResources } from 'core/resources';
+import { setCpuResources, setMemoryResources } from 'core/resources';
 import { cases } from 'core/template/transformers/cases';
 import { enumItem } from 'core/catalog';
 import { BaseGenerator, NodejsCoords, Runtime } from 'core/catalog/types';
@@ -38,7 +38,8 @@ export default class PlatformNodejs extends BaseGenerator {
             await this.transform(['package.json'], cases(props));
         }
         const res = await this.generator(LanguageNodejs).apply(resources, lprops, extra);
-        setMemoryResources(res, { 'limit': '1024Mi' });
+        setMemoryResources(res, { 'limit': '768Mi' });
+        setCpuResources(res, { 'limit': '500m' });
         return res;
     }
 }

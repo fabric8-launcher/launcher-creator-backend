@@ -4,7 +4,7 @@ import {
     newApp,
     newRoute,
     setBuildContextDir,
-    setBuildEnv,
+    setBuildEnv, setCpuResources,
     setDefaultHealthChecks, setDeploymentEnv,
     setMemoryResources
 } from 'core/resources';
@@ -33,6 +33,7 @@ export default class LanguageCSharp extends BaseGenerator {
                 props.env || {});
             setBuildContextDir(res, props.subFolderName);
             setMemoryResources(res, { 'limit': '512M' });
+            setCpuResources(res, { 'limit': '1' });
             setDefaultHealthChecks(res);
             resources.add(res);
             return await newRoute(resources, props.routeName, props.application, props.serviceName);
