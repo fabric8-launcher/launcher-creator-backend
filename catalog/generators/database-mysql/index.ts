@@ -1,5 +1,5 @@
 
-import { newApp, setHealthProbe, setMemoryResources } from 'core/resources';
+import { newApp, setCpuResources, setHealthProbe, setMemoryResources } from 'core/resources';
 import { BaseGenerator, BaseGeneratorExtra, BaseGeneratorProps } from 'core/catalog/types';
 import { DatabaseSecretRef } from 'generators/database-secret';
 import { IMAGE_MYSQL } from 'core/resources/images';
@@ -49,6 +49,7 @@ export default class DatabaseMysql extends BaseGenerator {
                 'MYSQL_PASSWORD': { 'secret': props.secretName, 'key': 'password' }
             });
             setMemoryResources(res, { 'limit': '512Mi' });
+            setCpuResources(res, { 'limit': '1' });
             setHealthProbe(res, 'livenessProbe', livenessProbe);
             setHealthProbe(res, 'readinessProbe', readinessProbe);
             resources.add(res);
