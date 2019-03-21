@@ -34,8 +34,7 @@ export default class LanguageJava extends BaseGenerator {
                 null,
                 props.env || {});
             setBuildContextDir(res, props.subFolderName);
-            setMemoryResources(res, { 'limit': '768Mi' });
-            setCpuResources(res, { 'limit': '1' });
+            setMemoryResources(res, { 'limit': '1G' });
             setDefaultHealthChecks(res);
             resources.add(res);
             return await newRoute(resources, props.routeName, props.application, props.serviceName);
