@@ -8,7 +8,8 @@ import * as HttpStatus from 'http-status-codes';
 export function test(ctx: Context) {
     const get = promisify(request.get);
 
-//    it('Test 1', function() {
-//          // Put test here
-//    });
+    it('HealthCheck', function () {
+        const url = `http://${ctx.routeHost}/`;
+        return get(url).then(res => assert.strictEqual(res.statusCode, HttpStatus.OK));
+    });
 }
