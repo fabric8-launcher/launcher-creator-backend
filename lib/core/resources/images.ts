@@ -6,6 +6,7 @@ export const BUILDER_JAVA = 'registry.access.redhat.com/redhat-openjdk-18/openjd
 export const BUILDER_JAVAEE = 'openshift/wildfly:latest';
 export const BUILDER_NODEJS_APP = 'nodeshift/centos7-s2i-nodejs';
 export const BUILDER_NODEJS_WEB = 'nodeshift/centos7-s2i-web-app';
+export const BUILDER_QUARKUS_NATIVE = 'quay.io/quarkus/centos-quarkus-native-s2i';
 
 export const IMAGE_MYSQL = 'mysql';
 export const IMAGE_POSTGRESQL = 'postgresql';
@@ -49,6 +50,14 @@ export const builderImages: BuilderImage[] = [
             'suggestedEnv': {
                 'ARTIFACT_DIR': 'target'
             }
+        }
+    },
+    {
+        'id': BUILDER_QUARKUS_NATIVE,
+        'name': 'Quarkus.io S2I (GraalVM Native)',
+        'metadata': {
+            'language': 'java',
+            'isBuilder': true
         }
     },
     {
