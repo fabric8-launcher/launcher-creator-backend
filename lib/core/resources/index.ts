@@ -460,7 +460,7 @@ export function setPathHealthChecks(res: Resources,
             'port': 8080,
             'scheme': 'HTTP'
         },
-        'initialDelaySeconds': 5,
+        'initialDelaySeconds': 60,
         'timeoutSeconds': 3
     };
     res = setHealthProbe(res, 'readinessProbe', readinessProbe, dcName);
