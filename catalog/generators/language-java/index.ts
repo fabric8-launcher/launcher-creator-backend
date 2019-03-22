@@ -4,7 +4,7 @@ import {
     newApp,
     newRoute,
     setBuildContextDir,
-    setBuildEnv, setCpuResources,
+    setBuildEnv,
     setDefaultHealthChecks, setDeploymentEnv,
     setMemoryResources
 } from 'core/resources';

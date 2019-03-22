@@ -39,7 +39,7 @@ export default class PlatformNodejs extends BaseGenerator {
         }
         const res = await this.generator(LanguageNodejs).apply(resources, lprops, extra);
         setMemoryResources(res, { 'limit': '768Mi' });
-        setCpuResources(res, { 'limit': '500m' });
+        setCpuResources(res, { 'limit': '1' });
         return res;
     }
 }
