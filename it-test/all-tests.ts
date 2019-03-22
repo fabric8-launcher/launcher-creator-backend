@@ -3,7 +3,7 @@ import * as path from 'path';
 import { dirSync } from 'tmp';
 import { existsSync, readdirSync } from 'fs';
 import { applyDeployment } from 'core/deploy';
-import { getRouteHost, waitForProject } from './ochelpers';
+import { getRouteHost, waitForFirstBuild, waitForProject } from './ochelpers';
 import { findPropertyWithValue, ModuleInfoDef } from 'core/info';
 import { listEnums } from 'core/catalog';
 import {
@@ -141,6 +141,7 @@ function testPart(part: Part) {
                 console.log('      Building project...');
                 runAt(targetDir.name, './gap', 'build');
             }
+            waitForFirstBuild(part);
             console.log('      Pushing project...');
             runAt(targetDir.name, './gap', 'push', '--wait');
             waitForProject(part);
