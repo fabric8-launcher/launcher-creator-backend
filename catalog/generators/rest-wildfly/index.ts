@@ -10,8 +10,6 @@ export default class RestWildfly extends BaseGenerator {
     public async apply(resources, props: RestWildflyProps, extra: any = {}) {
         // Check if the generator was already applied, so we don't do it twice
         if (!await this.filesCopied()) {
-            // First copy the files from the base Vert.x platform module
-            // and then copy our own over that
             const pprops = {
                 'application': props.application,
                 'subFolderName': props.subFolderName,

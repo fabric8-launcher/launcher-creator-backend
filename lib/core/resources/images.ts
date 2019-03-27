@@ -4,6 +4,7 @@ import { Enum } from 'core/catalog/types';
 export const BUILDER_DOTNET = 'registry.access.redhat.com/dotnet/dotnet-22-rhel7';
 export const BUILDER_JAVA = 'registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift';
 export const BUILDER_JAVAEE = 'openshift/wildfly:latest';
+export const BUILDER_JAVAEE_PRO = 'registry.access.redhat.com/jboss-eap-7/eap72-openshift';
 export const BUILDER_NODEJS_APP = 'nodeshift/centos7-s2i-nodejs';
 export const BUILDER_NODEJS_WEB = 'nodeshift/centos7-s2i-web-app';
 
@@ -49,6 +50,15 @@ export const builderImages: BuilderImage[] = [
             'suggestedEnv': {
                 'ARTIFACT_DIR': 'target'
             }
+        }
+    },
+    {
+        'id': BUILDER_JAVAEE_PRO,
+        'name': 'JavaEE Code Builder',
+        'metadata': {
+            'language': 'java',
+            'binaryExt': 'war',
+            'isBuilder': true
         }
     },
     {

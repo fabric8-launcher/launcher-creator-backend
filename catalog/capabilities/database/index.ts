@@ -32,6 +32,7 @@ function runtimeByType(rt: Runtime) {
         case 'thorntail' :  return DatabaseCrudThorntail;
         case 'vertx': return DatabaseCrudVertx;
         case 'wildfly' : return DatabaseCrudWildfly;
+        case 'eap' : return DatabaseCrudWildfly;
         default:
             throw new Error(`Unsupported runtime type: ${rt.name}`);
     }

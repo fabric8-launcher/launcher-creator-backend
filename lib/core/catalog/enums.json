@@ -64,6 +64,16 @@
         "language": "java",
         "website": "https://wildfly.org"
       }
+    },{
+      "id": "eap",
+      "name": "JBoss EAP",
+      "icon": "data:image/svg+xml,%3csvg id='logo' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 500 168'%3e%3cdefs%3e%3cstyle%3e.cls-1%7bfont-size:24px%3bfont-family:Interstate-Black%3b%7d.cls-2%7bletter-spacing:-1px%3b%7d.cls-3%7bfont-size:6px%3b%7d.cls-3%2c.cls-7%7bfont-family:Interstate-Regular%3b%7d.cls-4%7bletter-spacing:-3px%3b%7d.cls-5%7bfont-size:36px%3bfont-family:Interstate-Light%3b%7d.cls-6%7bletter-spacing:-2px%3b%7d.cls-7%7bfont-size:18px%3b%7d%3c/style%3e%3c/defs%3e%3ctitle%3eLogotype_RHJB_EnterpriseAppPlatform_forOpenShift_RGB_Black%3c/title%3e%3ctext class='cls-1' transform='translate(34.3 52.8)'%3eRED H%3ctspan class='cls-2' x='80.18' y='0'%3eA%3c/tspan%3e%3ctspan x='96.91' y='0'%3eT%3c/tspan%3e%3ctspan class='cls-3' x='113.71' y='-12.65'%3e%c2%ae%3c/tspan%3e%3ctspan class='cls-4' x='118.91' y='0'%3e %3c/tspan%3e%3ctspan x='123.71' y='0'%3eJ%3c/tspan%3e%3ctspan x='140.99' y='0'%3eB%3c/tspan%3e%3ctspan x='158.75' y='0'%3eOS%3c/tspan%3e%3ctspan x='193.33' y='0'%3eS%3c/tspan%3e%3ctspan class='cls-3' x='210.35' y='-12.65'%3e%c2%ae%3c/tspan%3e%3ctspan class='cls-5'%3e%3ctspan x='-1.61' y='30'%3eENTERPRISE%3c/tspan%3e%3ctspan x='-1.61' y='60'%3eAPPLI%3c/tspan%3e%3ctspan x='97.79' y='60'%3eC%3c/tspan%3e%3ctspan class='cls-6' x='119.85' y='60'%3eA%3c/tspan%3e%3ctspan x='141.53' y='60'%3eTION PL%3c/tspan%3e%3ctspan class='cls-6' x='274.94' y='60'%3eA%3c/tspan%3e%3ctspan x='296.61' y='60'%3eT%3c/tspan%3e%3ctspan class='cls-2' x='317.78' y='60'%3eF%3c/tspan%3e%3ctspan x='336.5' y='60'%3eORM%3c/tspan%3e%3c/tspan%3e%3ctspan class='cls-7'%3e%3ctspan class='cls-2' x='0.07' y='78'%3eF%3c/tspan%3e%3ctspan x='8.83' y='78'%3eOR OpenShift%3c/tspan%3e%3c/tspan%3e%3c/text%3e%3c/svg%3e",
+      "description": "A classic approach to packaging and running Java EE applications.",
+      "metadata": {
+        "categories": [ "backend" ],
+        "language": "java",
+        "website": "https://developers.redhat.com/products/eap/overview/"
+      }
     },
     {
       "id": "vertx",
@@ -144,6 +154,12 @@
     {
       "id": "community",
       "name": "Community"
+    }
+  ],
+  "runtime.version.eap": [
+    {
+      "id": "redhat",
+      "name": "JBoss EAP"
     }
   ],
   "runtime.version.vertx": [

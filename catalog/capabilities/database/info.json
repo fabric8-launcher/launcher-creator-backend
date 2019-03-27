@@ -41,7 +41,8 @@
             "springboot",
             "thorntail",
             "vertx",
-            "wildfly"
+            "wildfly",
+            "eap"
           ]
         },
         {
@@ -99,7 +100,8 @@
           "springboot",
           "thorntail",
           "wildfly",
-          "quarkus"
+          "quarkus",
+          "eap"
         ]
       },
       "type": "object",

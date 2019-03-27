@@ -19,6 +19,7 @@ function runtimeByType(rt: Runtime) {
         case 'thorntail' :  return PlatformThorntail;
         case 'vertx': return PlatformVertx;
         case 'wildfly' : return PlatformWildfly;
+        case 'eap' : return PlatformWildfly;
         default:
             throw new Error(`Unsupported runtime type: ${rt.name}`);
     }
