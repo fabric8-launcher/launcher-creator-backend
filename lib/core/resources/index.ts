@@ -356,7 +356,7 @@ function convertObjectToEnvWithRefs(env) {
 // case they are references to keys in a ConfigMap or a Secret.
 export function setBuildEnv(res: Resources, env, bcName?: any): Resources {
     if (!!env && res.buildConfigs.length > 0) {
-        const bc = (bcName) ? res.buildConfig(bcName) : res.buildConfigs[0];
+        const bc = (!!bcName) ? res.buildConfig(bcName) : res.buildConfigs[0];
         const bcss = _.get(bc, 'spec.strategy.sourceStrategy');
         if (!!bcss) {
             bcss.env = mergeEnv(bcss.env, convertObjectToEnvWithRefs(env));
@@ -371,7 +371,7 @@ export function setBuildEnv(res: Resources, env, bcName?: any): Resources {
 // case they are references to keys in a ConfigMap or a Secret.
 export function setDeploymentEnv(res: Resources, env, dcName?: any): Resources {
     if (!!env && res.deploymentConfigs.length > 0) {
-        const dc = (dcName) ? res.deploymentConfig(dcName) : res.deploymentConfigs[0];
+        const dc = (!!dcName) ? res.deploymentConfig(dcName) : res.deploymentConfigs[0];
         const dcc = _.get(dc, 'spec.template.spec.containers[0]');
         if (!!dcc) {
             dcc.env = mergeEnv(dcc.env, convertObjectToEnvWithRefs(env));
@@ -384,7 +384,7 @@ export function setDeploymentEnv(res: Resources, env, dcName?: any): Resources {
 // by 'bcName' with the given path.
 export function setBuildContextDir(res: Resources, contextDir: string, bcName?: any): Resources {
     if (!!contextDir && res.buildConfigs.length > 0) {
-        const bc = (bcName) ? res.buildConfig(bcName) : res.buildConfigs[0];
+        const bc = (!!bcName) ? res.buildConfig(bcName) : res.buildConfigs[0];
         if (!!bc) {
             _.set(bc, 'spec.source.contextDir', contextDir);
         }
@@ -399,7 +399,7 @@ export interface ComputeResource {
 
 function setComputeResources_(res: Resources, name: string, compres: ComputeResource, dcName?: any): Resources {
     if (res.deploymentConfigs.length > 0) {
-        const dc = (dcName) ? res.deploymentConfig(dcName) : res.deploymentConfigs[0];
+        const dc = (!!dcName) ? res.deploymentConfig(dcName) : res.deploymentConfigs[0];
         const dcc = _.get(dc, 'spec.template.spec.containers[0]');
         if (!!name && !!compres && !!dcc) {
             if (!!compres.request) {
@@ -428,7 +428,7 @@ export function setMemoryResources(res: Resources, memory: ComputeResource, dcNa
 // Sets the given health check probe for the DeploymentConfig selected by 'dcName'.
 export function setHealthProbe(res: Resources, probeName: string, probe: object, dcName?: any): Resources {
     if (!!probe && res.deploymentConfigs.length > 0) {
-        const dc = (dcName) ? res.deploymentConfig(dcName) : res.deploymentConfigs[0];
+        const dc = (!!dcName) ? res.deploymentConfig(dcName) : res.deploymentConfigs[0];
         const dcc = _.get(dc, 'spec.template.spec.containers[0]');
         if (!!probeName && !!probe && !!dcc) {
             dcc[probeName] = probe;
@@ -471,7 +471,7 @@ export function setPathHealthChecks(res: Resources,
 // Sets the default health checks for the DeploymentConfig selected by 'dcName'.
 // Both the readiness and the liveness check will use `/health`.
 export function setDefaultHealthChecks(res: Resources, dcName?: any): Resources {
-    return setPathHealthChecks(res, '/health', '/health');
+    return setPathHealthChecks(res, '/health', '/health', dcName);
 }
 
 // Sets the "app" label on all resources to the given value
