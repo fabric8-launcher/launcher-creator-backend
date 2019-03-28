@@ -39,7 +39,6 @@ export default class PlatformNodejs extends BaseGenerator {
         }
         await this.generator(LanguageNodejs).apply(resources, lprops, extra);
         setMemoryResources(resources, { 'limit': '768Mi' }, props.serviceName);
-        setCpuResources(resources, { 'limit': '1' }, props.serviceName);
         setPathHealthChecks(resources, '/', '/', props.serviceName);
         return resources;
     }
