@@ -7,6 +7,7 @@ import { BUILDER_NODEJS_WEB } from 'core/resources/images';
 
 import PlatformBaseSupport from 'generators/platform-base-support';
 import LanguageNodejs, { LanguageNodejsExtra, LanguageNodejsProps } from 'generators/language-nodejs';
+import { setCpuResources, setMemoryResources, setPathHealthChecks } from "core/resources";
 
 export interface PlatformReactProps extends LanguageNodejsProps {
     nodejs: NodejsCoords;
@@ -35,6 +36,10 @@ export default class PlatformReact extends BaseGenerator {
             await this.copy();
             await this.transform(['package.json'], cases(props));
         }
-        return await this.generator(LanguageNodejs).apply(resources, lprops, extra);
+        await this.generator(LanguageNodejs).apply(resources, lprops, extra);
+        setMemoryResources(resources, { 'limit': '100Mi' }, props.serviceName);
+        setCpuResources(resources, { 'limit': '200m' }, props.serviceName);
+        setPathHealthChecks(resources, '/', '/', props.serviceName);
+        return resources
     }
 }

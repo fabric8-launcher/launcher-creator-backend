@@ -1,6 +1,6 @@
 
 import * as _ from 'lodash';
-import { setBuildEnv, setDeploymentEnv } from 'core/resources';
+import { setDefaultHealthChecks, setMemoryResources } from 'core/resources';
 import { enumItem } from 'core/catalog';
 import { BaseGenerator, BasePlatformExtra, DotNetCoords } from 'core/catalog/types';
 import { BUILDER_DOTNET } from 'core/resources/images';
@@ -38,8 +38,10 @@ export default class PlatformDotNet extends BaseGenerator {
             await this.transform('**/*.cs', cases(props));
             await this.transform('files.csproj', cases(props));
             await this.move('files.csproj', props.application + '.csproj');
-
         }
-        return await this.generator(LanguageCSharp).apply(resources, lprops, extra);
+        await this.generator(LanguageCSharp).apply(resources, lprops, extra);
+        setMemoryResources(resources, { 'limit': '512M' }, props.serviceName);
+        setDefaultHealthChecks(resources, props.serviceName);
+        return resources
     }
 }

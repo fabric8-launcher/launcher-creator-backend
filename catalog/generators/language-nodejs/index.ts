@@ -5,9 +5,7 @@ import {
     newApp,
     newRoute,
     setBuildContextDir,
-    setBuildEnv, setCpuResources, setDeploymentEnv,
-    setMemoryResources,
-    setPathHealthChecks
+    setBuildEnv, setDeploymentEnv
 } from 'core/resources';
 import { BUILDER_NODEJS_APP } from 'core/resources/images';
 
@@ -34,9 +32,6 @@ export default class LanguageNodejs extends BaseGenerator {
                 null,
                 props.env || {});
             setBuildContextDir(res, props.subFolderName);
-            setMemoryResources(res, { 'limit': '100Mi' });
-            setCpuResources(res, { 'limit': '200m' });
-            setPathHealthChecks(res, '/', '/');
             resources.add(res);
             return await newRoute(resources, props.routeName, props.application, props.serviceName);
         } else {

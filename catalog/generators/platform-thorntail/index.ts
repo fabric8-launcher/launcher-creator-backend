@@ -7,6 +7,7 @@ import { BUILDER_JAVA } from 'core/resources/images';
 import PlatformBaseSupport from 'generators/platform-base-support';
 import LanguageJava, { LanguageJavaProps } from 'generators/language-java';
 import MavenSetup, { MavenSetupProps } from 'generators/maven-setup';
+import { setDefaultHealthChecks, setMemoryResources } from "core/resources";
 
 export interface PlatformThorntailProps extends LanguageJavaProps, MavenSetupProps {
 }
@@ -35,6 +36,8 @@ export default class PlatformThorntail extends BaseGenerator {
             await this.copy();
         }
         await this.generator(LanguageJava).apply(resources, lprops, extra);
+        setMemoryResources(resources, { 'limit': '1G' }, props.serviceName);
+        setDefaultHealthChecks(resources, props.serviceName);
         return await this.generator(MavenSetup).apply(resources, props, extra);
     }
 }

@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 import { enumItem } from 'core/catalog';
 import { BaseGenerator, BasePlatformExtra } from 'core/catalog/types';
 import { BUILDER_JAVA } from 'core/resources/images';
-import { setMemoryResources } from 'core/resources';
+import { setDefaultHealthChecks, setMemoryResources } from 'core/resources';
 
 import PlatformBaseSupport from 'generators/platform-base-support';
 import LanguageJava, { LanguageJavaProps } from 'generators/language-java';
@@ -36,8 +36,9 @@ export default class PlatformQuarkus extends BaseGenerator {
             await this.copy();
         }
         await this.generator(LanguageJava).apply(resources, lprops, extra);
+        setMemoryResources(resources, { 'limit': '1G' }, props.serviceName);
+        setDefaultHealthChecks(resources, props.serviceName);
         await this.generator(MavenSetup).apply(resources, props, extra);
-        setMemoryResources(resources, { 'limit': '512Mi' });
         return resources;
     }
 }
