@@ -130,7 +130,10 @@ export function runAt(cwd, cmd, ...args: string[]) {
                 console.error('OUT:', out);
                 console.error('ERR:', err);
             }
-            throw new Error(`Command '${cmd} ${args.join(' ')}' failed with error code: ${proc.status}\nOUT: ${out}\nERR: ${err}`);
+            const ex = new Error(`Command '${cmd} ${args.join(' ')}' failed with error code: ${proc.status}\nOUT: ${out}\nERR: ${err}`);
+            ex['stdout'] = out;
+            ex['stderr'] = err;
+            throw ex;
         }
         return proc.stdout.toString();
     } else {

@@ -12,7 +12,7 @@ export function waitForFirstBuild(part: Part) {
             process.stdout.write(' ok\n');
             break;
         } catch (e) {
-            if (e.toString().toLowerCase().indexOf('notfound') < 0) {
+            if (e.toString().toLowerCase().indexOf('(notfound)') < 0) {
                 process.stdout.write(' failed\n');
                 throw e;
             }
@@ -47,7 +47,7 @@ function waitForDeployment(part: Part) {
             process.stdout.write(' ok\n');
             break;
         } catch (e) {
-            if (e.toString().toLowerCase().indexOf('timeout') < 0) {
+            if (e.toString().toLowerCase().indexOf('error: timed out') < 0) {
                 process.stdout.write(' failed\n');
                 throw e;
             }
