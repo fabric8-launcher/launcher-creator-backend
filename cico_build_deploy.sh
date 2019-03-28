@@ -68,7 +68,7 @@ mkdir ${TARGET_DIR}/ node_modules/
 
 docker run --detach=true --name ${BUILDER_CONT} -t -v $(pwd)/${TARGET_DIR}:/${TARGET_DIR}:Z -v $(pwd)/node_modules:/node_modules ${BUILDER_IMAGE} /bin/tail -f /dev/null #FIXME
 
-docker exec -u root ${BUILDER_CONT} yarn install
+docker exec -u root ${BUILDER_CONT} npx yarn install
 docker exec -u root ${BUILDER_CONT} cp -r ${TARGET_DIR}/ /
 docker exec -u root ${BUILDER_CONT} cp -r node_modules/ /
 
