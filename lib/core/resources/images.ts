@@ -43,7 +43,10 @@ export const builderImages: BuilderImage[] = [
         'metadata': {
             'language': 'java',
             'binaryExt': 'war',
-            'isBuilder': true
+            'isBuilder': true,
+            'suggestedEnv': {
+                'ARTIFACT_DIR': 'target'
+            }
         }
     },
     {
