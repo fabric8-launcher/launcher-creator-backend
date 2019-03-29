@@ -3,6 +3,7 @@ import { pathExists, readFile, remove } from 'fs-extra';
 import { join } from 'path';
 import * as tmp from 'tmp-promise';
 import { spawn } from 'child-process-promise';
+import * as streamToString from 'stream-to-string';
 import * as fg from 'fast-glob';
 
 import {
@@ -73,4 +74,38 @@ export async function determineBuilderImageFromGit(gitRepoUrl: string, gitRepoBr
     const bi = await determineBuilderImage(td.path);
     td.cleanup();
     return bi;
+}
+
+export async function listBranchesFromGit(gitRepoUrl: string): Promise<string[]> {
+    // Git the list of branches and tags from the remote Git repository
+    const proc = spawn('git',
+        [
+            // Work-around for problem in older Gits
+            // https://github.com/git/git/commit/92bcbb9b338dd27f0fd4245525093c4bce867f3d
+            '-c', 'user.name=dummy',
+            '-c', 'user.email=dummy',
+            // Work-around to force Git never to ask for passwords
+            '-c', 'core.askPass=/bin/echo',
+            'ls-remote',
+            '-ht',
+            '--ref',
+            gitRepoUrl
+        ]);
+    proc.catch((error) => {
+        console.error(`Spawn error: ${error}`);
+        throw error;
+    });
+    return streamToString(proc.childProcess.stdout)
+        .then(output => {
+            const regex = /refs\/.*?\/(.*)/gm;
+            const result = [];
+            let m;
+            while ((m = regex.exec(output)) !== null) {
+                if (m.index === regex.lastIndex) {
+                    regex.lastIndex++;
+                }
+                result.push(m[1]);
+            }
+            return result;
+        });
 }

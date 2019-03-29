@@ -144,6 +144,29 @@ paths:
           description: Bad Request
         '401':
           description: Unauthorized
+  /import/branches:
+    get:
+      summary: Lists all available branches and tags for the given Git repository
+      description: >-
+        Takes a Git repositor URL and returns the names of all the branches and tags
+      tags:
+        - import
+      parameters:
+        - name: gitImportUrl
+          in: query
+          required: true
+          schema:
+            type: string
+          description: The URL to the Git repository
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
   /import/analyze:
     get:
       summary: Analyzes the given Git repository and returns what S2I builder image to use

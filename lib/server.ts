@@ -14,7 +14,7 @@ import * as catalog from 'core/catalog';
 import * as deploy from 'core/deploy';
 import { zipFolder } from 'core/utils';
 import { ApplicationDescriptor, DeploymentDescriptor } from 'core/catalog/types';
-import { determineBuilderImageFromGit } from 'core/analysis';
+import { determineBuilderImageFromGit, listBranchesFromGit } from 'core/analysis';
 import { builderImages } from 'core/resources/images';
 
 tmp.setGracefulCleanup();
@@ -150,6 +150,21 @@ router.post('/launch', async (req, res, next) => {
         'applications': [lreq.project]
     };
     await performLaunch(req, res, lreq, deployment);
+});
+
+router.get('/import/branches', async (req, res, next) => {
+    // Make sure we have all the required inputs
+    if (!req.query.gitImportUrl) {
+        sendReply(res, HttpStatus.BAD_REQUEST, 'Malformed request, missing gitImportUrl');
+        return false;
+    }
+    try {
+        const result = await listBranchesFromGit(req.query.gitImportUrl);
+        res.status(HttpStatus.OK).send(result);
+    } catch (ex) {
+        // TODO: Call catch(next)
+        sendReply(res, HttpStatus.INTERNAL_SERVER_ERROR, `Error analyzing repository '${req.query.gitImportUrl}'`);
+    }
 });
 
 router.get('/import/analyze', async (req, res, next) => {
