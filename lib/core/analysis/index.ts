@@ -89,8 +89,8 @@ export async function listBranchesFromGit(gitRepoUrl: string): Promise<string[]>
             // Work-around to force Git never to ask for passwords
             '-c', 'core.askPass=/bin/echo',
             'ls-remote',
-            '-ht',
-            '--ref',
+            '--heads',
+            '--tags',
             gitRepoUrl
         ]);
     proc.catch((error) => {
@@ -106,7 +106,9 @@ export async function listBranchesFromGit(gitRepoUrl: string): Promise<string[]>
                 if (m.index === regex.lastIndex) {
                     regex.lastIndex++;
                 }
-                result.push(m[1]);
+                if (!m[1].endsWith('^{}')) {
+                    result.push(m[1]);
+                }
             }
             return result;
         });
