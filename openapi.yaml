@@ -182,7 +182,7 @@ paths:
           schema:
             type: string
           description: The URL to the Git repository to analyze
-        - name: gitImporBranch
+        - name: gitImportBranch
           in: query
           schema:
             type: string
@@ -213,6 +213,11 @@ paths:
           required: true
           schema:
             type: string
+        - name: gitImportBranch
+          in: query
+          schema:
+            type: string
+          description: The branch of the Git repository to analyze (defaults to "master")
         - name: builderImage
           in: query
           description: The name of the image to use for building and running the code
