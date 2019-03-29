@@ -159,6 +159,11 @@ paths:
           schema:
             type: string
           description: The URL to the Git repository to analyze
+        - name: gitImporBranch
+          in: query
+          schema:
+            type: string
+          description: The branch of the Git repository to analyze (defaults to "master")
       responses:
         '200':
           description: OK

@@ -19,6 +19,7 @@ export default class Import extends BaseCapability {
             'nodejs': props.nodejs,
             'dotnet': props.dotnet,
             'gitImportUrl': props.gitImportUrl,
+            'gitImportBranch': props.gitImportBranch,
             'builderImage': props.builderImage,
             'builderLanguage': props.builderLanguage,
             'env': props.env,

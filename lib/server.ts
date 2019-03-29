@@ -160,7 +160,7 @@ router.get('/import/analyze', async (req, res, next) => {
     }
     try {
         // From the code we determine the builder image to use
-        const image = await determineBuilderImageFromGit(req.query.gitImportUrl);
+        const image = await determineBuilderImageFromGit(req.query.gitImportUrl, req.query.gitImportBranch);
         const result = {
             'image': !!image ? image.id : null,
             'builderImages': builderImages
@@ -168,13 +168,14 @@ router.get('/import/analyze', async (req, res, next) => {
         res.status(HttpStatus.OK).send(result);
     } catch (ex) {
         // TODO: Call catch(next)
-        sendReply(res, HttpStatus.INTERNAL_SERVER_ERROR, `Error analyzing repository '${req.query.gitImportUrl}'`);
+        sendReply(res, HttpStatus.INTERNAL_SERVER_ERROR, `Error analyzing repository '${req.query.gitImportUrl}' with branch '${req.query.gitImportBranch || "master"}'`);
     }
 });
 
 interface ImportLaunchRequest extends DeployRequest {
     applicationName: string;
     gitImportUrl: string;
+    gitImportBranch?: string;
     builderImage?: string;
 }
 
@@ -208,7 +209,8 @@ router.post('/import/launch', async (req, res, next) => {
                             {
                                 'module': 'import',
                                 'props': {
-                                    'gitImportUrl': ilreq.gitImportUrl
+                                    'gitImportUrl': ilreq.gitImportUrl,
+                                    'gitImportBranch': ilreq.gitImportBranch
                                 }
                             }
                         ]

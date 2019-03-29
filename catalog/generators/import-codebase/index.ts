@@ -22,6 +22,7 @@ function languageByBuilder(builder: BuilderImage) {
 
 export interface ImportCodebaseProps extends BaseGeneratorProps {
     gitImportUrl: string;
+    gitImportBranch?: string;
     builderImage?: string;
     builderLanguage?: string;
     env?: object,
@@ -43,7 +44,7 @@ export default class ImportCodebase extends BaseGenerator {
                 image = await determineBuilderImageFromGit(props.gitImportUrl);
             }
         } else {
-            await cloneGitRepo(props.gitImportUrl, this.targetDir);
+            await cloneGitRepo(this.targetDir, props.gitImportUrl, props.gitImportBranch);
             if (!image) {
                 image = await determineBuilderImage(this.targetDir);
             }

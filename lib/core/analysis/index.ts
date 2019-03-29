@@ -37,7 +37,7 @@ export function isJavaee(pom: string): boolean {
     return pom.indexOf('<packaging>war</packaging>') >= 0 && pom.indexOf('thorntail') < 0;
 }
 
-export async function cloneGitRepo(gitRepoUrl: string, targetDir: string): Promise<any> {
+export async function cloneGitRepo(targetDir: string, gitRepoUrl: string, gitRepoBranch?: string): Promise<any> {
     // Shallow-clone the repository
     return await spawn('git',
         [
@@ -50,6 +50,8 @@ export async function cloneGitRepo(gitRepoUrl: string, targetDir: string): Promi
             '-ccore.askPass',
             gitRepoUrl,
             '--depth=1',
+            '--single-branch',
+            `--branch=${gitRepoBranch || 'master'}`,
             targetDir
         ])
         .catch((error) => {
@@ -62,11 +64,11 @@ export async function removeGitFolder(targetDir: string): Promise<void> {
     await remove(join(targetDir, '.git'));
 }
 
-export async function determineBuilderImageFromGit(gitRepoUrl: string): Promise<BuilderImage> {
+export async function determineBuilderImageFromGit(gitRepoUrl: string, gitRepoBranch?: string): Promise<BuilderImage> {
     // Create temp dir
     const td = await tmp.dir({ 'unsafeCleanup': true });
     // Shallow-clone the repository
-    await cloneGitRepo(gitRepoUrl, td.path.toString());
+    await cloneGitRepo(td.path.toString(), gitRepoUrl, gitRepoBranch);
     // From the code we determine the builder image to use
     const bi = await determineBuilderImage(td.path);
     td.cleanup();
