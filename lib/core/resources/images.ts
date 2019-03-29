@@ -14,9 +14,9 @@ export const MARKER_BOOSTER_IMPORT = '#booster-import#';
 
 export interface BuilderImage extends Enum {
     'metadata'?: {
-        'language': string,
+        'language'?: string,
         'binaryExt'?: string
-        'isBuilder': boolean
+        'isBuilder'?: boolean
         'suggestedEnv'?: object
     };
 }
