@@ -12,14 +12,16 @@ import {
     BUILDER_JAVAEE,
     BUILDER_NODEJS_APP,
     builderById,
-    BuilderImage
+    BuilderImage, markerBoosterImport
 } from 'core/resources/images';
 
 export async function determineBuilderImage(dir: string): Promise<BuilderImage> {
     if (!pathExists(dir)) {
         throw new Error('Directory doesn\'t exist');
     }
-    if (await pathExists(join(dir, 'pom.xml'))) {
+    if (await pathExists(join(dir, '.openshiftio/application.yaml'))) {
+        return markerBoosterImport;
+    } else if (await pathExists(join(dir, 'pom.xml'))) {
         if (isJavaee(await readFile(join(dir, 'pom.xml'), 'utf8')) ) {
             return builderById(BUILDER_JAVAEE);
         }

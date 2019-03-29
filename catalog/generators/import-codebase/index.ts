@@ -1,11 +1,13 @@
 
 import { BaseGenerator, BaseGeneratorProps } from 'core/catalog/types';
-import { builderById, builderByLanguage, BuilderImage } from 'core/resources/images';
+import { builderById, builderByLanguage, BuilderImage, MARKER_BOOSTER_IMPORT } from 'core/resources/images';
 import { cloneGitRepo, determineBuilderImage, determineBuilderImageFromGit, removeGitFolder } from 'core/analysis';
 
 import LanguageJava from 'generators/language-java';
 import LanguageNodejs from 'generators/language-nodejs';
 import LanguageCSharp from 'generators/language-csharp';
+import { readResources } from "core/deploy";
+import { setBuildEnv, setDeploymentEnv } from "core/resources";
 
 // Returns the corresponding language generator depending on the given builder image
 function languageByBuilder(builder: BuilderImage) {
@@ -52,12 +54,19 @@ export default class ImportCodebase extends BaseGenerator {
                 await removeGitFolder(this.targetDir);
             }
         }
-        const lprops = {
-            ...props,
-            'builderImage': image.id,
-            'binaryExt': image.metadata.binaryExt
-        };
-        const res = await this.generator(languageByBuilder(image)).apply(resources, lprops, extra);
+        let res;
+        if (image.id === MARKER_BOOSTER_IMPORT) {
+            res = await readResources(this.join(this.targetDir, '.openshiftio/application.yaml'))
+            setBuildEnv(res, props.env);
+            setDeploymentEnv(res, props.env);
+        } else {
+            const lprops = {
+                ...props,
+                'builderImage': image.id,
+                'binaryExt': image.metadata.binaryExt
+            };
+            res = await this.generator(languageByBuilder(image)).apply(resources, lprops, extra);
+        }
         const param = res.parameter('SOURCE_REPOSITORY_URL');
         if (!!param) {
             param.value = props.gitImportUrl;

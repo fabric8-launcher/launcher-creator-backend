@@ -178,7 +178,7 @@ router.get('/import/analyze', async (req, res, next) => {
         const image = await determineBuilderImageFromGit(req.query.gitImportUrl, req.query.gitImportBranch);
         const result = {
             'image': !!image ? image.id : null,
-            'builderImages': builderImages
+            'builderImages': [ image, ...builderImages.filter(bi => bi.id !== image.id) ]
         };
         res.status(HttpStatus.OK).send(result);
     } catch (ex) {

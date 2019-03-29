@@ -10,6 +10,8 @@ export const BUILDER_NODEJS_WEB = 'nodeshift/centos7-s2i-web-app';
 export const IMAGE_MYSQL = 'mysql';
 export const IMAGE_POSTGRESQL = 'postgresql';
 
+export const MARKER_BOOSTER_IMPORT = '#booster-import#';
+
 export interface BuilderImage extends Enum {
     'metadata'?: {
         'language': string,
@@ -85,6 +87,11 @@ export const images: BuilderImage[] = [
     ...databaseImages,
     ...builderImages
 ];
+
+export const markerBoosterImport: BuilderImage = {
+    'id': MARKER_BOOSTER_IMPORT,
+    'name': 'Launcher Example Application'
+};
 
 export function builderById(builderId: string): BuilderImage {
     return builderImages.find(e => e.id === builderId);
