@@ -180,11 +180,7 @@
                 "image": "placeholder-app-name-730040e0c873453f877c10cd07912d1f:latest",
                 "ports": [
                   {
-                    "containerPort": 5000,
-                    "protocol": "TCP"
-                  },
-                  {
-                    "containerPort": 5001,
+                    "containerPort": 8080,
                     "protocol": "TCP"
                   }
                 ],
