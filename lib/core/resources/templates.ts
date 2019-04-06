@@ -44,7 +44,7 @@ const buildTriggers = [{
 }];
 
 function normalizeImageName(img: string) {
-    return img.replace(/\//g, '_');
+    return img.replace(/[\/:]/g, '_');
 }
 
 function templateFileName(img: string) {
