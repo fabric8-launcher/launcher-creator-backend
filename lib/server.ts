@@ -319,6 +319,8 @@ async function performLaunch(req, res, dreq: DeployRequest, deployment: Deployme
             if (!!dreq.clusterId) {
                 headers['X-OpenShift-Cluster'] = dreq.clusterId;
             }
+            headers['X-OpenShift-Authorization'] = req.headers['X-OpenShift-Authorization'];
+            headers['X-Git-Authorization'] = req.headers['X-Git-Authorization'];
             const backendUrl = process.env.LAUNCHER_BACKEND_URL || 'http://localhost:8080/api';
             const url = backendUrl + '/launcher/upload';
             const options = {
