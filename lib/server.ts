@@ -315,7 +315,7 @@ async function performLaunch(req, res, dreq: DeployRequest, deployment: Deployme
             const auth = {
                 'bearer': req.get('Authorization').slice(7)
             };
-            const headers = req.headers;
+            const headers = {};
             if (!!dreq.clusterId) {
                 headers['X-OpenShift-Cluster'] = dreq.clusterId;
             }
