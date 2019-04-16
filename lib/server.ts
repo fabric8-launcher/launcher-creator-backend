@@ -328,16 +328,20 @@ async function performLaunch(req, res, dreq: DeployRequest, deployment: Deployme
                 headers
             };
             request.post(options, (err2, res2, body) => {
-                console.info(`${timestamp()} Pushed project "${deployment.applications[0].application}" to ${url} - ${res2.statusCode}`);
                 let json = null;
                 try {
                     json = JSON.parse(body);
                 } catch (e) { /* ignore parse errors */
                 }
                 if (!err2 && res2.statusCode === HttpStatus.OK) {
+                    console.info(`${timestamp()} Pushed project "${deployment.applications[0].application}" to ${url} - ${res2.statusCode}`);
                     sendReply(res, HttpStatus.OK, json || body);
+                } else if (!err2 && res2.statusCode !== HttpStatus.OK) {
+                    console.info(`${timestamp()} Error pushing project "${deployment.applications[0].application}" to ${url} - ${res2.statusCode}`);
+                    sendReply(res, res2.statusCode, json || res2.statusMessage);
                 } else {
-                    sendReply(res, res2.statusCode, json || err2 || res2.statusMessage);
+                    console.info(`${timestamp()} Error pushing project "${deployment.applications[0].application}" to ${url} - ${err2}`);
+                    sendReply(res, HttpStatus.INTERNAL_SERVER_ERROR, json || err2);
                 }
                 td.cleanup();
             });
