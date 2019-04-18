@@ -9,7 +9,13 @@
         "categories": [ "backend" ],
         "language": "csharp",
         "website": "https://docs.microsoft.com/en-us/dotnet/core"
-      }
+      },
+      "versions": [
+        {
+          "id": "community",
+          "name": "Community"
+        }
+      ]
     },
     {
       "id": "nodejs",
@@ -20,7 +26,13 @@
         "categories": [ "backend" ],
         "language": "javascript",
         "website": "https://nodejs.org"
-      }
+      },
+      "versions": [
+        {
+          "id": "community",
+          "name": "Community"
+        }
+      ]
     },
     {
       "id": "quarkus",
@@ -31,7 +43,13 @@
         "categories": [ "backend" ],
         "language": "java",
         "website": "https://quarkus.io/"
-      }
+      },
+      "versions": [
+        {
+          "id": "community",
+          "name": "Community"
+        }
+      ]
     },
     {
       "id": "springboot",
@@ -42,7 +60,13 @@
         "categories": [ "backend" ],
         "language": "java",
         "website": "https://spring.io/projects/spring-boot"
-      }
+      },
+      "versions": [
+        {
+          "id": "community",
+          "name": "Community"
+        }
+      ]
     },
     {
       "id": "thorntail",
@@ -53,7 +77,13 @@
         "categories": [ "backend" ],
         "language": "java",
         "website": "https://thorntail.io"
-      }
+      },
+      "versions": [
+        {
+          "id": "community",
+          "name": "Community"
+        }
+      ]
     },{
       "id": "wildfly",
       "name": "WildFly",
@@ -63,7 +93,13 @@
         "categories": [ "backend" ],
         "language": "java",
         "website": "https://wildfly.org"
-      }
+      },
+      "versions": [
+        {
+          "id": "community",
+          "name": "Community"
+        }
+      ]
     },
     {
       "id": "vertx",
@@ -74,7 +110,13 @@
         "categories": [ "backend" ],
         "language": "java",
         "website": "https://projects.eclipse.org/projects/rt.vertx"
-      }
+      },
+      "versions": [
+        {
+          "id": "community",
+          "name": "Community"
+        }
+      ]
     },
     {
       "id": "react",
@@ -85,7 +127,13 @@
         "categories": [ "frontend" ],
         "language": "javascript",
         "website": "https://reactjs.org"
-      }
+      },
+      "versions": [
+        {
+          "id": "community",
+          "name": "Community"
+        }
+      ]
     },
     {
       "id": "angular",
@@ -96,7 +144,13 @@
         "categories": [ "frontend" ],
         "language": "javascript",
         "website": "https://angular.io"
-      }
+      },
+      "versions": [
+        {
+          "id": "community",
+          "name": "Community"
+        }
+      ]
     },
     {
       "id": "vuejs",
@@ -107,67 +161,13 @@
         "categories": [ "frontend" ],
         "language": "javascript",
         "website": "https://vuejs.org"
-      }
-    }
-  ],
-  "runtime.version.dotnet": [
-    {
-      "id": "community",
-      "name": "Community"
-    }
-  ],
-  "runtime.version.nodejs": [
-    {
-      "id": "community",
-      "name": "Community"
-    }
-  ],
-  "runtime.version.quarkus": [
-    {
-      "id": "community",
-      "name": "Community"
-    }
-  ],
-  "runtime.version.springboot": [
-    {
-      "id": "community",
-      "name": "Community"
-    }
-  ],
-  "runtime.version.thorntail": [
-    {
-      "id": "community",
-      "name": "Community"
-    }
-  ],
-  "runtime.version.wildfly": [
-    {
-      "id": "community",
-      "name": "Community"
-    }
-  ],
-  "runtime.version.vertx": [
-    {
-      "id": "community",
-      "name": "Community"
-    }
-  ],
-  "runtime.version.angular": [
-    {
-      "id": "community",
-      "name": "Community"
-    }
-  ],
-  "runtime.version.react": [
-    {
-      "id": "community",
-      "name": "Community"
-    }
-  ],
-  "runtime.version.vuejs": [
-    {
-      "id": "community",
-      "name": "Community"
+      },
+      "versions": [
+        {
+          "id": "community",
+          "name": "Community"
+        }
+      ]
     }
   ],
   "databaseType": [
