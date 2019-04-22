@@ -196,10 +196,6 @@ interface ImportLaunchRequest extends DeployRequest {
     builderImage?: string;
 }
 
-function isImportLaunchRequest(obj: any): obj is ImportLaunchRequest {
-    return 'applicationName' in obj && 'gitImportUrl' in obj;
-}
-
 router.post('/import/launch', async (req, res, next) => {
     // Make sure we're authenticated
     if (!req.get('Authorization')) {
