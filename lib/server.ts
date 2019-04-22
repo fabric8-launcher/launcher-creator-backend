@@ -12,7 +12,7 @@ import * as Sentry from 'raven';
 
 import * as catalog from 'core/catalog';
 import * as deploy from 'core/deploy';
-import { zipFolder } from 'core/utils';
+import { getFilteredEnums, zipFolder } from 'core/utils';
 import { ApplicationDescriptor, DeploymentDescriptor } from 'core/catalog/types';
 import { determineBuilderImageFromGit, listBranchesFromGit } from 'core/analysis';
 import { builderImages } from 'core/resources/images';
@@ -61,13 +61,15 @@ router.get('/generators', (req, res) => {
 });
 
 router.get('/enums', (req, res) => {
-    res.status(HttpStatus.OK).send(catalog.listEnums());
+    const rtFilter = process.env.CREATOR_RUNTIME_FILTER || '';
+    res.status(HttpStatus.OK).send(getFilteredEnums(rtFilter));
 });
 
 router.get('/enums/:id', (req, res) => {
-        const id = req.params.id;
-        const enumdef = catalog.listEnums()[id] || [];
-        res.status(HttpStatus.OK).send(enumdef);
+    const rtFilter = process.env.CREATOR_RUNTIME_FILTER || '';
+    const id = req.params.id;
+    const enumdef = getFilteredEnums(rtFilter)[id] || [];
+    res.status(HttpStatus.OK).send(enumdef);
 });
 
 router.get('/download', (req, res, next) => {

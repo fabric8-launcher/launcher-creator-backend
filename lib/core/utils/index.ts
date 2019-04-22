@@ -2,6 +2,9 @@
 import * as path from 'path';
 import * as Archiver from 'archiver';
 import { createReadStream, createWriteStream, readdir, statSync, Stats } from 'fs-extra';
+import * as catalog from "core/catalog";
+import * as HttpStatus from "http-status-codes";
+import { Enums } from "core/catalog/types";
 
 function log(res, ...args) {
     console.log(...args);
@@ -103,4 +106,29 @@ export function appendFile(to: string, from: string) {
             resolve(to);
         });
     });
+}
+
+export function getFilteredRuntimeIds(rtFilter: String = '') {
+    let runtimeIds = catalog.listEnums()['runtime.name'].map(rt => rt.id);
+    if (rtFilter !== '') {
+        let negate = false;
+        if (rtFilter.trimLeft().startsWith('!')) {
+            negate = true;
+            rtFilter = rtFilter.trimLeft().substr(1)
+        }
+        const rtFilterParts = rtFilter.split(',').map(rtf => rtf.trim());
+        runtimeIds = runtimeIds.filter(id => (negate) ? !rtFilterParts.includes(id) : rtFilterParts.includes(id))
+    }
+    return runtimeIds;
+}
+
+export function getFilteredEnums(rtFilter: String = ''): Enums {
+    const enums = { ...catalog.listEnums() };
+    if (rtFilter !== '') {
+        const runtimeIds = getFilteredRuntimeIds(rtFilter);
+        const runtimes = enums['runtime.name'];
+        const newRuntimes = runtimes.filter(rt => runtimeIds.includes(rt.id));
+        enums['runtime.name'] = newRuntimes;
+    }
+    return enums
 }
