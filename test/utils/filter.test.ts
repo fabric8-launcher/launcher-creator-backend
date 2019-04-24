@@ -1,39 +1,34 @@
 
 import * as test from 'tape';
-import { getFilteredEnums, getFilteredRuntimeIds } from 'core/utils';
-
-test('getFilteredRuntimeIds unfiltered', (t) => {
-    t.plan(1);
-    const ids = getFilteredRuntimeIds()
-    t.same(ids.sort(), ['angular', 'dotnet', 'nodejs', 'quarkus', 'react', 'springboot', 'thorntail', 'vertx', 'vuejs', 'wildfly'])
-});
-
-test('getFilteredRuntimeIds normal filter', (t) => {
-    t.plan(1);
-    const ids = getFilteredRuntimeIds('quarkus , vertx,dummy ')
-    t.same(ids.sort(), ['quarkus', 'vertx'])
-});
-
-test('getFilteredRuntimeIds negated filter', (t) => {
-    t.plan(1);
-    const ids = getFilteredRuntimeIds(' !  quarkus , vertx,dummy ')
-    t.same(ids.sort(), ['angular', 'dotnet', 'nodejs', 'react', 'springboot', 'thorntail', 'vuejs', 'wildfly'])
-});
+import { filterEnums } from 'core/utils';
+import { listEnums } from 'core/catalog';
 
 test('getFilteredEnums unfiltered', (t) => {
     t.plan(1);
-    const enums = getFilteredEnums()['runtime.name'];
+    const enums = filterEnums(listEnums())['runtime.name'];
     t.same(enums.map(e => e.id).sort(), ['angular', 'dotnet', 'nodejs', 'quarkus', 'react', 'springboot', 'thorntail', 'vertx', 'vuejs', 'wildfly'])
 });
 
-test('getFilteredEnums normal filter', (t) => {
+test('getFilteredEnums normal runtime filter', (t) => {
     t.plan(1);
-    const enums = getFilteredEnums('quarkus , vertx,dummy ')['runtime.name'];
+    const enums = filterEnums(listEnums(), 'quarkus|vertx|dummy', '')['runtime.name'];
     t.same(enums.map(e => e.id).sort(), ['quarkus', 'vertx'])
 });
 
-test('getFilteredEnums negated filter', (t) => {
+test('getFilteredEnums negated runtime filter', (t) => {
     t.plan(1);
-    const enums = getFilteredEnums(' !  quarkus , vertx,dummy ')['runtime.name'];
+    const enums = filterEnums(listEnums(), ' !quarkus|vertx|dummy', '')['runtime.name'];
     t.same(enums.map(e => e.id).sort(), ['angular', 'dotnet', 'nodejs', 'react', 'springboot', 'thorntail', 'vuejs', 'wildfly'])
+});
+
+test('getFilteredEnums normal version filter', (t) => {
+    t.plan(1);
+    const enums = filterEnums(listEnums(), '', 'community');
+    t.same(enums['runtime.version.vertx'].map(e => e.id).sort(), ['community'])
+});
+
+test('getFilteredEnums negated verion filter', (t) => {
+    t.plan(1);
+    const enums = filterEnums(listEnums(), '', '!community')
+    t.same(enums['runtime.version.vertx'].map(e => e.id).sort(), [])
 });

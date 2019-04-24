@@ -2,8 +2,6 @@
 import * as path from 'path';
 import * as Archiver from 'archiver';
 import { createReadStream, createWriteStream, readdir, statSync, Stats } from 'fs-extra';
-import * as catalog from "core/catalog";
-import * as HttpStatus from "http-status-codes";
 import { Enums } from "core/catalog/types";
 
 function log(res, ...args) {
@@ -108,27 +106,43 @@ export function appendFile(to: string, from: string) {
     });
 }
 
-export function getFilteredRuntimeIds(rtFilter: String = '') {
-    let runtimeIds = catalog.listEnums()['runtime.name'].map(rt => rt.id);
-    if (rtFilter !== '') {
+function getFilteredIds(ids: string[], filter: string = '') {
+    if (filter !== '') {
         let negate = false;
-        if (rtFilter.trimLeft().startsWith('!')) {
+        if (filter.trimLeft().startsWith('!')) {
             negate = true;
-            rtFilter = rtFilter.trimLeft().substr(1)
+            filter = filter.trimLeft().substr(1)
         }
-        const rtFilterParts = rtFilter.split(',').map(rtf => rtf.trim());
-        runtimeIds = runtimeIds.filter(id => (negate) ? !rtFilterParts.includes(id) : rtFilterParts.includes(id))
+        const filterParts = filter.split(',').map(rtf => rtf.trim());
+        return ids.filter(id => (negate) ? !filterParts.includes(id) : filterParts.includes(id))
+    } else {
+        return ids;
     }
-    return runtimeIds;
 }
 
-export function getFilteredEnums(rtFilter: String = ''): Enums {
-    const enums = { ...catalog.listEnums() };
+function filterEnum(enums: object, enumId: string, filter: string = '') {
+    if (filter !== '') {
+        let negate = false;
+        if (filter.trimLeft().startsWith('!')) {
+            negate = true;
+            filter = filter.trimLeft().substr(1)
+        }
+        const re = new RegExp(filter);
+        const values = enums[enumId];
+        const newValues = values.filter(v => negate ? !re.test(v.id) : re.test(v.id));
+        enums[enumId] = newValues;
+    }
+}
+
+export function filterEnums(orgenums: object, rtFilter: string = '', vFilter: string = ''): Enums {
+    const enums = { ...orgenums };
     if (rtFilter !== '') {
-        const runtimeIds = getFilteredRuntimeIds(rtFilter);
-        const runtimes = enums['runtime.name'];
-        const newRuntimes = runtimes.filter(rt => runtimeIds.includes(rt.id));
-        enums['runtime.name'] = newRuntimes;
+        filterEnum(enums, 'runtime.name', rtFilter);
+    }
+    if (vFilter !== '') {
+        Object.keys(enums)
+            .filter(key => key.startsWith('runtime.version.'))
+            .forEach(id => filterEnum(enums, id, vFilter));
     }
     return enums
 }

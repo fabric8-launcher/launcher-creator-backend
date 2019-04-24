@@ -12,7 +12,7 @@ import * as Sentry from 'raven';
 
 import * as catalog from 'core/catalog';
 import * as deploy from 'core/deploy';
-import { getFilteredEnums, zipFolder } from 'core/utils';
+import { filterEnums, zipFolder } from 'core/utils';
 import { ApplicationDescriptor, DeploymentDescriptor } from 'core/catalog/types';
 import { determineBuilderImageFromGit, listBranchesFromGit } from 'core/analysis';
 import { builderImages } from 'core/resources/images';
@@ -61,14 +61,16 @@ router.get('/generators', (req, res) => {
 });
 
 router.get('/enums', (req, res) => {
-    const rtFilter = process.env.CREATOR_RUNTIME_FILTER || '';
-    res.status(HttpStatus.OK).send(getFilteredEnums(rtFilter));
+    const rtFilter = process.env.LAUNCHER_FILTER_RUNTIME || '';
+    const vFilter = process.env.LAUNCHER_FILTER_VERSION || '';
+    res.status(HttpStatus.OK).send(filterEnums(catalog.listEnums(), rtFilter, vFilter));
 });
 
 router.get('/enums/:id', (req, res) => {
-    const rtFilter = process.env.CREATOR_RUNTIME_FILTER || '';
+    const rtFilter = process.env.LAUNCHER_FILTER_RUNTIME || '';
+    const vFilter = process.env.LAUNCHER_FILTER_VERSION || '';
     const id = req.params.id;
-    const enumdef = getFilteredEnums(rtFilter)[id] || [];
+    const enumdef = filterEnums(catalog.listEnums(), rtFilter, vFilter)[id] || [];
     res.status(HttpStatus.OK).send(enumdef);
 });
 
