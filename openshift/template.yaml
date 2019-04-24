@@ -104,14 +104,6 @@ objects:
             value: ${WELCOME_IMAGE_NAME}
           - name: WELCOME_IMAGE_TAG
             value: ${WELCOME_IMAGE_TAG}
-          - name: CREATOR_RUNTIME_FILTER
-            value: ${CREATOR_RUNTIME_FILTER}
-          - name: SENTRY_DSN
-            valueFrom:
-              configMapKeyRef:
-                name: launcher
-                key: launcher.creator.sentry.dsn
-                optional: true
           - name: LAUNCHER_FILTER_RUNTIME
             valueFrom:
               configMapKeyRef:
@@ -123,6 +115,12 @@ objects:
               configMapKeyRef:
                 name: launcher
                 key: launcher.filter.version
+                optional: true
+          - name: SENTRY_DSN
+            valueFrom:
+              configMapKeyRef:
+                name: launcher
+                key: launcher.creator.sentry.dsn
                 optional: true
           terminationMessagePath: /dev/termination-log
           readinessProbe:
