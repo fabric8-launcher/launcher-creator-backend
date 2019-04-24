@@ -27,12 +27,6 @@ parameters:
   required: true
   value: latest
 
-- name: CREATOR_RUNTIME_FILTER
-  description: List of runtimes allowed in the Create Application flow
-  displayName: Show these runtimes only in the Create Application flow (comma-separated values)
-  required: false
-  value:
-
 - name: IMAGE
   value: fabric8/launcher-creator-backend
   required: true
@@ -117,6 +111,18 @@ objects:
               configMapKeyRef:
                 name: launcher
                 key: launcher.creator.sentry.dsn
+                optional: true
+          - name: LAUNCHER_FILTER_RUNTIME
+            valueFrom:
+              configMapKeyRef:
+                name: launcher
+                key: launcher.filter.runtime
+                optional: true
+          - name: LAUNCHER_FILTER_VERSION
+            valueFrom:
+              configMapKeyRef:
+                name: launcher
+                key: launcher.filter.version
                 optional: true
           terminationMessagePath: /dev/termination-log
           readinessProbe:
