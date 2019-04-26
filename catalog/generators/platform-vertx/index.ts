@@ -35,6 +35,7 @@ export default class PlatformVertx extends BaseGenerator {
         if (!resources.service(props.serviceName)) {
             await this.generator(PlatformBaseSupport).apply(resources, props, extra);
             await this.copy();
+            await this.mergeVersionPoms(props.runtime);
         }
         await this.generator(LanguageJava).apply(resources, lprops, extra);
         setMemoryResources(resources, { 'limit': '1G' }, props.serviceName);

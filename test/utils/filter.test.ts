@@ -30,5 +30,5 @@ test('getFilteredEnums normal version filter', (t) => {
 test('getFilteredEnums negated verion filter', (t) => {
     t.plan(1);
     const enums = filterEnums(listEnums(), '', '!community')
-    t.same(enums['runtime.version.vertx'].map(e => e.id).sort(), [])
+    t.same(enums['runtime.version.vertx'].map(e => e.id).sort(), ['redhat'])
 });
