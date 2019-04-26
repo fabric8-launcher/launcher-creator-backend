@@ -33,7 +33,6 @@
   <description>PROJECT_DESCRIPTION</description>
 
   <properties>
-    <vertx.version>3.6.3</vertx.version>
     <slf4j.version>1.7.25</slf4j.version>
     <vertx-maven-plugin.version>1.0.18</vertx-maven-plugin.version>
     <vertx.verticle>io.openshift.booster.MainApplication</vertx.verticle>
@@ -41,13 +40,6 @@
 
   <dependencyManagement>
     <dependencies>
-      <dependency>
-        <groupId>io.vertx</groupId>
-        <artifactId>vertx-dependencies</artifactId>
-        <version>${vertx.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -95,13 +87,13 @@
     <dependency>
       <groupId>org.assertj</groupId>
       <artifactId>assertj-core</artifactId>
-      <version>3.11.0</version>
+      <version>3.11.1</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>io.rest-assured</groupId>
       <artifactId>rest-assured</artifactId>
-      <version>3.1.1</version>
+      <version>3.3.0</version>
       <scope>test</scope>
     </dependency>
 

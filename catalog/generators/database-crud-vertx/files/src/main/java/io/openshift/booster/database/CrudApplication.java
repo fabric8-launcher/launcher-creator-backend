@@ -30,11 +30,15 @@ public class CrudApplication extends RouterConsumer {
     JDBCClient jdbc = JDBCClient.createShared(vertx, new JsonObject()
       //{{if .databaseType==postgresql}}
       .put("url", "jdbc:postgresql://" + getEnv("DB_HOST", "localhost") + "/my_data")
+      .put("jdbcUrl", "jdbc:postgresql://" + getEnv("DB_HOST", "localhost") + "/my_data")
       //{{else if .databaseType==mysql}}
       //.put("url", "jdbc:mysql://" + getEnv("DB_HOST", "localhost") + "/my_data?useSSL=false")
+      //.put("jdbcUrl", "jdbc:mysql://" + getEnv("DB_HOST", "localhost") + "/my_data?useSSL=false")
       //{{end}}
       .put("user", getEnv("DB_USERNAME", "user"))
       .put("password", getEnv("DB_PASSWORD", "password"))
+      .put("principal", getEnv("DB_USERNAME", "user"))
+      .put("credential", getEnv("DB_PASSWORD", "password"))
     );
     this.store = new JdbcProductStore(jdbc);
     return DBInitHelper.initDatabase(vertx, jdbc);

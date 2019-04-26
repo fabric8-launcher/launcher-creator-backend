@@ -44,6 +44,7 @@ export default class DatabaseCrudVertx extends BaseGenerator {
             await this.generator(PlatformVertx).apply(resources, pprops, extra);
             await this.copy();
             await this.mergePoms(`merge/pom.${props.databaseType}.xml`);
+            await this.mergeVersionPoms(props.runtime);
             await this.transform('src/**/*.java', cases(props));
             await this.transform('src/main/java/io/openshift/booster/MainApplication.java',
                 blocks('return new RouterConsumer[]{', '}',
