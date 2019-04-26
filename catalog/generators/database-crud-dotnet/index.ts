@@ -26,6 +26,7 @@ export default class DatabaseCrudDotNet extends BaseGenerator {
                 'subFolderName': props.subFolderName,
                 'serviceName': props.serviceName,
                 'routeName': props.routeName,
+                'runtime': props.runtime,
                 'dotnet': props.dotnet,
                 'env': {
                     'DB_HOST': {

@@ -1,7 +1,7 @@
 
 import { readdirSync, statSync, pathExistsSync } from 'fs-extra';
 import { join } from 'path';
-import { Enum, Enums } from 'core/catalog/types';
+import { Enum, Enums, Runtime } from 'core/catalog/types';
 import { InfoDef, ModuleInfoDef } from 'core/info';
 
 function catalogModuleFolder() {
@@ -72,4 +72,21 @@ export function listEnums(): Enums {
 export function enumItem(enumId, itemId: string): Enum {
     const items: Enum[] = listEnums()[enumId] || [];
     return items.find(e => e.id === itemId);
+}
+
+export function validRuntime(runtime: Runtime): Runtime {
+    const rt = listEnums()['runtime.name'].find(rt => rt.id === runtime.name);
+    if (!rt) {
+        throw new Error(`Unknown runtime '${runtime.name}'`)
+    }
+    const versions = listEnums()[`runtime.version.${runtime.name}`];
+    if (!versions || versions.length == 0) {
+        throw new Error(`Missing versions for runtime '${runtime.name}'`)
+    }
+    const v = versions.find(v => v.id === runtime.version);
+    if (v) {
+        return runtime;
+    } else {
+        return { 'name': runtime.name, 'version': versions[0].id } as Runtime
+    }
 }

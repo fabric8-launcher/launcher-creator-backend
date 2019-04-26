@@ -1,7 +1,7 @@
 
 import * as _ from 'lodash';
 import { enumItem } from 'core/catalog';
-import { BaseGenerator, BasePlatformExtra } from 'core/catalog/types';
+import { BaseGenerator, BasePlatformExtra, Runtime } from 'core/catalog/types';
 import { BUILDER_JAVA } from 'core/resources/images';
 
 import PlatformBaseSupport from 'generators/platform-base-support';
@@ -10,6 +10,7 @@ import MavenSetup, { MavenSetupProps } from 'generators/maven-setup';
 import { setDefaultHealthChecks, setMemoryResources } from "core/resources";
 
 export interface PlatformVertxProps extends LanguageJavaProps, MavenSetupProps {
+    runtime: Runtime;
 }
 
 export interface PlatformVertxExtra extends BasePlatformExtra {

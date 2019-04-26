@@ -20,6 +20,7 @@ export default class RestDotNet extends BaseGenerator {
                 'subFolderName': props.subFolderName,
                 'serviceName': props.serviceName,
                 'routeName': props.routeName,
+                'runtime': props.runtime,
                 'dotnet': props.dotnet,
             } as PlatformDotNetProps;
             await this.generator(PlatformDotNet).apply(resources, pprops, extra);

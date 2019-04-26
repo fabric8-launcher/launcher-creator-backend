@@ -64,7 +64,7 @@ export interface NodejsCoords {
     version: string;
 }
 
-export function toRuntime(arg: string) {
+export function toRuntime(arg: string): Runtime {
     const parts = arg.split('/', 2);
     const runtime: Runtime = { 'name': parts[0] };
     if (parts.length > 1) {

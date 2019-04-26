@@ -18,6 +18,7 @@ export default class RestSpring extends BaseGenerator {
                 'subFolderName': props.subFolderName,
                 'serviceName': props.serviceName,
                 'routeName': props.routeName,
+                'runtime': props.runtime,
                 'maven': props.maven,
             } as PlatformSpringBootProps;
             await this.generator(PlatformSpringBoot).apply(resources, pprops, extra);

@@ -17,6 +17,7 @@ export default class RestThorntail extends BaseGenerator {
                 'subFolderName': props.subFolderName,
                 'serviceName': props.serviceName,
                 'routeName': props.routeName,
+                'runtime': props.runtime,
                 'maven': props.maven,
             } as PlatformThorntailProps;
             await this.generator(PlatformThorntail).apply(resources, pprops, extra);

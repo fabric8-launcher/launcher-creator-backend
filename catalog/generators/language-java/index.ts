@@ -8,7 +8,7 @@ import {
     setDeploymentEnv
 } from 'core/resources';
 
-import { BaseGenerator, BaseGeneratorProps } from 'core/catalog/types';
+import { BaseGenerator, BaseGeneratorProps, Runtime } from 'core/catalog/types';
 
 export interface LanguageJavaProps extends BaseGeneratorProps {
     builderImage: string;

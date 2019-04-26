@@ -22,6 +22,7 @@ export default class DatabaseCrudWildfly extends BaseGenerator {
                     'subFolderName': props.subFolderName,
                     'serviceName': props.serviceName,
                     'routeName': props.routeName,
+                    'runtime': props.runtime,
                     'maven': props.maven,
                     'env': {
                         'MYSQL_DATABASE': 'my_data',

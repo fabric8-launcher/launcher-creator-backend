@@ -2,7 +2,7 @@
 import * as _ from 'lodash';
 import { setDefaultHealthChecks, setMemoryResources } from 'core/resources';
 import { enumItem } from 'core/catalog';
-import { BaseGenerator, BasePlatformExtra, DotNetCoords } from 'core/catalog/types';
+import { BaseGenerator, BasePlatformExtra, DotNetCoords, Runtime } from 'core/catalog/types';
 import { BUILDER_DOTNET } from 'core/resources/images';
 
 import PlatformBaseSupport from 'generators/platform-base-support';
@@ -11,6 +11,7 @@ import LanguageCSharp, { LanguageCSharpProps } from 'generators/language-csharp'
 import { cases } from 'core/template/transformers/cases';
 
 export interface PlatformDotNetProps extends LanguageCSharpProps {
+    runtime: Runtime;
     dotnet: DotNetCoords;
 }
 

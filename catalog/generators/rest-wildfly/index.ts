@@ -17,6 +17,7 @@ export default class RestWildfly extends BaseGenerator {
                 'subFolderName': props.subFolderName,
                 'serviceName': props.serviceName,
                 'routeName': props.routeName,
+                'runtime': props.runtime,
                 'maven': props.maven,
             } as PlatformWildflyProps;
             await this.generator(PlatformWildfly).apply(resources, pprops, extra);

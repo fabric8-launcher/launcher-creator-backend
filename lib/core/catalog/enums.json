@@ -149,7 +149,11 @@
   "runtime.version.vertx": [
     {
       "id": "community",
-      "name": "Community"
+      "name": "3.6.3 (Community)"
+    },
+    {
+      "id": "redhat",
+      "name": "3.6.3.redhat-00009 (RHOAR)"
     }
   ],
   "runtime.version.angular": [

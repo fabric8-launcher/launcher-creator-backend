@@ -1,7 +1,7 @@
 
 import * as _ from 'lodash';
 import { enumItem } from 'core/catalog';
-import { BaseGenerator, BasePlatformExtra } from 'core/catalog/types';
+import { BaseGenerator, BasePlatformExtra, Runtime } from 'core/catalog/types';
 import { BUILDER_JAVAEE } from 'core/resources/images';
 import { setDefaultHealthChecks, setMemoryResources } from 'core/resources';
 
@@ -10,6 +10,7 @@ import LanguageJava, { LanguageJavaProps } from 'generators/language-java';
 import MavenSetup, { MavenSetupProps } from 'generators/maven-setup';
 
 export interface PlatformWildflyProps extends LanguageJavaProps, MavenSetupProps {
+    runtime: Runtime;
 }
 
 export interface PlatformWildflyExtra extends BasePlatformExtra {

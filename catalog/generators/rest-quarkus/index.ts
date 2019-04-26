@@ -17,6 +17,7 @@ export default class RestQuarkus extends BaseGenerator {
                 'subFolderName': props.subFolderName,
                 'serviceName': props.serviceName,
                 'routeName': props.routeName,
+                'runtime': props.runtime,
                 'maven': props.maven,
             } as PlatformQuarkusProps;
             await this.generator(PlatformQuarkus).apply(resources, pprops, extra);

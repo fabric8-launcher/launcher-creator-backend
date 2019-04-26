@@ -20,6 +20,7 @@ export default class RestVertx extends BaseGenerator {
                 'subFolderName': props.subFolderName,
                 'serviceName': props.serviceName,
                 'routeName': props.routeName,
+                'runtime': props.runtime,
                 'maven': props.maven,
             } as PlatformVertxProps;
             await this.generator(PlatformVertx).apply(resources, pprops, extra);
