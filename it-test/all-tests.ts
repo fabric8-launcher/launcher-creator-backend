@@ -6,10 +6,10 @@ import { applyDeployment } from 'core/deploy';
 import { getRouteHost, waitForFirstBuild, waitForProject } from './ochelpers';
 import { findPropertyWithValue, ModuleInfoDef } from 'core/info';
 import { listEnums } from 'core/catalog';
+import { Runtime } from 'core/catalog/types';
 import {
     run,
     isDryRun,
-    getRuntimes,
     Capability,
     capName,
     deployment,
@@ -18,7 +18,10 @@ import {
     Part,
     getServiceName,
     getCapabilities,
-    CapabilityOptions, getCapabilityOverrides, isNoBuild
+    CapabilityOptions,
+    getCapabilityOverrides,
+    isNoBuild,
+    getRuntimeVersions
 } from './functions';
 
 // Put any capabilities here that need special options for testing.
@@ -57,14 +60,14 @@ after(function() {
 });
 
 describe('Backends', function() {
-    testRuntimesCaps(getRuntimes('backend'), getCapabilities('backend'));
+    testRuntimesCaps(getRuntimeVersions('backend'), getCapabilities('backend'));
 });
 
 describe('Frontends', function() {
-    testRuntimesCaps(getRuntimes('frontend'), getCapabilities('frontend'));
+    testRuntimesCaps(getRuntimeVersions('frontend'), getCapabilities('frontend'));
 });
 
-function testRuntimesCaps(runtimes: string[], capInfos: ModuleInfoDef[]) {
+function testRuntimesCaps(runtimes: Runtime[], capInfos: ModuleInfoDef[]) {
     runtimes.forEach(function(runtime) {
         const parts = listParts(runtime, capInfos);
         if (parts.length > 0) {
@@ -73,9 +76,9 @@ function testRuntimesCaps(runtimes: string[], capInfos: ModuleInfoDef[]) {
     });
 }
 
-function listParts(runtime: string, capInfos: ModuleInfoDef[]): Part[] {
+function listParts(runtime: Runtime, capInfos: ModuleInfoDef[]): Part[] {
     const parts: Part[] = [];
-    const rtCaps = capInfos.filter(d => !!findPropertyWithValue(d, 'runtime.name', runtime, listEnums()));
+    const rtCaps = capInfos.filter(d => !!findPropertyWithValue(d, 'runtime.name', runtime.name, listEnums()));
     const caps = rtCaps.map(c => c.module);
     const cOverrides = getCapabilityOverrides();
 
@@ -124,7 +127,7 @@ function testPart(part: Part) {
         }
     }
 
-    describe(`Runtime ${part.runtime} with ${part.capabilities.map(capName)}${!!part.folder ? ' in folder ' + part.folder : ''}`, function() {
+    describe(`Runtime ${part.runtime.name}/${part.runtime.version} with ${part.capabilities.map(capName)}${!!part.folder ? ' in folder ' + part.folder : ''}`, function() {
         const context: Context = {};
         before('setup', async function() {
             this.timeout(0);
@@ -159,7 +162,7 @@ function testPart(part: Part) {
     });
 }
 
-function testRuntimeCap(runtime: string, capability: Capability, context: Context) {
+function testRuntimeCap(runtime: Runtime, capability: Capability, context: Context) {
     const name = capName(capability);
     describe(`Capability ${name}`, function() {
         this.timeout(10000);

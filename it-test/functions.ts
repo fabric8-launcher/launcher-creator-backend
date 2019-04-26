@@ -1,7 +1,8 @@
 import { spawnSync, SpawnSyncOptions } from 'child_process';
 import { listCapabilityInfos, listEnums } from 'core/catalog';
-import { toRuntime } from 'core/catalog/types';
+import { Runtime, toRuntime } from 'core/catalog/types';
 import * as _ from 'lodash';
+import { ModuleInfoDef } from "core/info";
 
 export interface Context {
     routeHost?: string;
@@ -21,7 +22,7 @@ export interface CapabilityOptions {
 }
 
 export interface Part {
-    runtime?: string;
+    runtime?: Runtime;
     folder?: string;
     capabilities: Capability[];
 }
@@ -57,7 +58,7 @@ export function deployment(part: Part) {
             'parts': [{
                 'subFolderName': part.folder,
                 'shared': {
-                    'runtime': toRuntime(part.runtime)
+                    'runtime': part.runtime
                 },
                 'capabilities': caps
             }]
@@ -141,7 +142,7 @@ export function runAt(cwd, cmd, ...args: string[]) {
     }
 }
 
-export function getRuntimes(tier: string) {
+export function getRuntimes(tier: string): string[] {
     const rtOverrides = getRuntimeOverrides();
     return listEnums()['runtime.name']
         .filter(e => _.get(e, 'metadata.categories', []).includes(tier))
@@ -149,7 +150,14 @@ export function getRuntimes(tier: string) {
         .filter(r => !rtOverrides || rtOverrides.includes(r));
 }
 
-export function getCapabilities(tier: string) {
+export function getRuntimeVersions(tier: string): Runtime[] {
+    const rts = getRuntimes(tier);
+    return rts.flatMap(rt =>
+        listEnums()[`runtime.version.${rt}`]
+            .map(v => ({ 'name': rt, 'version': v.id } as Runtime)));
+}
+
+export function getCapabilities(tier: string): ModuleInfoDef[] {
     const cOverrides = getCapabilityOverrides();
     const cis = listCapabilityInfos();
     return cis
