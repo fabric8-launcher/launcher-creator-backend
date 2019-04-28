@@ -38,11 +38,6 @@
     <vertx.verticle>io.openshift.booster.MainApplication</vertx.verticle>
   </properties>
 
-  <dependencyManagement>
-    <dependencies>
-    </dependencies>
-  </dependencyManagement>
-
   <dependencies>
     <dependency>
       <groupId>io.vertx</groupId>
