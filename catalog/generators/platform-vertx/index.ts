@@ -7,7 +7,7 @@ import { BUILDER_JAVA } from 'core/resources/images';
 import PlatformBaseSupport from 'generators/platform-base-support';
 import LanguageJava, { LanguageJavaProps } from 'generators/language-java';
 import MavenSetup, { MavenSetupProps } from 'generators/maven-setup';
-import { setDefaultHealthChecks, setMemoryResources } from "core/resources";
+import { setDefaultHealthChecks, setMemoryResources } from 'core/resources';
 
 export interface PlatformVertxProps extends LanguageJavaProps, MavenSetupProps {
     runtime: Runtime;
