@@ -156,6 +156,13 @@ modules.xml
 # Sonarlint plugin
  .idea/sonarlint
 
+### Visual Studio Code ###
+# project settings
+.vscode/
+
+# history plugin
+.history/
+
 ### Java ###
 # Compiled class file
 *.class
