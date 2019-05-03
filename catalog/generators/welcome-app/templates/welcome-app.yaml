@@ -50,7 +50,7 @@ objects:
 - apiVersion: v1
   kind: ImageStream
   metadata:
-    name: welcome
+    name: ${APP_NAME}-welcome
     labels:
       app: ${APP_NAME}
       creatorCategory: support
@@ -65,7 +65,7 @@ objects:
 - apiVersion: v1
   kind: DeploymentConfig
   metadata:
-    name: welcome
+    name: ${APP_NAME}-welcome
     labels:
       app: ${APP_NAME}
       creatorCategory: support
@@ -73,18 +73,18 @@ objects:
     replicas: 1
     selector:
       app: ${APP_NAME}
-      deploymentconfig: welcome
+      deploymentconfig: ${APP_NAME}-welcome
     strategy:
       resources: {}
     template:
       metadata:
         labels:
           app: ${APP_NAME}
-          deploymentconfig: welcome
+          deploymentconfig: ${APP_NAME}-welcome
       spec:
         containers:
         - image: ${WELCOME_IMAGE_NAME}:${WELCOME_IMAGE_TAG}
-          name: welcome
+          name: ${APP_NAME}-welcome
           ports:
           - containerPort: 8080
             protocol: TCP
@@ -128,10 +128,10 @@ objects:
     - imageChangeParams:
         automatic: true
         containerNames:
-        - welcome
+        - ${APP_NAME}-welcome
         from:
           kind: ImageStreamTag
-          name: welcome:${WELCOME_IMAGE_TAG}
+          name: ${APP_NAME}-welcome:${WELCOME_IMAGE_TAG}
       type: ImageChange
   status:
     latestVersion: 0
@@ -143,7 +143,7 @@ objects:
 - kind: Service
   apiVersion: v1
   metadata:
-    name: welcome
+    name: ${APP_NAME}-welcome
     labels:
       app: ${APP_NAME}
       creatorCategory: support
@@ -155,11 +155,11 @@ objects:
       targetPort: 8080
     selector:
       app: ${APP_NAME}
-      deploymentconfig: welcome
+      deploymentconfig: ${APP_NAME}-welcome
 - apiVersion: v1
   kind: Route
   metadata:
-    name: welcome
+    name: ${APP_NAME}-welcome
     labels:
       app: ${APP_NAME}
       creatorCategory: support
@@ -170,4 +170,4 @@ objects:
       targetPort: 8080-tcp
     to:
       kind: Service
-      name: welcome
+      name: ${APP_NAME}-welcome
