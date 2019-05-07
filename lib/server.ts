@@ -63,7 +63,9 @@ router.get('/generators', (req, res) => {
 router.get('/enums', (req, res) => {
     const rtFilter = process.env.LAUNCHER_FILTER_RUNTIME || '';
     const vFilter = process.env.LAUNCHER_FILTER_VERSION || '';
-    res.status(HttpStatus.OK).send(filterEnums(catalog.listEnums(), rtFilter, vFilter));
+    let enums = filterEnums(catalog.listEnums(), rtFilter, vFilter);
+    enums = filterEnums(enums, req.query.runtimeFilter || '', req.query.versionFilter || '');
+    res.status(HttpStatus.OK).send(enums);
 });
 
 router.get('/enums/:id', (req, res) => {
