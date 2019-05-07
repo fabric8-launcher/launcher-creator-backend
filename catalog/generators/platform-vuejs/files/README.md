@@ -15,6 +15,8 @@ have the project be built on OpenShift you can do the following:
 $ ./gap push
 ```
 
+# {{.nodejs.name}}
+
 ## Project setup
 ```
 yarn install
