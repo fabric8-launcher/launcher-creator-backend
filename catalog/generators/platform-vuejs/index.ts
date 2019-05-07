@@ -36,7 +36,7 @@ export default class PlatformVueJS extends BaseGenerator {
         if (!resources.service(props.serviceName)) {
             await this.generator(PlatformBaseSupport).apply(resources, props, extra);
             await this.copy();
-            await this.transform(['package.json'], cases(props));
+            await this.transform(['package.json', 'public/index.html', 'README.md'], cases(props));
         }
         await this.generator(LanguageNodejs).apply(resources, lprops, extra);
         setMemoryResources(resources, { 'limit': '100Mi' }, props.serviceName);
