@@ -5,7 +5,7 @@ const args = process.argv.slice(2);
 
 if (args.length < 1) {
     console.error('Missing argument');
-    console.log(`Usage: yarn run -s analyze <git_repo> [<branch>]</branch>`);
+    console.log(`Usage: yarn run -s analyze <git_repo> [<branch>]`);
     console.log(`    git_repo     - URL or local file path to a Git repository.`);
     process.exit(1);
 }
