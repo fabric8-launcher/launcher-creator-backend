@@ -16,7 +16,7 @@ RUN yum install -y java-1.8.0-openjdk java-1.8.0-openjdk-devel
 RUN curl -sSL https://github.com/openshift/origin/releases/download/v3.11.0/openshift-origin-client-tools-v3.11.0-0cbc58b-linux-64bit.tar.gz | tar xzC /usr/bin --strip-components 1
 
 #Install ODO
-RUN curl -sSL https://github.com/redhat-developer/odo/releases/download/v0.0.15/odo-linux-amd64.gz | gzip -d > /usr/bin/odo && chmod +x /usr/bin/odo
+RUN curl -sSL https://github.com/openshift/odo/releases/download/v1.0.0-beta3/odo-linux-amd64.gz | gzip -d > /usr/bin/odo && chmod +x /usr/bin/odo
 
 USER 1001
 
